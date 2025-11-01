@@ -3233,6 +3233,14 @@ struct s_random_opt_group_entry {
 	uint16 id;
 	int16 min_value, max_value;
 	int8 param;
+	uint16 rate;
+};
+
+/// Struct of random group
+struct s_random_opt_random
+{
+	uint32 total_rate;
+	std::vector<std::shared_ptr<s_random_opt_group_entry>> data; /// item ID, s_item_group_entry
 	uint16 chance;
 };
 
@@ -3240,9 +3248,7 @@ struct s_random_opt_group_entry {
 struct s_random_opt_group {
 	uint16 id;
 	std::string name;
-	std::map<uint16, std::vector<std::shared_ptr<s_random_opt_group_entry>>> slots;
-	uint16 max_random;
-	std::vector<std::shared_ptr<s_random_opt_group_entry>> random_options;
+	std::map<uint16, std::shared_ptr<s_random_opt_random>> slots;
 
 public:
 	void apply( struct item& item );
@@ -3267,12 +3273,13 @@ extern RandomOptionDatabase random_option_db;
 
 class RandomOptionGroupDatabase : public TypesafeYamlDatabase<uint16, s_random_opt_group> {
 public:
-	RandomOptionGroupDatabase() : TypesafeYamlDatabase("RANDOM_OPTION_GROUP", 1) {
+	RandomOptionGroupDatabase() : TypesafeYamlDatabase("RANDOM_OPTION_GROUP", 2) {
 
 	}
 
 	const std::string getDefaultLocation() override;
 	uint64 parseBodyNode(const ryml::NodeRef& node) override;
+	void loadingFinished() override;
 
 	// Additional
 	bool add_option(const ryml::NodeRef& node, std::shared_ptr<s_random_opt_group_entry> &entry);
@@ -3520,14 +3527,12 @@ struct s_laphine_upgrade{
 	uint16 requiredRandomOptions;
 	bool cardsAllowed;
 	std::shared_ptr<s_random_opt_group> randomOptionGroup;
-	uint16 resultRefine;
-	uint16 resultRefineMinimum;
-	uint16 resultRefineMaximum;
+	std::unordered_map<uint16, uint16> resultRefine;
 };
 
 class LaphineUpgradeDatabase : public TypesafeYamlDatabase<t_itemid, s_laphine_upgrade>{
 public:
-	LaphineUpgradeDatabase() : TypesafeYamlDatabase( "LAPHINE_UPGRADE_DB", 1 ){
+	LaphineUpgradeDatabase() : TypesafeYamlDatabase( "LAPHINE_UPGRADE_DB", 2 ){
 
 	}
 
