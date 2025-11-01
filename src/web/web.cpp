@@ -68,6 +68,7 @@ std::string web_server_id = "ragnarok";
 std::string web_server_pw = "";
 std::string web_server_db = "ragnarok";
 
+std::string web_codepage = "utf8";
 std::string default_codepage = "";
 
 Sql * login_handle = nullptr;
@@ -173,7 +174,8 @@ int32 inter_config_read(const char* cfgName)
 	}
 
 	while(fgets(line, sizeof(line), fp)) {
-		char w1[24], w2[1024];
+		char w1[24] = { 0 };
+		char w2[1024] = { 0 };
 
 		if (line[0] == '/' && line[1] == '/')
 			continue;
@@ -225,7 +227,9 @@ int32 inter_config_read(const char* cfgName)
 			web_server_pw = w2;
 		else if(!strcmpi(w1,"web_server_db"))
 			web_server_db = w2;
-		else if(!strcmpi(w1,"default_codepage"))
+		else if(!strcmpi(w1,"web_codepage"))
+			web_codepage = w2;
+		else if (!strcmpi(w1, "default_codepage"))
 			default_codepage = w2;
 		else if (!strcmpi(w1, "user_configs"))
 			safestrncpy(user_configs_table, w2, sizeof(user_configs_table));
@@ -335,8 +339,8 @@ int32 web_sql_init(void) {
 	}
 	ShowStatus("Connect success! (Web Server Connection)\n");
 
-	if (!default_codepage.empty()) {
-		if (SQL_ERROR == Sql_SetEncoding(web_handle, default_codepage.c_str()))
+	if (!web_codepage.empty()) {
+		if (SQL_ERROR == Sql_SetEncoding(web_handle, web_codepage.c_str()))
 			Sql_ShowDebug(web_handle);
 	}
 
