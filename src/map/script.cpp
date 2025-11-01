@@ -9758,12 +9758,10 @@ BUILDIN_FUNC(successrefitem) {
 		pc_unequipitem(sd,i,2); // status calc will happen in pc_equipitem() below
 
 		clif_refine( *sd, i, ITEMREFINING_SUCCESS );
-		clif_delitem( *sd, i, 1, 3 );
 
 		//Logs items, got from (N)PC scripts [Lupus]
 		log_pick_pc(sd, LOG_TYPE_SCRIPT, 1, &sd->inventory.u.items_inventory[i]);
 
-		clif_additem(sd,i,1,0);
 		pc_equipitem(sd,i,ep);
 		clif_misceffect( *sd, NOTIFYEFFECT_REFINE_SUCCESS );
 		if( sd->inventory_data[i]->type == IT_WEAPON ){
@@ -9860,12 +9858,10 @@ BUILDIN_FUNC(downrefitem) {
 		sd->inventory.u.items_inventory[i].refine = cap_value( sd->inventory.u.items_inventory[i].refine, 0, MAX_REFINE);
 
 		clif_refine( *sd, i, ITEMREFINING_DOWNGRADE );
-		clif_delitem( *sd, i, 1, 3 );
 
 		//Logs items, got from (N)PC scripts [Lupus]
 		log_pick_pc(sd, LOG_TYPE_SCRIPT, 1, &sd->inventory.u.items_inventory[i]);
 
-		clif_additem(sd,i,1,0);
 		pc_equipitem(sd,i,ep);
 		clif_misceffect( *sd, NOTIFYEFFECT_REFINE_FAILURE );
 		achievement_update_objective(sd, AG_ENCHANT_FAIL, 1, sd->inventory.u.items_inventory[i].refine);
