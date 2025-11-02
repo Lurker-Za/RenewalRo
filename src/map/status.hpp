@@ -1446,6 +1446,14 @@ enum sc_type : int16 {
 	SC_WIND_CHARM_POWER,
 	SC_GROUND_CHARM_POWER,
 
+	//premium buff
+	SC_SUB_DEADPENALTY,
+	SC_SUB_ITEMBOOST,
+	SC_SUB_EXPBOOST,
+	SC_PREMIUM_STORAGEBOOST,
+	SC_PREMIUM_ITEMBOOST,
+	SC_PREMIUM_EXPBOOST,
+
 	SC_MAX, //Automatically updated max, used in for's to check we are within bounds.
 };
 
@@ -3260,6 +3268,7 @@ enum e_status_change_flag : uint16 {
 	SCF_REQUIRENOWEAPON,
 	SCF_REMOVEFROMHOMONWARP,
 	SCF_REMOVEFROMHOMONMAPWARP,
+	SCF_NOTICKSAVE,
 	SCF_MAX
 };
 

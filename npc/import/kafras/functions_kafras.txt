@@ -1,0 +1,712 @@
+//===== rAthena Script =======================================
+//= Kafra Functions
+//===== By: ==================================================
+//= rAthena Dev Team
+//= Darlskies, Darkchild, Syrus22, Lupus, kobra_k88 (2.0)
+//= L0ne_W0lf
+//===== Current Version: =====================================
+//= 6.8
+//===== Compatible With: =====================================
+//= rAthena Project
+//===== Description: =========================================
+//= These functions handle save, storage, cart rental, teleport,
+//= and Free Teleport/Warp/Rent Cart options for all Kafra NPCs.
+//=
+//= Kafra's will need a lot of work. The Welcome Message argument
+//= may become obsolete, as most kafras have a slightly differing
+//= Welcome message.
+//===== Additional Comments: =================================
+//= 1.1 Now using functions v2.1 Added Cart Rent for Classes: Whitesmith, Professor.
+//=     Replaced checkoption(x) into checkcart(0) [Lupus] v2.1b Added Fix Kafra Pass Func [Kobra_k88]
+//= 2.2 Final fix of the Kafra Pass Exploit! [Lupus] a -Izlude[4] fix
+//= 2.2a Minor changes to function calls.  Using agruments. Added Guild options. [kobra_k88]
+//= 2.2b This version uses arrays for the teleport option. Rearranged next statements to make menu transitions smoother. [kobra_k88]
+//= 2.3 Removed SAVE from Niflheim. [Lupus]
+//= 2.3 removed "fix" by HawkMoon RTFM and check supernovice.txt . There's a SPECIAL Kafra which gives CARTS to SN for a special proce. [Lupus]
+//= 2.4 Added Baby Class Support (Baby Novice check) Removed annoying storage feature where u had to close dialog window to be able to use your storage [Lupus]
+//= 2.5 Added Louyang official Kafra, fixes some Kafras, not letting you to Save your position [Lupus]
+//= 2.6 Reverted Dungeons Kafras (they should offer only Storage). Added temp Ayothaya Kafra
+//= 2.7 Added correct Ayothaya, Louyang & Amatsu Kafras. [Lupus]
+//= 2.8 Fixed Amatsu Storage problems [Lupus] 2.9 Fixed spelling mistakes. [Nexon]
+//= 3.0 Added special "not working teleport menu" for Einbroch Kafras [Lupus]
+//= 3.1 Removed callfunc Is_####_Class in favor of baseClass [Silentdragon]
+//= 3.2 Fixed an exploit [Lupus]
+//= 4.0 Added Kafra storage password protection. [Lupus]
+//=     to block Kafra Password, read comments at 350 line
+//= 5.0 Fixed the close2;....close; end; lines. Who let them slip away? =/ [erKURITA]
+//=     Also, the kafra upon warp was giving back the zeny. Removed. [erKURITA]
+//= 5.1 Optimized a little, added no tele/save arg's [Evera]
+//= 5.1a Temporary? Added F_ClearGarbage to clear unused/outdated variables [Lupus]
+//= 5.2 By default commented out custom Guilds Kafra's "Guild Storage". [Lupus]
+//= 5.3 uncommented Guild Storage. Confirmed kRO feature. [Lupus]
+//= 5.4 added -Guide option (Kafra shows you nearest Guide) Work in progress.
+//=     Need all coords for all guides.. and somehow pass their coords to kafra.
+//=     Removed universal Kafra Pass, added 3 new Kafra Tickets [Lupus]
+//= 5.4b temporary moved "-Guide" from the 1st menu punct [Lupus]
+//= 5.5 Added proper Niflheim welcome message.	[L0ne_W0lf]
+//=     Cleaned up the menus a bit. Got rid of the proceeding "-" prefix.
+//= 5.5b Missed a preceeding hyphen, which was screwing up teleporting. [L0ne_W0lf]
+//= 5.6 Further dialog updates, added  dynamic costs for cart and storage use. [L0ne_W0lf]
+//=     Updated some functions to handle Guild Kafras the way they should.
+//= 5.6a Corrected a few wrong names in the teleport function. [L0ne_W0lf]
+//= 5.7 Correced end message no longer displaying, and the duplicate names [L0ne_W0lf]
+//=     Thanks to Barron-Monster for pointing out the issues.
+//= 5.8 Fixed another double name being shown when "saving" [L0ne_W0lf]
+//= 5.9 Fixed the Kafra Welcome message for guilds. Thanks Barron-Monster. [L0ne_W0lf]
+//= 6.0 Closed Kafra Password exploit in Cool Event Corp. Storages until we got a client/packet based password support.
+//=     Added 2 args into F_SetKafCode to fit it in Cool Evnt Co. NPC [Lupus]
+//= 6.1 Added menu for Turbo Track Kafra Staff. [L0ne_W0lf]
+//= 6.2 Updated/Fixed warp cords. [Kisuka]
+//= 6.3 #kafra_code is now stored as is. [brianluau]
+//= 6.4 Removed unofficial Guide function. [Daegaladh]
+//= 6.5 Optimized. [Joseph]
+//= 6.6 Added Warp Points / View Points Function. [Joseph]
+//= 6.7 Added Rune Knight Kafra. [Euphy]
+//= 6.8 Updated some functions and added VIP features. [Euphy]
+//= 6.8a 프리미엄 창고 추가, KRo 본섭 대사 [옥음]
+//============================================================
+
+//=== Main Function ========================================================
+//=   arg(0): Used to determine which welcome message to show.
+//=   arg(1): Used to determine which menu to display.
+//=   arg(2): Used to determine if the info menu is shown in F_KafInfo.
+//=   arg(3): Cost to use Storage
+//=   arg(4): Cost to Rent a Pushcart
+//==========================================================================
+function	script	F_Kafra	{
+	callfunc "F_ClearGarbage"; // Clear outdated, unused variables
+	.@welcome = getarg(0);
+	.@menu_num = getarg(1);
+
+	// Display Kafra Welcome Message
+	switch(.@welcome) {
+	default:// Default message (obsolete)
+		mes "[카프라 직원]";
+		mes "어서오십시오. 카프라 서비스는 언제나";
+		mes "여러분 곁에 있습니다.";
+		mes "무엇을 도와드릴까요~?";
+		break;
+	case 1:// Niflheim specific message
+		mes "[카프라 직원]";
+		mes "^666666어서...오십시오.(주) 카프라";
+		mes "서비스는...";
+		mes "죽어서도...여러분 곁에...";
+		mes "있습니다.";
+		mes "...무엇을...도와드릴까요?^000000";
+		break;
+	case 2:// Guild Castle Kafra message
+		mes "[카프라 직원]";
+		mes "어서오십시오. ^ff0000" + getguildname( getcharid(2) ) + "^000000 길드원님.";
+		mes "카프라 서비스는 언제나";
+		mes "여러분 곁에 있습니다.";
+		mes "무엇을 도와드릴까요?";
+		break;
+	case 3:// Amatsu specific message (obsolete)
+		mes "[카프라 직원]";
+		mes "이 먼곳까지 우리 문화를 배우러 오신건가요 아니면 구경하러 오신건가요?";
+		mes "어쨌든 마을에 머무르실거죠?";
+		mes "쾌적한 야생화의 향기로 공기는 영원히";
+		mes "무거워요.";
+		break;
+	case 4:// Louyang and Ayothaya specific message (obsolete)
+		mes "[카프라 직원]";
+		mes "많은 카프라 서비스 지역이 있기 때문에";
+		mes "집에서 멀지 않습니다.";
+		break;
+	case 5:// NPC has it's own welcome message. (Display nothing)
+		break;
+	}
+	next;
+	if (.@welcome == 2)// 길드 카프라 메뉴 보기 (자유 워프, 자유 창고, 자유 카트)
+		setarray .@K_Menu0$[0], "창고 서비스 이용", "길드 창고 서비스 이용", "카트 서비스 이용", "공간이동 서비스 이용", "종료";
+	else {
+		switch(.@menu_num) {
+			// 저장과 창고이용 전용
+			case 1:	setarray .@K_Menu0$[0],"저장 서비스 이용","창고 서비스 이용","종료"; break;
+			// 창고전용
+			case 2:	setarray .@K_Menu0$[0],"창고 서비스 이용","종료"; break;
+			// 공간이동 비제공 (공통)
+			case 3: setarray .@K_Menu0$[0],"저장 서비스 이용","창고 서비스 이용","카트 서비스 이용","기타정보 확인","종료"; break;
+			// Case 4는 아인브로크의 공간이동안됨 메시지.
+			// 저장 및 공간이동 안됨 (공통)
+			case 5:	setarray .@K_Menu0$[0],"창고 서비스 이용","카트 서비스 이용","기타정보 확인","종료"; break;
+			// 창고와 기타정보 확인만 가능.
+			case 6:	setarray .@K_Menu0$[0],"창고 서비스 이용","기타정보 확인","종료"; break;
+			// 저장, 창고 및 카트대여 가능 (카프라 창고)
+			case 7:	setarray .@K_Menu0$[0],"저장 서비스 이용","창고 서비스 이용","카트 서비스 이용","종료"; break;
+			// 저장, 창고 및 카트대여 가능 (터보트랙)
+			case 8: setarray .@K_Menu0$[0],"저장 서비스 이용","창고 서비스 이용","기타정보 확인","종료"; break;
+			// 저장안됨 (룬나이트)
+			case 9: setarray .@K_Menu0$[0],"창고 서비스 이용","카트 서비스 이용","공간이동 서비스 이용","기타정보 확인","종료"; break;
+			// 창고 , 저장, 카트대여가능 (데와타, case 7의 재정렬)
+			case 10: setarray .@K_Menu0$[0],"창고 서비스 이용","저장 서비스 이용","카트 서비스 이용","종료"; break;
+			// 기본값 (절대값)
+			default: setarray .@K_Menu0$[0],"저장 서비스 이용","창고 서비스 이용","공간이동 서비스 이용","카트 서비스 이용","기타정보 확인","종료"; break;
+		}
+	}
+	.@menu$ = implode(.@K_Menu0$,":");
+	while (true) {
+		.@j = select(.@menu$) - 1;
+		if (.@K_Menu0$[.@j] == "저장 서비스 이용")
+			return;
+		else if (.@K_Menu0$[.@j] == "창고 서비스 이용") {
+			if (.@welcome == 2)// 길드창고에 대한 비용 없음
+				callfunc "F_KafStor",2,0,0;
+			else
+				callfunc "F_KafStor",0,getarg(3),.@welcome;
+			next;
+		}
+		else if (.@K_Menu0$[.@j] == "공간이동 서비스 이용") {
+			if (.@menu_num != 4)// 아인브로크 출력은 "공간이동 서비스 이용불가" 공지.
+				callfunc "F_KafTele",.@welcome;
+			else {
+				mes "[카프라 직원]";
+				mes "저희 카프라 서비스 슈발츠발드";
+				mes "본부에서는 슈발츠발드 공화국과의";
+				mes "협정";
+				mes "'^FF0000슈발츠발드내 공간이동서비스 제한^000000'";
+				mes "에 따라 공간이동 서비스를 해드리지";
+				mes "않고 있습니다.";
+				next;
+				mes "[카프라 직원]";
+				mes "다른 지역으로의 이동시 비공정을";
+				mes "이용해주시길 바랍니다.";
+			}
+			close;
+		}
+		else if (.@K_Menu0$[.@j] == "카트 서비스 이용") {
+			if (callfunc("F_KafCart",.@welcome,getarg(4)) == 1)
+				next;
+		}
+		else if (.@K_Menu0$[.@j] == "기타정보 확인") {
+			callfunc "F_KafInfo",getarg(2);
+			next;
+		}
+		else if (.@K_Menu0$[.@j] == "종료") {
+			callfunc "F_KafEnd",.@welcome,0;
+			end;
+		}
+		else if (.@K_Menu0$[.@j] == "길드 창고 서비스 이용") {
+			callfunc "F_KafStor",1,0;
+			next;
+		}
+	}
+}
+
+//===================================================
+// 창고 함수
+//===================================================
+function	script	F_KafStor	{
+	.@type = getarg(0);
+	.@fee = getarg(1);
+
+	// 길드창고 열람 불가능 (이미 사용중등)
+	if (.@type == 1) {
+		if (guildopenstorage()) {
+			mes "[카프라 직원]";
+			mes "죄송합니다.";
+			mes "이미 다른 길드원이 길드 창고를 사용 중입니다.";
+			mes "다른 길드원이 길드 창고 사용을";
+			mes "마칠때까지 기다려주세요.";
+			close3;
+		}
+		cutin "", 255;
+		close;
+	}
+	// 창고 열람금지 (기본스킬을 배우지 않았을경우..)
+	if (!callfunc("F_CanOpenStorage")) {
+		mes "[카프라 직원]";
+		// 니플헤임의 특별 메시지
+		if (getarg(2) == 1) {
+			mes "^666666죄...죄송합니다.. 고..고객님...";
+			mes "..차..창고를 이..이용하..하시려면..";
+			mes "..초..초보자..스킬레벨을..6 이상..";
+			mes "..올..올리시거나..새로운..기..기본기능..";
+			mes "..스..스킬을..익히셔야..합니다..^000000";
+			return;
+		}
+		mes "죄송합니다. 고객님";
+		mes "창고를 이용하시려면 초보자";
+		mes "스킬레벨을 6 이상 올리시거나 새로운";
+		mes "기본기능 스킬을 익히셔야 합니다.";
+		return;
+	}
+	// 기본창고 열람 (길드성에서 창고를 열람하는 경우 건너뜀)
+	if (.@type != 2) {
+		// "카프라 창고 무료 이용권"을 가지고 있다면 사용
+		if (countitem(7059))
+			delitem 7059,1;
+		else {
+			if (Zeny < .@fee) {
+				mes "[카프라 직원]";
+				// 니플헤임 특별 메시지
+				if (getarg(2) == 1) {
+					percentheal -50,-50;
+					mes "^666666제..제니가..";
+					mes "모...모자랍니다..!";
+					mes "..150..제..제니가 피..필요..";
+					mes "윽! 피..피좀..^000000";
+					return;
+				}
+				// 일반 메시지
+				mes "죄송합니다. 고객님";
+				mes "창고를 이용하시려면 "+ .@fee + "제니가";
+				mes "필요합니다.";
+				return;
+			}
+			Zeny -= .@fee;
+			RESRVPTS += (.@fee/5);
+		}
+	}
+
+	// 길드 성에서는 '종료' 에 대한 메시지는 출력안함
+	if (.@type != 2) {
+		// 니플헤임 특별 메시지
+		if (getarg(2) == 1) {
+			percentheal 0,-10;
+			mes "[카프라 직원]";
+			for ( .@i = 0; .@i < 5; .@i++ )
+				mes "^666666고..고맙..습니다..";
+				mes "..이용..하시...하실..";
+				mes "..창고를.. 선택...^000000";
+				next;
+				switch(select("1번 창고:2번 창고:3번 창고")) {
+
+				case 1:
+					set .@sno,0;
+					break;
+				case 2:
+					set .@sno,1;
+					break;
+				case 3:
+					set .@sno,2;
+					break;
+				}
+		}
+		// 일반메시지
+		else {
+			mes "[카프라 직원]";
+			mes "이용하실 창고를 선택 해 주세요.";
+			next;
+			switch(select("1번 창고:2번 창고:3번 창고")) {
+
+			case 1:
+				set .@sno,0;
+				break;
+			case 2:
+				set .@sno,1;
+				break;
+			case 3:
+				set .@sno,2;
+				break;
+			}
+
+		}
+	}
+	else {
+		mes "[카프라 직원]";
+		mes "이용하실 창고를 선택 해 주세요.";
+		next;
+		switch(select("1번 창고:2번 창고:3번 창고")) {
+
+		case 1:
+			set .@sno,0;
+			break;
+		case 2:
+			set .@sno,1;
+			break;
+		case 3:
+			set .@sno,2;
+			break;
+		}
+	}
+
+	callfunc("F_CheckKafCode");	//check your storage password, if set
+
+	// 길드 성에서는 '종료' 에 대한 메시지는 출력안함
+	if (.@type != 2) {
+		// 니플헤임 특별 메시지
+		if(getarg(2) == 1) {
+			mes "[카프라 직원]";
+			mes "^666666고..고맙..습니다..";
+			mes "..차..창고를..여..열겠습니다..";
+			mes "....^000000";
+		} else {
+
+			mes "[카프라 직원]";
+			mes "창고를 열겠습니다.";
+			mes "이용해 주셔서 감사합니다.";
+		}
+	}
+	else {
+		mes "[카프라 직원]";
+		mes "창고를 열겠습니다.";
+		mes "이용해 주셔서 감사합니다.";
+	}
+
+	close2;
+	if(.@sno == 0)
+		if(getstatus(SC_PREMIUM_STORAGEBOOST))
+			openstorage2 5,STOR_MODE_GET|STOR_MODE_PUT;
+		else
+			openstorage2 1,STOR_MODE_GET|STOR_MODE_PUT;
+	else if(.@sno == 1)
+		if(getstatus(SC_PREMIUM_STORAGEBOOST))
+			openstorage2 6,STOR_MODE_GET|STOR_MODE_PUT;
+		else
+			openstorage2 2,STOR_MODE_GET|STOR_MODE_PUT;
+	else if(.@sno == 2)
+		if(getstatus(SC_PREMIUM_STORAGEBOOST))
+			openstorage2 7,STOR_MODE_GET|STOR_MODE_PUT;
+		else
+			openstorage2 3,STOR_MODE_GET|STOR_MODE_PUT;
+
+	cutin "", 255;
+	end;
+}
+
+//===================================================
+// 공간이동 함수
+//===================================================
+function	script	F_KafTele	{
+	mes "[카프라 직원]";
+	mes "목적지를 말씀해 주십시오.";
+	next;
+	.@j = select( implode(@wrpC$,":") ) - 1;
+	if (@wrpC$[.@j] == "취소")
+		return;
+	// "카프라 워프 무료 이용권"이 있으면 사용.
+	// 길드성에서는 소모되지 않음.
+	if (countitem(7060) > 0 && getarg(0) != 2)
+		delitem 7060,1;
+	else {
+		if (Zeny < @wrpP[.@j]) {
+			mes "[카프라 직원]";
+			mes "고객님, 지불하실 금액이 부족";
+			mes "합니다.";
+			mes "다시 확인해 주세요.";
+			close3;
+		}
+		Zeny -= @wrpP[.@j];
+		RESRVPTS += (@wrpP[.@j]/16);
+	}
+	cutin "", 255;
+	if (@wrpD$[.@j] == "알데바란") warp "aldebaran",168,112;
+	else if (@wrpD$[.@j] == "알베르타") warp "alberta", 117, 56;
+	else if (@wrpD$[.@j] == "코모도") warp "comodo", 209, 143;
+	else if (@wrpD$[.@j] == "파로스 등대") warp "cmd_fild07", 127, 134;
+	else if (@wrpD$[.@j] == "게펜") warp "geffen", 120, 39;
+	else if (@wrpD$[.@j] == "이즈루드") {
+		if (checkre(RENEWAL) == true)
+			warp "izlude", 128, 98;
+		else
+			warp "izlude", 91, 105;
+	}
+	else if (@wrpD$[.@j] == "유노") warp "yuno", 158, 125;
+	else if (@wrpD$[.@j] == "폐광던전") warp "mjolnir_02", 99, 351;
+	else if (@wrpD$[.@j] == "모로크") warp "morocc", 156, 46;
+	else if (@wrpD$[.@j] == "오크 던전") warp "gef_fild10", 52, 326;
+	else if (@wrpD$[.@j] == "페이온") warp "payon", 161, 58;
+	else if (@wrpD$[.@j] == "프론테라") warp "prontera", 116, 72;
+	else if (@wrpD$[.@j] == "움발라") warp "umbala", 100, 154;
+	end;
+}
+
+
+//===================================================
+// 카트 함수
+//===================================================
+function	script	F_KafCart	{
+	// 카트 대여를 하려는 직업이 상인인지 확인
+	if (BaseClass != Job_Merchant) {
+		mes "[카프라 직원]";
+		mes "죄송합니다.";
+		mes "카트는 상인계열 직업군에 속한 분들만";
+		mes "사용하실 수 있습니다.";
+		return 1;
+	}
+	// 대여하는 직업군에 카트가 존재하는지 확인
+	else if (checkcart() == true) {
+		mes "[카프라 직원]";
+		mes "고객님께선 현재 카트를 장착하고";
+		mes "계십니다.";
+		return 1;
+	}
+	// 플레이어가 푸쉬카트 스킬을 배웠는지 확인
+	else if (getskilllv("MC_PUSHCART") == 0) {
+		mes "[카프라 직원]";
+		mes "카트를 대여하기 위해서는";
+		mes "'푸쉬카트' 스킬을 익히고 오셔야 합니다.";
+		return 1;
+	}
+	// "카트 대여 무료이용권" 을 가지고 있으면 사용
+	// 길드성에서는 소모되지 않음
+	if (countitem(7061) > 0 && getarg(0) != 2)
+		delitem 7061,1;
+	else {
+		.@rental_fee = getarg(1);
+		mes "[카프라 직원]";
+		mes "카트 이용료는 " + .@rental_fee + " 제니입니다.";
+		mes "이용을 하시겠습니까?";
+		next;
+		if (select("이용한다.:취소.") == 2)
+			return 0;
+		if (Zeny < .@rental_fee) {
+			mes "[카프라 직원]";
+			mes "고객님, 지불하실 금액이 부족";
+			mes "합니다.";
+			mes "카트 이용료는 " + .@rental_fee + " 제니입니다.";
+			return 1;
+		}
+		Zeny -= .@rental_fee;
+		RESRVPTS += 48;
+	}
+	setcart;
+	return 1;
+}
+
+//===================================================
+// 특별 적립 포인트 함수
+//===================================================
+function	script	F_KafInfo	{
+	if(select("적립포인트 확인", "취소") == 2) {
+		close3;
+	}
+	mes "[카프라 직원]";
+	mes "" + strcharinfo(0) + " 고객님의 적립포인트는";
+	mes "" + RESRVPTS + " 점 입니다.";
+	next;
+	mes "[카프라 직원]";
+	mes "적립포인트는 저희 카프라 본사에서";
+	mes "상품과 교환이 가능합니다.";
+	mes "편리한 저희 카프라 서비스도";
+	mes "이용하시고 많은 상품도 받아가세요~";
+	close3;
+	
+}
+
+// === End Function ==================================================
+//  arg(0): 어떤 메시지를 표시할지 결정하는 데 사용됩니다.
+//  arg(1): 저장 메시지가 표시되는지 여부를 판별하는 데 사용됩니다.
+//  arg(2): 저장하고 있는 위치의 이름을 표시하는 데 사용됩니다. 
+//===================================================================
+function	script	F_KafEnd	{
+	.@type = getarg(0);
+	mes "[카프라 직원]";
+	if (getarg(1) == true) {// Save
+		mes "저장 되었습니다.";
+		mes "이용해 주셔서 감사합니다.";
+	} else if (.@type == 0 || .@type == 5) {// Generic End
+		mes "저희 카프라 서비스는 보다 완벽한 서비스와 엄격한 관리 업무로 고객 여러분이 안심하고 편하게 이용하실 수 있도록 최선을 다하고 있습니다.";
+		mes "이용해 주셔서 감사합니다.";
+	} else if (.@type == 1) {// Niflheim End
+		percentheal 0,-25;
+		mes "^666666카...프..라..는.. 죽어서도..";
+		mes "..여러분..곁..에.. 있습니다..^000000";
+	}
+	close3;
+}
+
+//===================================================
+// 창고 비밀번호 확인 함수
+//===================================================
+function	script	F_CheckKafCode	{
+	if (!#kafra_code)
+		return;
+	mes "창고를 사용하기 위한 비밀번호 입력:";
+	input .@code_;
+	if (.@code_ != #kafra_code) {
+		dispbottom "창고 비밀번호가 다릅니다.";
+		close3;
+	}
+	@kafcode_try = 0;
+	return;
+}
+
+// === Set / Change / Clear Storage Password Function ===
+// getarg(0): NPC Name
+// getarg(1): Company Name
+//=======================================================
+function	script	F_SetKafCode	{
+	.@npc_name$ = getarg(0);
+	.@comp_name$ = getarg(1);
+
+	mes .@npc_name$;
+	if (#kafra_code == 0) {
+		mes "" + .@comp_name$ + "은(는) 자랑스럽게 새로운 서비스를 제공합니다.";
+		mes "비밀번호로 창고를 보호하세요.";
+		next;
+		if (select( "새로운 비밀번호 설정 -> 5000z", "종료" ) == 1)
+			callsub( S_SET, .@npc_name$, .@comp_name$ );
+		close3;
+	}
+	mes "창고가 비밀번호로 보호되고 있습니다.";
+	mes "무엇을 하시겠습니까?";
+	next;
+	switch( select( "비밀번호를 변경한다 -> 5000z", "비밀번호를 해제한다 -> 1000z", "종료" ) ) {
+	case 1:
+		mes .@npc_name$;
+		mes "변경하기 위해 ^0000FF기존 비밀번호^000000를 입력하세요.";
+		.@code = callfunc("F_EntKafCode");
+		if (!.@code || .@code != #kafra_code) {
+			mes "비밀번호가 다릅니다. 비밀번호 변경에 실패 했습니다.";
+			emotion ET_SCRATCH;
+			break;
+		}
+		next;
+		callsub( S_SET, .@npc_name$, .@comp_name$ );
+		break;
+	case 2:
+		mes .@npc_name$;
+		mes "비밀번호 해제를 위해 기존 비밀번호를 입력하세요.";
+		.@code = callfunc("F_EntKafCode");
+		if (!.@code) {
+			mes "비밀번호가 해제되지 않았습니다.";
+			emotion ET_SCRATCH;
+			break;
+		}
+		next;
+		mes .@npc_name$;
+		if (Zeny < 1000) {
+			mes "비용 지불을 위한 제니가 충분하지 않습니다.";
+			emotion ET_MONEY;
+			break;
+		}
+		Zeny -= 1000;
+		if (.@code == #kafra_code) {
+			#kafra_code = 0;
+			mes "비밀번호가 해제되었습니다.";
+			mes "" + .@comp_name$ + "을(를) 이용해 주셔서 감사합니다.";
+			emotion ET_THANKS;
+		} else {
+			mes "비밀번호가 다릅니다. 지불된 제니는 돌려드리지 않습니다.";
+			mes "다음엔 정확하게 비밀번호를 입력하세요.";
+			emotion ET_SORRY;
+		}
+		break;
+	case 3:
+		break;
+	}
+	close3;
+
+S_SET:
+	.@npc_name$ = getarg(0);
+	.@comp_name$ = getarg(1);
+
+	mes .@npc_name$;
+	mes "^FF0000새로운 비밀번호^000000를 입력하여 창고를 보호하세요.";
+	.@code = callfunc("F_EntKafCode");
+	if (!.@code) {
+		mes "비밀번호가 변경되지 않았습니다.";
+		emotion ET_SCRATCH;
+		return;
+	}
+	next;
+	mes .@npc_name$;
+	if (Zeny < 5000) {
+		mes "비밀번호 설정에 대한 비용이 충분하지 않으신것 같습니다.";
+		emotion ET_MONEY;
+		return;
+	}
+	Zeny -= 5000;
+	#kafra_code = .@code;
+	mes "설정된 비밀번호로 인하여 창고가 보호됩니다.";
+	mes "" + .@comp_name$ + "을(를) 이용해 주셔서 감사합니다.";
+	emotion ET_THANKS;
+	return;
+}
+
+//===================================================
+// 기본 비밀번호 확인  함수
+//===================================================
+function	script	F_EntKafCode	{
+	mes "1000~10000000사이의 숫자를 입력하세요:";
+	@kafcode_try += 1;
+	if (@kafcode_try > 10) {
+		@kafcode_try = 0;
+		logmes "창고 비밀번호를 정확하게 입력하세요.";
+		return 0;
+	}
+	if (input(.@code_) == 1) {
+		mes "그렇게 큰 비밀번호는 사용할 수 없습니다.";
+		return 0;
+	}
+	if (.@code_ < 1000) {
+		mes "사용된 비밀번호가 너무 짧습니다.";
+		return 0;
+	}
+	return .@code_;
+}
+
+//===================================================
+// 워프 포인트 / 뷰포인트 함수
+//===================================================
+function	script	F_KafSet	{
+	deletearray @wrpC$[0], getarraysize(@wrpC$);
+	deletearray @wrpD$[0], getarraysize(@wrpD$);
+	deletearray @wrpP$[0], getarraysize(@wrpP$);
+	deletearray @viewpX[0], getarraysize(@viewpX);
+	deletearray @viewpY[0], getarraysize(@viewpY);
+
+	.@map$ = strnpcinfo(4);
+	if (.@map$ == "prontera") {
+		setarray @wrpD$[0], "이즈루드", "게펜", "페이욘", "모로크", "오크 던전", "알베르타";
+		setarray @wrpP[0], 60, 120, 120, 120, 170, 180;
+		setarray @viewpX[0], 151, 29, 282, 152;
+		setarray @viewpY[0], 29, 207, 200, 326;
+	} else if (.@map$ == "alberta") {
+		setarray @wrpP[0], 120, 180, 180;
+		setarray @wrpD$[0], "페이온", "모로크", "프론테라";
+		setarray @viewpX[0], 28, 113, 0, 0;
+		setarray @viewpY[0], 229, 60, 0, 0;
+	} else if (.@map$ == "aldebaran") {
+		setarray @wrpP[0], 120, 120, 180, 170;
+		setarray @wrpD$[0], "게펜", "유노" , "이즈루드", "폐광던전";
+	} else if (.@map$ == "comodo" ) {
+		setarray @wrpD$[0], "모로크", "파로스 등대", "움발라";
+		setarray @wrpP[0], 180, 120, 180;
+	} else if (.@map$ == "cmd_fild07") {
+		setarray @wrpD$[0], "코모도", "모로크";
+		setarray @wrpP[0], 120, 120;
+	} else if (.@map$ == "geffen") {
+		setarray @wrpD$[0], "프론테라", "알데바란", "오크 던전", "폐광던전";
+		setarray @wrpP[0], 120, 120, 170, 170;
+		setarray @viewpX[0], 120, 203;
+		setarray @viewpY[0], 62, 123;
+	} else if (.@map$ == "izlude") {
+		setarray @wrpD$[0], "게펜", "페이온", "모로크", "알데바란";
+		setarray @wrpP[0], 120, 120, 120, 180;
+	} else if (.@map$ == "morocc") {
+		setarray @wrpD$[0], "프론테라", "페이온", "알베르타", "코모도", "파로스 등대";
+		setarray @wrpP[0], 120, 120, 180, 180, 120;
+		setarray @viewpX[0], 156, 163, 28, 292;
+		setarray @viewpY[0], 97, 260, 167, 211;
+	} else if (.@map$ == "umbala") {
+		setarray @wrpD$[0], "코모도";
+		setarray @wrpP[0], 180;
+	} else if (.@map$ == "payon") {
+		setarray @wrpD$[0], "프론테라", "알베르타", "모로크";
+		setarray @wrpP[0], 120, 120, 120;
+	} else if (.@map$ == "yuno") {
+		setarray @wrpD$[0], "알데바란";
+		setarray @wrpP[0], 120;
+		setarray @viewpX[0], 328, 278, 153, 0;
+		setarray @viewpY[0], 108, 221, 187, 0;
+	} else if (.@map$ == "job3_rune01") {
+		setarray @wrpD$[0], "이즈루드", "게펜", "페이온", "모로크", "알베르타";
+		setarray @wrpP[0], 60, 120, 120, 120, 180;
+	}
+
+	.@warp_size = getarraysize(@wrpD$);
+
+	// VIP 가격은 지역 서버마다 다릅니다. 이것은 가장 실용적입니다.
+	if (VIP_SCRIPT && !vip_status(VIP_STATUS_ACTIVE)) {
+		for ( .@i = 0; .@i < .@warp_size; .@i++ )
+			@wrpP[.@i] *= 2;
+	}
+
+	for ( .@i = 0; .@i < .@warp_size; .@i++ )
+		@wrpC$[.@i] = @wrpD$[.@i] + " -> " + @wrpP[.@i] + " z";
+	@wrpC$[ .@warp_size ] = "취소";
+	return;
+}

@@ -45,11 +45,84 @@ Header:
   Type: STATUS_DB
   Version: 4
 
-Footer:
-  Imports:
-  - Path: db/pre-re/status.yml
-    Mode: Prerenewal
-  - Path: db/re/status.yml
-    Mode: Renewal
-  - Path: db/import/re/status.yml
-    Mode: Renewal
+Body:
+  - Status: Premium_Expboost
+    Icon: EFST_AID_PERIOD_PLUSEXP_2ND
+    Flags:
+      NoRemoveOnDead: true
+      NoClearbuff: true
+      NoDispell: true
+      NoBanishingBuster: true
+      NoClearance: true
+      NoTickSave: true
+      NoSave: true
+  - Status: Premium_Itemboost
+    Icon: EFST_AID_PERIOD_RECEIVEITEM_2ND
+    Flags:
+      NoRemoveOnDead: true
+      NoClearbuff: true
+      NoDispell: true
+      NoBanishingBuster: true
+      NoClearance: true
+      NoTickSave: true
+      NoSave: true
+  - Status: Premium_Storageboost
+    Icon: EFST_AID_PERIOD_ADDSTOREITEMCOUNT
+    Flags:
+      NoRemoveOnDead: true
+      NoClearbuff: true
+      NoDispell: true
+      NoBanishingBuster: true
+      NoClearance: true
+      NoTickSave: true
+      NoSave: true
+  - Status: Sub_Expboost
+    Icon: EFST_AID_PERIOD_PLUSEXP
+    Flags:
+      NoRemoveOnDead: true
+      NoClearbuff: true
+      NoDispell: true
+      NoBanishingBuster: true
+      NoClearance: true
+      NoTickSave: true
+      NoSave: true
+  - Status: Sub_Itemboost
+    Icon: EFST_AID_PERIOD_RECEIVEITEM
+    Flags:
+      NoRemoveOnDead: true
+      NoClearbuff: true
+      NoDispell: true
+      NoBanishingBuster: true
+      NoClearance: true
+      NoTickSave: true
+      NoSave: true
+  - Status: Sub_Deadpenalty
+    Icon: EFST_AID_PERIOD_DEADPENALTY
+    Flags:
+      NoRemoveOnDead: true
+      NoClearbuff: true
+      NoDispell: true
+      NoBanishingBuster: true
+      NoClearance: true
+      NoTickSave: true
+      NoSave: true
+  - Status: Period_Plusexp_2nd
+    Icon: EFST_PERIOD_PLUSEXP_2ND
+    Flags:
+      NoRemoveOnDead: true
+      NoClearbuff: true
+      NoDispell: true
+      NoBanishingBuster: true
+      NoClearance: true
+      SendVal1: true
+      NoTickSave: true
+  - Status: Period_Receiveitem_2nd
+    Icon: EFST_PERIOD_RECEIVEITEM_2ND
+    Flags:
+      NoRemoveOnDead: true
+      NoClearbuff: true
+      NoDispell: true
+      NoBanishingBuster: true
+      NoClearance: true
+      SendVal1: true
+      NoTickSave: true

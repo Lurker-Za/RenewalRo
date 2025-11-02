@@ -652,6 +652,12 @@ enum e_clif_messages : uint16 {
 	// [Holy Water] must be equipped.
 	MSI_FAIL_NEED_EQUIPPED_GUN_GRANADE = 2561,
 
+	// Duplicate items exist and cannot be used.
+	MSI_PERVENT_DUPLICATEUSE_ITEM = 2803,
+
+	// Duplicate item effects exist and cannot be used.
+	MSI_PERVENT_DUPLICATEUSE_EFSTITEM = 2804,
+
 	// [Grenade Launcher] weapon class must be equipped.
 	MSI_IMPOSSIBLE_CHANGE_GUILD_MASTER_IN_SIEGE_TIME = 2963,
 
