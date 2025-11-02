@@ -3593,6 +3593,21 @@ int32 npc_unload(npc_data* nd, bool single) {
 //
 // NPC Source Files
 //
+static inline bool path_has_import(const char* p) {
+    return p && strstr(p, "import");
+}
+
+static std::string import_normalized_key(std::string path) {
+    std::replace(path.begin(), path.end(), '\\', '/');
+
+    const std::string needle = "/import/";
+    for (;;) {
+        auto pos = path.find(needle);
+        if (pos == std::string::npos) break;
+        path.erase(pos + 1, needle.size() - 1);
+    }
+    return path;
+}
 
 /**
  * Adds a npc source file (or removes all)
@@ -3617,6 +3632,34 @@ int32 npc_addsrcfile(const char* name, bool loadscript)
 	if (util::vector_exists(npc_src_files, name)) {
 		return 0; // found the file, no need to insert it again
 	}
+	
+    const bool new_is_import = path_has_import(name);
+    const std::string new_key = import_normalized_key(name);
+
+    int existing_index = -1;
+    bool existing_is_import = false;
+    for (size_t i = 0; i < npc_src_files.size(); ++i) {
+        const std::string key_i = import_normalized_key(npc_src_files[i]);
+        if (key_i == new_key) {
+            existing_index = static_cast<int>(i);
+            existing_is_import = path_has_import(npc_src_files[i].c_str());
+            break;
+        }
+    }
+
+    if (existing_index >= 0) {
+        if (new_is_import && !existing_is_import) {
+            ShowInfo("npc_addsrcfile: Prefer import path '%s' over '%s'\n",
+                     name, npc_src_files[existing_index].c_str());
+            npc_src_files.erase(npc_src_files.begin() + existing_index);
+        } else if (!new_is_import && existing_is_import) {
+            ShowInfo("npc_addsrcfile: Keep existing import path '%s', ignore '%s'\n",
+                     npc_src_files[existing_index].c_str(), name);
+            return 0;
+        } else {
+            return 0;
+        }
+    }
 
 	npc_src_files.push_back(name);
 
