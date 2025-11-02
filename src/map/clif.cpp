@@ -6444,21 +6444,21 @@ void clif_cooking_list( map_session_data& sd, int32 trigger, uint16 skill_id, in
 /// @param val1
 /// @param val2
 /// @param val3
-void clif_status_change_sub(block_list *bl, int32 id, int32 type, int32 flag, t_tick tick, int32 val1, int32 val2, int32 val3, enum send_target target_type)
+void clif_status_change_sub(block_list *bl, int32 id, int32 type, int32 flag, t_tick tick, t_tick tick_total, int32 val1, int32 val2, int32 val3)
 {
 	unsigned char buf[32];
+	nullpo_retv(bl);
 
 	if (type == EFST_BLANK)  //It shows nothing on the client...
 		return;
 
 	if (type == EFST_POSTDELAY && tick == 0)
 		return;
-
-	nullpo_retv(bl);
-
-	// Statuses with an infinite duration, but still needs a duration sent to display properly.
-	if (type == EFST_LUNARSTANCE || type == EFST_UNIVERSESTANCE || type == EFST_SUNSTANCE || type == EFST_STARSTANCE)
-		tick = 200;
+	
+	if (!(status_efst_get_bl_type((efst_type)type)&bl->type)) // only send status changes that actually matter to the client
+		return;
+	
+	map_session_data *sd = BL_CAST(BL_PC, bl);
 
 #if PACKETVER >= 20120618
 	if (flag && battle_config.display_status_timers)
@@ -6475,10 +6475,26 @@ void clif_status_change_sub(block_list *bl, int32 id, int32 type, int32 flag, t_
 	WBUFB(buf,8) = flag;
 #if PACKETVER >= 20120618
 	if (flag && battle_config.display_status_timers) {
-		if (tick <= 0)
-			tick = 9999; // this is indeed what official servers do
+		switch (type) {
+			case EFST_LUNARSTANCE:
+			case EFST_UNIVERSESTANCE:
+			case EFST_SUNSTANCE:
+			case EFST_STARSTANCE:
+				tick = 200;
+				break;
+			default:
+				if (tick <= 0)
+					tick = 9999; // this is indeed what official servers do
+				break;
 
-		WBUFL(buf,9) = client_tick(tick);/* at this stage remain and total are the same value I believe */
+#if !( PACKETVER_MAIN_NUM >= 20191120 || PACKETVER_RE_NUM >= 20191106 )
+		// Older clients display normal riding icon.
+		if (type == EFST_MADOGEAR_TYPE)
+			type = EFST_RIDING;
+#endif
+		}
+
+		WBUFL(buf,9) = client_tick(tick_total);
 		WBUFL(buf,13) = client_tick(tick);
 		WBUFL(buf,17) = val1;
 		WBUFL(buf,21) = val2;
@@ -6495,7 +6511,7 @@ void clif_status_change_sub(block_list *bl, int32 id, int32 type, int32 flag, t_
 		WBUFL(buf,21) = val3;
 	}
 #endif
-	clif_send(buf, packet_len(WBUFW(buf,0)), bl, target_type);
+	clif_send(buf, packet_len(WBUFW(buf,0)), bl, (sd ? (pc_isinvisible(sd) ? SELF : AREA) : AREA_WOS));
 }
 
 /* Sends status effect to clients around the bl
@@ -6508,38 +6524,13 @@ void clif_status_change_sub(block_list *bl, int32 id, int32 type, int32 flag, t_
  * @param val3
  */
 void clif_status_change(block_list *bl, int32 type, int32 flag, t_tick tick, int32 val1, int32 val2, int32 val3) {
-	map_session_data *sd = nullptr;
-
-	if (type == EFST_BLANK)  //It shows nothing on the client...
-		return;
-
-	if (type == EFST_POSTDELAY && tick == 0)
-		return;
-
-	if (type == EFST_ILLUSION && !battle_config.display_hallucination) // Disable Hallucination.
-		return;
-
-#if !( PACKETVER_MAIN_NUM >= 20191120 || PACKETVER_RE_NUM >= 20191106 )
-	// Older clients display normal riding icon.
-	if (type == EFST_MADOGEAR_TYPE)
-		type = EFST_RIDING;
-#endif
-
-	nullpo_retv(bl);
-
-	sd = BL_CAST(BL_PC, bl);
-
-	// Check if current bl type is in the returned bitmask and only send status changes that actually matter to the client
-	if (!(status_efst_get_bl_type(static_cast<efst_type>(type)) & bl->type))
-		return;
-
-	clif_status_change_sub(bl, bl->id, type, flag, tick, val1, val2, val3, ((sd ? (pc_isinvisible(sd) ? SELF : AREA) : AREA_WOS)));
+	clif_status_change_sub(bl, bl->id, type, flag, tick, tick, val1, val2, val3);
 }
 
 /// Notifies the client when a player enters the screen with an active EFST.
 /// 08ff <id>.L <index>.W <remain msec>.L { <val>.L }*3  (ZC_EFST_SET_ENTER) (PACKETVER >= 20111108)
 /// 0984 <id>.L <index>.W <total msec>.L <remain msec>.L { <val>.L }*3 (ZC_EFST_SET_ENTER2) (PACKETVER >= 20120618)
-void clif_efst_status_change( block_list& bl, block_list& tbl, enum send_target target, efst_type type, t_tick tick, int32 val1, int32 val2, int32 val3 ){
+void clif_efst_status_change( block_list& bl, block_list& tbl, enum send_target target, efst_type type, t_tick tick, t_tick tick_total, int32 val1, int32 val2, int32 val3 ){
 #if PACKETVER >= 20111108
 	if (type == EFST_BLANK)
 		return;
@@ -6552,9 +6543,9 @@ void clif_efst_status_change( block_list& bl, block_list& tbl, enum send_target 
 	p.packetType = HEADER_ZC_EFST_SET_ENTER;
 	p.targetID = tbl.id;
 	p.type = type;
-	p.duration = client_tick( tick );
+	p.duration = client_tick(tick_total);
 #if PACKETVER >= 20120618
-	p.duration2 = p.duration;
+	p.duration2 = client_tick(tick);
 #endif
 	p.val1 = val1;
 	p.val2 = val2;
@@ -6602,11 +6593,11 @@ void clif_efst_status_change_sub(block_list *tbl, block_list *bl, enum send_targ
 	for (i = 0; i < sc_display_count; i++) {
 		enum sc_type type = sc_display[i]->type;
 		status_change *sc = status_get_sc(bl);
-		const struct TimerData *td = (sc && sc->getSCE(type) ? get_timer(sc->getSCE(type)->timer) : nullptr);
-		t_tick tick = 0;
+		const TimerData *td = (sc && sc->getSCE(type) ? get_timer(sc->getSCE(type)->timer) : nullptr);
+		t_tick tick = 0, cur_tick = gettick();
 
-		if (td)
-			tick = DIFF_TICK(td->tick, gettick());
+		if (td != nullptr)
+			tick = DIFF_TICK(td->tick, cur_tick);
 
 		// Status changes that need special handling
 		switch( type ){
@@ -6627,9 +6618,9 @@ void clif_efst_status_change_sub(block_list *tbl, block_list *bl, enum send_targ
 		}
 
 #if PACKETVER > 20120418
-		clif_efst_status_change( *tbl, *bl, target, status_db.getIcon( type ), tick, sc_display[i]->val1, sc_display[i]->val2, sc_display[i]->val3 );
+		clif_efst_status_change( *tbl, *bl, target, status_db.getIcon( type ), tick, sc->getSCE(type)->tick_total, sc_display[i]->val1, sc_display[i]->val2, sc_display[i]->val3 );
 #else
-		clif_status_change_sub(tbl, bl->id, status_db.getIcon(type), 1, tick, sc_display[i]->val1, sc_display[i]->val2, sc_display[i]->val3, target);
+		clif_status_change_sub(tbl, bl->id, status_db.getIcon(type), 1, tick, sc->getSCE(type)->tick_total, sc_display[i]->val1, sc_display[i]->val2, sc_display[i]->val3, target);
 #endif
 	}
 }

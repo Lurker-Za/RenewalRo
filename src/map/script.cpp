@@ -12387,7 +12387,8 @@ BUILDIN_FUNC(sc_start)
 	TBL_NPC * nd = map_id2nd(st->oid);
 	block_list* bl;
 	enum sc_type type;
-	int32 tick, val1, val2, val3, val4=0, rate, flag;
+	int32 val1, val2, val3, val4=0, rate, flag;
+	int64 tick;
 	char start_type;
 	const char* command = script_getfuncname(st);
 
@@ -12399,7 +12400,7 @@ BUILDIN_FUNC(sc_start)
 		start_type = 1;
 
 	type = (sc_type)script_getnum(st,2);
-	tick = script_getnum(st,3);
+	tick = script_getnum64(st,3);
 	val1 = script_getnum(st,4);
 
 	//If from NPC we make default flag 1 to be unavoidable
