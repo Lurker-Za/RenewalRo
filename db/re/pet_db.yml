@@ -148,7 +148,7 @@ Body:
     Fullness: 4
     IntimacyFed: 40
     CaptureRate: 1500
-    SpecialPerformance: false
+    #SpecialPerformance: false
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
 
@@ -252,7 +252,7 @@ Body:
     Fullness: 7
     IntimacyFed: 40
     CaptureRate: 1500
-    SpecialPerformance: false
+    #SpecialPerformance: false
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
 
@@ -283,7 +283,7 @@ Body:
     Fullness: 6
     IntimacyFed: 40
     CaptureRate: 1000
-    SpecialPerformance: false
+    #SpecialPerformance: false
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
 
@@ -314,7 +314,7 @@ Body:
     Fullness: 1
     IntimacyFed: 30
     CaptureRate: 1500
-    SpecialPerformance: false
+    #SpecialPerformance: false
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
 
@@ -345,7 +345,7 @@ Body:
     Fullness: 3
     IntimacyFed: 30
     CaptureRate: 1500
-    SpecialPerformance: false
+    #SpecialPerformance: false
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
 
@@ -363,7 +363,7 @@ Body:
     Fullness: 3
     IntimacyFed: 20
     CaptureRate: 1000
-    SpecialPerformance: false
+    #SpecialPerformance: false
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
 
@@ -490,7 +490,7 @@ Body:
     Fullness: 3
     IntimacyFed: 20
     CaptureRate: 500
-    SpecialPerformance: false
+    #SpecialPerformance: false
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
 
@@ -510,7 +510,7 @@ Body:
     Fullness: 4
     IntimacyFed: 20
     CaptureRate: 500
-    SpecialPerformance: false
+    #SpecialPerformance: false
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
 
@@ -539,7 +539,7 @@ Body:
     Fullness: 3
     IntimacyFed: 10
     CaptureRate: 500
-    SpecialPerformance: false
+    #SpecialPerformance: false
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
 
@@ -559,7 +559,7 @@ Body:
     Fullness: 3
     IntimacyFed: 10
     CaptureRate: 500
-    SpecialPerformance: false
+    #SpecialPerformance: false
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
 
@@ -588,7 +588,7 @@ Body:
     Fullness: 4
     IntimacyFed: 20
     CaptureRate: 500
-    SpecialPerformance: false
+    #SpecialPerformance: false
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
 
@@ -618,7 +618,7 @@ Body:
     Fullness: 2
     IntimacyFed: 10
     CaptureRate: 500
-    SpecialPerformance: false
+    #SpecialPerformance: false
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
 
@@ -651,7 +651,7 @@ Body:
     Fullness: 2
     IntimacyFed: 10
     CaptureRate: 200
-    SpecialPerformance: false
+    #SpecialPerformance: false
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
 
@@ -713,7 +713,7 @@ Body:
     Fullness: 7
     IntimacyFed: 10
     CaptureRate: 300
-    SpecialPerformance: false
+    #SpecialPerformance: false
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
 
@@ -736,7 +736,7 @@ Body:
     Fullness: 2
     IntimacyFed: 20
     CaptureRate: 800
-    SpecialPerformance: false
+    #SpecialPerformance: false
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
 
@@ -784,7 +784,7 @@ Body:
     Fullness: 3
     IntimacyFed: 50
     CaptureRate: 2000
-    SpecialPerformance: false
+    #SpecialPerformance: false
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
 
@@ -803,7 +803,7 @@ Body:
     Fullness: 3
     IntimacyFed: 50
     CaptureRate: 2000
-    SpecialPerformance: false
+    #SpecialPerformance: false
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
 
@@ -824,7 +824,7 @@ Body:
     Fullness: 3
     IntimacyFed: 50
     CaptureRate: 2000
-    SpecialPerformance: false
+    #SpecialPerformance: false
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
 
@@ -844,7 +844,7 @@ Body:
     Fullness: 3
     IntimacyFed: 50
     CaptureRate: 2000
-    SpecialPerformance: false
+    #SpecialPerformance: false
   - Mob: GOBLIN_1
     TameItem: Knife_Goblin_Ring
     EggItem: Knife_Goblin_Egg
@@ -852,7 +852,7 @@ Body:
     Fullness: 3
     IntimacyFed: 50
     CaptureRate: 800
-    SpecialPerformance: false
+    #SpecialPerformance: false
   - Mob: GOBLIN_2
     TameItem: Flail_Goblin_Ring
     EggItem: Flail_Goblin_Egg
@@ -860,7 +860,7 @@ Body:
     Fullness: 3
     IntimacyFed: 50
     CaptureRate: 800
-    SpecialPerformance: false
+    #SpecialPerformance: false
   - Mob: GOBLIN_4
     TameItem: Hammer_Goblin_Ring
     EggItem: Hammer_Goblin_Egg
@@ -868,7 +868,7 @@ Body:
     Fullness: 3
     IntimacyFed: 50
     CaptureRate: 800
-    SpecialPerformance: false
+    #SpecialPerformance: false
   - Mob: DELETER_
     TameItem: Holy_Marble
     EggItem: Red_Deleter_Egg
@@ -876,7 +876,7 @@ Body:
     Fullness: 4
     IntimacyFed: 20
     CaptureRate: 800
-    SpecialPerformance: false
+    #SpecialPerformance: false
   - Mob: DIABOLIC
     TameItem: Red_Burning_Stone
     EggItem: Diabolic_Egg
@@ -884,7 +884,7 @@ Body:
     Fullness: 2
     IntimacyFed: 10
     CaptureRate: 800
-    SpecialPerformance: false
+    #SpecialPerformance: false
   - Mob: WANDER_MAN
     TameItem: Skull_Of_Vagabond
     EggItem: Wanderer_Egg
@@ -892,7 +892,7 @@ Body:
     Fullness: 2
     IntimacyFed: 20
     CaptureRate: 800
-    SpecialPerformance: false
+    #SpecialPerformance: false
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
 
@@ -919,7 +919,7 @@ Body:
     Fullness: 3
     IntimacyFed: 30
     CaptureRate: 800
-    SpecialPerformance: false
+    #SpecialPerformance: false
   - Mob: GOLEM
     TameItem: Magical_Lithography
     EggItem: Golem_Egg
@@ -928,7 +928,7 @@ Body:
     Fullness: 7
     IntimacyFed: 20
     CaptureRate: 500
-    SpecialPerformance: false
+    #SpecialPerformance: false
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
 
@@ -957,7 +957,7 @@ Body:
     Fullness: 3
     IntimacyFed: 10
     CaptureRate: 500
-    SpecialPerformance: false
+    #SpecialPerformance: false
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
 
@@ -974,7 +974,7 @@ Body:
     Fullness: 3
     IntimacyFed: 10
     CaptureRate: 200
-    SpecialPerformance: false
+    #SpecialPerformance: false
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
 
@@ -994,7 +994,7 @@ Body:
     Fullness: 7
     IntimacyFed: 20
     CaptureRate: 500
-    SpecialPerformance: false
+    #SpecialPerformance: false
     Script: >
       if (getpetinfo(PETINFO_INTIMATE) >= PET_INTIMATE_LOYAL) {
          skill "TF_HIDING",1;
@@ -1012,7 +1012,7 @@ Body:
     Fullness: 7
     IntimacyFed: 10
     CaptureRate: 50
-    SpecialPerformance: false
+    #SpecialPerformance: false
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
 
@@ -1032,7 +1032,7 @@ Body:
     Fullness: 3
     IntimacyFed: 10
     CaptureRate: 200
-    SpecialPerformance: false
+    #SpecialPerformance: false
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
 
@@ -1051,7 +1051,7 @@ Body:
     Fullness: 3
     IntimacyFed: 10
     CaptureRate: 50
-    SpecialPerformance: false
+    #SpecialPerformance: false
     Script: >
       if (getpetinfo(PETINFO_INTIMATE) >= PET_INTIMATE_LOYAL) {
          bonus2 bSPDrainRate,30,1;
@@ -1069,7 +1069,7 @@ Body:
     Fullness: 3
     IntimacyFed: 10
     CaptureRate: 200
-    SpecialPerformance: false
+    #SpecialPerformance: false
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
 
@@ -1098,7 +1098,7 @@ Body:
     Fullness: 7
     IntimacyFed: 20
     CaptureRate: 500
-    SpecialPerformance: false
+    #SpecialPerformance: false
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
 
@@ -1116,7 +1116,7 @@ Body:
     Fullness: 3
     IntimacyFed: 15
     CaptureRate: 200
-    SpecialPerformance: false
+    #SpecialPerformance: false
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
 
@@ -1136,7 +1136,7 @@ Body:
     Fullness: 3
     IntimacyFed: 15
     CaptureRate: 500
-    SpecialPerformance: false
+    #SpecialPerformance: false
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
 
@@ -1167,7 +1167,7 @@ Body:
     Fullness: 7
     IntimacyFed: 20
     CaptureRate: 500
-    SpecialPerformance: false
+    #SpecialPerformance: false
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
 
@@ -1185,7 +1185,7 @@ Body:
     Fullness: 3
     IntimacyFed: 10
     CaptureRate: 200
-    SpecialPerformance: false
+    #SpecialPerformance: false
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
 
@@ -1203,7 +1203,7 @@ Body:
     Fullness: 3
     IntimacyFed: 15
     CaptureRate: 200
-    SpecialPerformance: false
+    #SpecialPerformance: false
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
 
@@ -1234,7 +1234,7 @@ Body:
     Fullness: 3
     IntimacyFed: 10
     CaptureRate: 500
-    SpecialPerformance: false
+    #SpecialPerformance: false
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
 
@@ -1252,7 +1252,7 @@ Body:
     Fullness: 7
     IntimacyFed: 20
     CaptureRate: 200
-    SpecialPerformance: false
+    #SpecialPerformance: false
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
 
@@ -1283,7 +1283,7 @@ Body:
     Fullness: 7
     IntimacyFed: 10
     CaptureRate: 2000
-    SpecialPerformance: false
+    #SpecialPerformance: false
   - Mob: IMP
     TameItem: Flaming_Ice
     EggItem: Imp_Egg
@@ -1292,7 +1292,7 @@ Body:
     Fullness: 3
     IntimacyFed: 10
     CaptureRate: 200
-    SpecialPerformance: false
+    #SpecialPerformance: false
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
 
@@ -1314,7 +1314,7 @@ Body:
     IntimacyOverfed: 0
     IntimacyOwnerDie: 0
     CaptureRate: 50
-    SpecialPerformance: false
+    #SpecialPerformance: false
   - Mob: E_HYDRA
     TameItem: Leaf_Cat_Ball
     EggItem: Mystic_Leaf_Cat_Ball
@@ -1325,7 +1325,7 @@ Body:
     IntimacyOverfed: 0
     IntimacyOwnerDie: 0
     CaptureRate: 50
-    SpecialPerformance: false
+    #SpecialPerformance: false
   - Mob: J_TAINI
     EggItem: Egg_Of_Tiny
     FoodItem: Apple
@@ -1395,7 +1395,7 @@ Body:
     IntimacyOverfed: 0
     IntimacyOwnerDie: 0
     CaptureRate: 5000
-    SpecialPerformance: false
+    #SpecialPerformance: false
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
 
@@ -1544,7 +1544,7 @@ Body:
     HungryDelay: 120
     IntimacyFed: 15
     CaptureRate: 0
-    SpecialPerformance: false
+    #SpecialPerformance: false
     AllowAutoFeed: true
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
@@ -1583,7 +1583,7 @@ Body:
     HungryDelay: 120
     IntimacyFed: 15
     CaptureRate: 0
-    SpecialPerformance: false
+    #SpecialPerformance: false
     AllowAutoFeed: true
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
@@ -1615,7 +1615,7 @@ Body:
     HungryDelay: 120
     IntimacyFed: 15
     CaptureRate: 0
-    SpecialPerformance: false
+    #SpecialPerformance: false
     AllowAutoFeed: true
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
@@ -1643,7 +1643,7 @@ Body:
     HungryDelay: 120
     IntimacyFed: 15
     CaptureRate: 0
-    SpecialPerformance: false
+    #SpecialPerformance: false
     AllowAutoFeed: true
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
@@ -1671,7 +1671,7 @@ Body:
     HungryDelay: 120
     IntimacyFed: 15
     CaptureRate: 0
-    SpecialPerformance: false
+    #SpecialPerformance: false
     AllowAutoFeed: true
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
@@ -1699,7 +1699,7 @@ Body:
     HungryDelay: 120
     IntimacyFed: 15
     CaptureRate: 0
-    SpecialPerformance: false
+    #SpecialPerformance: false
     AllowAutoFeed: true
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
@@ -1734,7 +1734,7 @@ Body:
     HungryDelay: 120
     IntimacyFed: 15
     CaptureRate: 0
-    SpecialPerformance: false
+    #SpecialPerformance: false
     AllowAutoFeed: true
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
@@ -1761,7 +1761,7 @@ Body:
     HungryDelay: 120
     IntimacyFed: 15
     CaptureRate: 0
-    SpecialPerformance: false
+    #SpecialPerformance: false
     AllowAutoFeed: true
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
@@ -1789,7 +1789,7 @@ Body:
     HungryDelay: 120
     IntimacyFed: 15
     CaptureRate: 0
-    SpecialPerformance: false
+    #SpecialPerformance: false
     AllowAutoFeed: true
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
@@ -1813,7 +1813,7 @@ Body:
     HungryDelay: 120
     IntimacyFed: 15
     CaptureRate: 0
-    SpecialPerformance: false
+    #SpecialPerformance: false
     AllowAutoFeed: true
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
@@ -1851,7 +1851,7 @@ Body:
     HungryDelay: 120
     IntimacyFed: 15
     CaptureRate: 0
-    SpecialPerformance: false
+    #SpecialPerformance: false
     AllowAutoFeed: true
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
@@ -1875,7 +1875,7 @@ Body:
     HungryDelay: 120
     IntimacyFed: 15
     CaptureRate: 0
-    SpecialPerformance: false
+    #SpecialPerformance: false
     AllowAutoFeed: true
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
@@ -1902,7 +1902,7 @@ Body:
     HungryDelay: 120
     IntimacyFed: 15
     CaptureRate: 0
-    SpecialPerformance: false
+    #SpecialPerformance: false
     AllowAutoFeed: true
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
@@ -1943,7 +1943,7 @@ Body:
     HungryDelay: 120
     IntimacyFed: 15
     CaptureRate: 0
-    SpecialPerformance: false
+    #SpecialPerformance: false
     AllowAutoFeed: true
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
@@ -1966,7 +1966,7 @@ Body:
     HungryDelay: 120
     IntimacyFed: 15
     CaptureRate: 0
-    SpecialPerformance: false
+    #SpecialPerformance: false
     AllowAutoFeed: true
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
@@ -1994,7 +1994,7 @@ Body:
     HungryDelay: 120
     IntimacyFed: 15
     CaptureRate: 0
-    SpecialPerformance: false
+    #SpecialPerformance: false
     AllowAutoFeed: true
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
@@ -2026,7 +2026,7 @@ Body:
     HungryDelay: 120
     IntimacyFed: 15
     CaptureRate: 0
-    SpecialPerformance: false
+    #SpecialPerformance: false
     AllowAutoFeed: true
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
@@ -2051,7 +2051,7 @@ Body:
     HungryDelay: 120
     IntimacyFed: 15
     CaptureRate: 0
-    SpecialPerformance: false
+    #SpecialPerformance: false
     AllowAutoFeed: true
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
@@ -2084,7 +2084,7 @@ Body:
     HungryDelay: 120
     IntimacyFed: 15
     CaptureRate: 0
-    SpecialPerformance: false
+    #SpecialPerformance: false
     AllowAutoFeed: true
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
@@ -2111,7 +2111,7 @@ Body:
     HungryDelay: 120
     IntimacyFed: 15
     CaptureRate: 0
-    SpecialPerformance: false
+    #SpecialPerformance: false
     AllowAutoFeed: true
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
@@ -2126,7 +2126,7 @@ Body:
     HungryDelay: 120
     IntimacyFed: 15
     CaptureRate: 0
-    SpecialPerformance: false
+    #SpecialPerformance: false
     AllowAutoFeed: true
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
@@ -2154,7 +2154,7 @@ Body:
     HungryDelay: 120
     IntimacyFed: 15
     CaptureRate: 0
-    SpecialPerformance: false
+    #SpecialPerformance: false
     AllowAutoFeed: true
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
@@ -2183,7 +2183,7 @@ Body:
     HungryDelay: 120
     IntimacyFed: 15
     CaptureRate: 0
-    SpecialPerformance: false
+    #SpecialPerformance: false
     AllowAutoFeed: true
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
@@ -2221,7 +2221,7 @@ Body:
     HungryDelay: 120
     IntimacyFed: 15
     CaptureRate: 0
-    SpecialPerformance: false
+    #SpecialPerformance: false
     AllowAutoFeed: true
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
@@ -2247,7 +2247,7 @@ Body:
     HungryDelay: 120
     IntimacyFed: 15
     CaptureRate: 0
-    SpecialPerformance: false
+    #SpecialPerformance: false
     AllowAutoFeed: true
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
@@ -2273,7 +2273,7 @@ Body:
 #    Fullness: 7
 #    IntimacyFed: 10
 #    CaptureRate: 0
-#    SpecialPerformance: false
+#    #SpecialPerformance: false
 #    AllowAutoFeed: true
 #    Script: >
 #      .@i = getpetinfo(PETINFO_INTIMATE);
@@ -2301,7 +2301,7 @@ Body:
 #    HungryDelay: 120
 #    IntimacyFed: 15
 #    CaptureRate: 0
-#    SpecialPerformance: false
+#    #SpecialPerformance: false
 #    AllowAutoFeed: true
 #    Script: >
 #      .@i = getpetinfo(PETINFO_INTIMATE);
@@ -2328,7 +2328,7 @@ Body:
 #    HungryDelay: 120   # unknown
 #    IntimacyFed: 15   # unknown
 #    CaptureRate: 0   # unknown
-#    SpecialPerformance: false   # unknown
+#    #SpecialPerformance: false   # unknown
 #    AllowAutoFeed: true
 #    Script: >
 #      .@i = getpetinfo(PETINFO_INTIMATE);
@@ -2400,7 +2400,7 @@ Body:
 #    HungryDelay: 120   # unknown
 #    IntimacyFed: 15   # unknown
 #    CaptureRate: 0   # unknown
-#    SpecialPerformance: false   # unknown
+#    #SpecialPerformance: false   # unknown
 #  - Mob: SCATLETON
 #    EggItem: Scatletoncarrier
 #    EquipItem: Red_Chorker_Bell
@@ -2409,7 +2409,7 @@ Body:
 #    HungryDelay: 120   # unknown
 #    IntimacyFed: 15   # unknown
 #    CaptureRate: 0   # unknown
-#    SpecialPerformance: false   # unknown
+#    #SpecialPerformance: false   # unknown
 #    Script: >
 #      if (getpetinfo(PETINFO_INTIMATE) >= PET_INTIMATE_LOYAL) {
 #         bonus bMatk,10;
@@ -2433,7 +2433,7 @@ Body:
     HungryDelay: 120   # unknown
     IntimacyFed: 15   # unknown
     CaptureRate: 0   # unknown
-    SpecialPerformance: false   # unknown
+    #SpecialPerformance: false   # unknown
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
 
@@ -2451,7 +2451,7 @@ Body:
     HungryDelay: 120   # unknown
     IntimacyFed: 15   # unknown
     CaptureRate: 0   # unknown
-    SpecialPerformance: false   # unknown
+    #SpecialPerformance: false   # unknown
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
 
@@ -2469,7 +2469,7 @@ Body:
 #    HungryDelay: 120   # unknown
 #    IntimacyFed: 15   # unknown
 #    CaptureRate: 0   # unknown
-#    SpecialPerformance: false   # unknown
+#    #SpecialPerformance: false   # unknown
 #    AllowAutoFeed: true
 #    Script: >
 #      if (getpetinfo(PETINFO_INTIMATE) >= PET_INTIMATE_LOYAL) {
@@ -2484,7 +2484,7 @@ Body:
 #    HungryDelay: 120   # unknown
 #    IntimacyFed: 15   # unknown
 #    CaptureRate: 0   # unknown
-#    SpecialPerformance: false   # unknown
+#    #SpecialPerformance: false   # unknown
 #    AllowAutoFeed: true
 #    Script: >
 #      .@i = getpetinfo(PETINFO_INTIMATE);
@@ -2515,7 +2515,7 @@ Body:
 #    HungryDelay: 120   # unknown
 #    IntimacyFed: 15   # unknown
 #    CaptureRate: 0   # unknown
-#    SpecialPerformance: false   # unknown
+#    #SpecialPerformance: false   # unknown
 #    Script: >
 #      .@i = getpetinfo(PETINFO_INTIMATE);
 #
@@ -2533,7 +2533,7 @@ Body:
 #    HungryDelay: 120   # unknown
 #    IntimacyFed: 15   # unknown
 #    CaptureRate: 0   # unknown
-#    SpecialPerformance: false   # unknown
+#    #SpecialPerformance: false   # unknown
 #    AllowAutoFeed: true
 #    Script: >
 #      .@i = getpetinfo(PETINFO_INTIMATE);
@@ -2566,7 +2566,7 @@ Body:
     HungryDelay: 120   # unknown
     IntimacyFed: 15   # unknown
     CaptureRate: 200   # unknown
-    SpecialPerformance: false   # unknown
+    #SpecialPerformance: false   # unknown
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
 
@@ -2596,7 +2596,7 @@ Body:
     HungryDelay: 120   # unknown
     IntimacyFed: 15   # unknown
     CaptureRate: 0   # unknown
-    SpecialPerformance: false   # unknown
+    #SpecialPerformance: false   # unknown
     AllowAutoFeed: true
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
@@ -2626,7 +2626,7 @@ Body:
 #    HungryDelay: 120   # unknown
 #    IntimacyFed: 15   # unknown
 #    CaptureRate: 0   # unknown
-#    SpecialPerformance: false   # unknown
+#    #SpecialPerformance: false   # unknown
 #    AllowAutoFeed: true
 #    Script: >
 #      .@i = getpetinfo(PETINFO_INTIMATE);
@@ -2663,7 +2663,7 @@ Body:
     HungryDelay: 120   # unknown
     IntimacyFed: 15   # unknown
     CaptureRate: 0   # unknown
-    SpecialPerformance: false   # unknown
+    #SpecialPerformance: false   # unknown
     AllowAutoFeed: true
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
@@ -2689,7 +2689,7 @@ Body:
 #    HungryDelay: 120   # unknown
 #    IntimacyFed: 15   # unknown
 #    CaptureRate: 0   # unknown
-#    SpecialPerformance: false   # unknown
+#    #SpecialPerformance: false   # unknown
 #    AllowAutoFeed: true
 #    Script: >
 #      .@i = getpetinfo(PETINFO_INTIMATE);
@@ -2718,7 +2718,7 @@ Body:
 #    HungryDelay: 120   # unknown
 #    IntimacyFed: 15   # unknown
 #    CaptureRate: 0   # unknown
-#    SpecialPerformance: false   # unknown
+#    #SpecialPerformance: false   # unknown
 #    Script: >
 #      .@i = getpetinfo(PETINFO_INTIMATE);
 #
@@ -2759,7 +2759,7 @@ Body:
 #    HungryDelay: 120   # unknown
 #    IntimacyFed: 15   # unknown
 #    CaptureRate: 0   # unknown
-#    SpecialPerformance: false   # unknown
+#    #SpecialPerformance: false   # unknown
 #    AllowAutoFeed: true
 #    Script: >
 #      .@i = getpetinfo(PETINFO_INTIMATE);
@@ -2788,7 +2788,7 @@ Body:
 #    HungryDelay: 120   # unknown
 #    IntimacyFed: 15   # unknown
 #    CaptureRate: 0   # unknown
-#    SpecialPerformance: false   # unknown
+#    #SpecialPerformance: false   # unknown
 #    AllowAutoFeed: true
 #    Script: >
 #      .@i = getpetinfo(PETINFO_INTIMATE);
@@ -2821,7 +2821,7 @@ Body:
     HungryDelay: 120   # unknown
     IntimacyFed: 15   # unknown
     CaptureRate: 2000   # unknown
-    SpecialPerformance: false   # unknown
+    #SpecialPerformance: false   # unknown
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
 
@@ -2840,7 +2840,7 @@ Body:
 #    HungryDelay: 120   # unknown
 #    IntimacyFed: 15   # unknown
 #    CaptureRate: 0   # unknown
-#    SpecialPerformance: false   # unknown
+#    #SpecialPerformance: false   # unknown
 #    AllowAutoFeed: true
 #    Script: >
 #      .@i = getpetinfo(PETINFO_INTIMATE);
@@ -2878,7 +2878,7 @@ Body:
 #    HungryDelay: 120   # unknown
 #    IntimacyFed: 15   # unknown
 #    CaptureRate: 0   # unknown
-#    SpecialPerformance: false   # unknown
+#    #SpecialPerformance: false   # unknown
 #    AllowAutoFeed: true
 #    Script: >
 #      .@i = getpetinfo(PETINFO_INTIMATE);
@@ -2907,7 +2907,7 @@ Body:
 #    HungryDelay: 120   # unknown
 #    IntimacyFed: 15   # unknown
 #    CaptureRate: 0   # unknown
-#    SpecialPerformance: false   # unknown
+#    #SpecialPerformance: false   # unknown
 #    AllowAutoFeed: true
 #    Script: >
 #      .@i = getpetinfo(PETINFO_INTIMATE);
@@ -2945,7 +2945,7 @@ Body:
 #    HungryDelay: 120   # unknown
 #    IntimacyFed: 15   # unknown
 #    CaptureRate: 0   # unknown
-#    SpecialPerformance: false   # unknown
+#    #SpecialPerformance: false   # unknown
 #    AllowAutoFeed: true
 #    Script: >
 #      .@i = getpetinfo(PETINFO_INTIMATE);
@@ -2972,7 +2972,7 @@ Body:
 #    HungryDelay: 120   # unknown
 #    IntimacyFed: 15   # unknown
 #    CaptureRate: 0   # unknown
-#    SpecialPerformance: false   # unknown
+#    #SpecialPerformance: false   # unknown
 #    Script: >
 #      .@i = getpetinfo(PETINFO_INTIMATE);
 #
@@ -2993,7 +2993,7 @@ Body:
 #    HungryDelay: 120   # unknown
 #    IntimacyFed: 15   # unknown
 #    CaptureRate: 2000   # unknown
-#    SpecialPerformance: false   # unknown
+#    #SpecialPerformance: false   # unknown
 #    Script: >
 #      .@i = getpetinfo(PETINFO_INTIMATE);
 #
@@ -3034,7 +3034,7 @@ Body:
 #    HungryDelay: 120   # unknown
 #    IntimacyFed: 15   # unknown
 #    CaptureRate: 0   # unknown
-#    SpecialPerformance: false   # unknown
+#    #SpecialPerformance: false   # unknown
 #    AllowAutoFeed: true
 #    Script: >
 #      .@i = getpetinfo(PETINFO_INTIMATE);
@@ -3061,7 +3061,7 @@ Body:
 #    HungryDelay: 120   # unknown
 #    IntimacyFed: 15   # unknown
 #    CaptureRate: 0   # unknown
-#    SpecialPerformance: false   # unknown
+#    #SpecialPerformance: false   # unknown
 #    AllowAutoFeed: true
 #    Script: >
 #      .@i = getpetinfo(PETINFO_INTIMATE);
@@ -3088,7 +3088,7 @@ Body:
 #    HungryDelay: 120   # unknown
 #    IntimacyFed: 15   # unknown
 #    CaptureRate: 0   # unknown
-#    SpecialPerformance: false   # unknown
+#    #SpecialPerformance: false   # unknown
 #    AllowAutoFeed: true
 #    Script: >
 #      .@i = getpetinfo(PETINFO_INTIMATE);
@@ -3114,7 +3114,7 @@ Body:
 #    HungryDelay: 120   # unknown
 #    IntimacyFed: 15   # unknown
 #    CaptureRate: 0   # unknown
-#    SpecialPerformance: false   # unknown
+#    #SpecialPerformance: false   # unknown
 #    Script: >
 #      .@i = getpetinfo(PETINFO_INTIMATE);
 #
@@ -3135,7 +3135,7 @@ Body:
 #    HungryDelay: 120   # unknown
 #    IntimacyFed: 15   # unknown
 #    CaptureRate: 2000   # unknown
-#    SpecialPerformance: false   # unknown
+#    #SpecialPerformance: false   # unknown
 #    Script: >
 #      .@i = getpetinfo(PETINFO_INTIMATE);
 #
@@ -3155,7 +3155,7 @@ Body:
     HungryDelay: 120   # unknown
     IntimacyFed: 15   # unknown
     CaptureRate: 0   # unknown
-    SpecialPerformance: false   # unknown
+    #SpecialPerformance: false   # unknown
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
 
@@ -3187,7 +3187,7 @@ Body:
 #    HungryDelay: 120   # unknown
 #    IntimacyFed: 15   # unknown
 #    CaptureRate: 0   # unknown
-#    SpecialPerformance: false   # unknown
+#    #SpecialPerformance: false   # unknown
 #    Script: >
 #      .@i = getpetinfo(PETINFO_INTIMATE);
 #
@@ -3207,7 +3207,7 @@ Body:
 #    HungryDelay: 120   # unknown
 #    IntimacyFed: 15   # unknown
 #    CaptureRate: 0   # unknown
-#    SpecialPerformance: false   # unknown
+#    #SpecialPerformance: false   # unknown
 #    Script: >
 #      .@i = getpetinfo(PETINFO_INTIMATE);
 #
@@ -3227,7 +3227,7 @@ Body:
 #    HungryDelay: 120   # unknown
 #    IntimacyFed: 15   # unknown
 #    CaptureRate: 0   # unknown
-#    SpecialPerformance: false   # unknown
+#    #SpecialPerformance: false   # unknown
 #    AllowAutoFeed: true
 #    Script: >
 #      .@i = getpetinfo(PETINFO_INTIMATE);
@@ -3265,7 +3265,7 @@ Body:
 #    HungryDelay: 120   # unknown
 #    IntimacyFed: 15   # unknown
 #    CaptureRate: 0   # unknown
-#    SpecialPerformance: false   # unknown
+#    #SpecialPerformance: false   # unknown
 #    AllowAutoFeed: true
 #    Script: >
 #      .@i = getpetinfo(PETINFO_INTIMATE);
@@ -3291,7 +3291,7 @@ Body:
 #    HungryDelay: 120   # unknown
 #    IntimacyFed: 15   # unknown
 #    CaptureRate: 0   # unknown
-#    SpecialPerformance: false   # unknown
+#    #SpecialPerformance: false   # unknown
 #    Script: >
 #      .@i = getpetinfo(PETINFO_INTIMATE);
 #
@@ -3308,7 +3308,7 @@ Body:
 #    HungryDelay: 120   # unknown
 #    IntimacyFed: 15   # unknown
 #    CaptureRate: 0   # unknown
-#    SpecialPerformance: false   # unknown
+#    #SpecialPerformance: false   # unknown
 #    Script: >
 #      .@i = getpetinfo(PETINFO_INTIMATE);
 #
@@ -3324,7 +3324,7 @@ Body:
 #    HungryDelay: 120   # unknown
 #    IntimacyFed: 15   # unknown
 #    CaptureRate: 0   # unknown
-#    SpecialPerformance: false   # unknown
+#    #SpecialPerformance: false   # unknown
 #    Script: >
 #      .@i = getpetinfo(PETINFO_INTIMATE);
 #
@@ -3341,7 +3341,7 @@ Body:
 #    HungryDelay: 120   # unknown
 #    IntimacyFed: 15   # unknown
 #    CaptureRate: 0   # unknown
-#    SpecialPerformance: false   # unknown
+#    #SpecialPerformance: false   # unknown
 #    Script: >
 #      .@i = getpetinfo(PETINFO_INTIMATE);
 #
@@ -3358,7 +3358,7 @@ Body:
 #    HungryDelay: 120   # unknown
 #    IntimacyFed: 15   # unknown
 #    CaptureRate: 0   # unknown
-#    SpecialPerformance: false   # unknown
+#    #SpecialPerformance: false   # unknown
 #    Script: >
 #      .@i = getpetinfo(PETINFO_INTIMATE);
 #
@@ -3375,7 +3375,7 @@ Body:
 #    HungryDelay: 120   # unknown
 #    IntimacyFed: 15   # unknown
 #    CaptureRate: 0   # unknown
-#    SpecialPerformance: false   # unknown
+#    #SpecialPerformance: false   # unknown
 #    Script: >
 #      .@i = getpetinfo(PETINFO_INTIMATE);
 #
@@ -3392,7 +3392,7 @@ Body:
 #    HungryDelay: 120   # unknown
 #    IntimacyFed: 15   # unknown
 #    CaptureRate: 0   # unknown
-#    SpecialPerformance: false   # unknown
+#    #SpecialPerformance: false   # unknown
 #    Script: >
 #      .@i = getpetinfo(PETINFO_INTIMATE);
 #
@@ -3407,7 +3407,7 @@ Body:
 #    HungryDelay: 120   # unknown
 #    IntimacyFed: 15   # unknown
 #    CaptureRate: 0   # unknown
-#    SpecialPerformance: false   # unknown
+#    #SpecialPerformance: false   # unknown
 #    Script: >
 #      .@i = getpetinfo(PETINFO_INTIMATE);
 #
@@ -3422,7 +3422,7 @@ Body:
 #    HungryDelay: 120   # unknown
 #    IntimacyFed: 15   # unknown
 #    CaptureRate: 0   # unknown
-#    SpecialPerformance: false   # unknown
+#    #SpecialPerformance: false   # unknown
 #    Script: >
 #      .@i = getpetinfo(PETINFO_INTIMATE);
 #
@@ -3438,7 +3438,7 @@ Body:
 #    HungryDelay: 120   # unknown
 #    IntimacyFed: 15   # unknown
 #    CaptureRate: 0   # unknown
-#    SpecialPerformance: false   # unknown
+#    #SpecialPerformance: false   # unknown
 #    Script: >
 #      .@i = getpetinfo(PETINFO_INTIMATE);
 #
@@ -3453,7 +3453,7 @@ Body:
 #    HungryDelay: 120   # unknown
 #    IntimacyFed: 15   # unknown
 #    CaptureRate: 0   # unknown
-#    SpecialPerformance: false   # unknown
+#    #SpecialPerformance: false   # unknown
 #    Script: >
 #      .@i = getpetinfo(PETINFO_INTIMATE);
 #
@@ -3468,7 +3468,7 @@ Body:
 #    HungryDelay: 120   # unknown
 #    IntimacyFed: 15   # unknown
 #    CaptureRate: 0   # unknown
-#    SpecialPerformance: false   # unknown
+#    #SpecialPerformance: false   # unknown
 #    Script: >
 #      .@i = getpetinfo(PETINFO_INTIMATE);
 #
@@ -3483,7 +3483,7 @@ Body:
 #    HungryDelay: 120   # unknown
 #    IntimacyFed: 15   # unknown
 #    CaptureRate: 0   # unknown
-#    SpecialPerformance: false   # unknown
+#    #SpecialPerformance: false   # unknown
 #    Script: >
 #      .@i = getpetinfo(PETINFO_INTIMATE);
 #
@@ -3502,7 +3502,7 @@ Body:
 #    HungryDelay: 120   # unknown
 #    IntimacyFed: 15   # unknown
 #    CaptureRate: 0   # unknown
-#    SpecialPerformance: false   # unknown
+#    #SpecialPerformance: false   # unknown
 #    Script: >
 #      .@i = getpetinfo(PETINFO_INTIMATE);
 #
@@ -3527,7 +3527,7 @@ Body:
 #    HungryDelay: 120   # unknown
 #    IntimacyFed: 15   # unknown
 #    CaptureRate: 0   # unknown
-#    SpecialPerformance: false   # unknown
+#    #SpecialPerformance: false   # unknown
 #    Script: >
 #      .@i = getpetinfo(PETINFO_INTIMATE);
 #

@@ -89,3 +89,27 @@ Header:
   Version: 3
 
 Body:
+  - Id: 9169
+    AegisName: aegis_9169
+    Name: 시계탑 관리자의 알
+    Type: PetEgg
+  - Id: 9170
+    AegisName: aegis_9170
+    Name: 엔젤골트의 알
+    Type: PetEgg
+  - Id: 9171
+    AegisName: aegis_9171
+    Name: 타임홀더의 알
+    Type: PetEgg
+  - Id: 9187
+    AegisName: Skeggiold_Egg
+    Name: 스케골트의 알
+    Type: PetEgg
+  - Id: 9190
+    AegisName: aegis_9190
+    Name: 클락의 알
+    Type: PetEgg
+  - Id: 9193
+    AegisName: Mistress_Egg2
+    Name: 미스트레스의 알
+    Type: PetEgg

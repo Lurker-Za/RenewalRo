@@ -1,0 +1,900 @@
+# This file is a part of rAthena.
+#   Copyright(C) 2021 rAthena Development Team
+#   https://rathena.org - https://github.com/rathena
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+#
+###########################################################################
+# Monster Database
+###########################################################################
+#
+# Monster Settings
+#
+###########################################################################
+# - Id                      Monster ID.
+#   AegisName               Server name to reference the monster in scripts and lookups, should use no spaces.
+#   Name                    Name in English.
+#   JapaneseName            Name in Japanese. (Default: 'Name' value)
+#   Level                   Level. (Default: 1)
+#   Hp                      Total HP. (Default: 1)
+#   Sp                      Total SP. (Default: 1)
+#   BaseExp                 Base experience gained. (Default: 0)
+#   JobExp                  Job experience gained. (Default: 0)
+#   MvpExp                  MVP experience gained. (Default: 0)
+#   Attack                  Minimum attack in pre-renewal and base attack in renewal. (Default: 0)
+#   Attack2                 Maximum attack in pre-renewal and base magic attack in renewal. (Default: 0)
+#   Defense                 Physical defense of the monster, reduces melee and ranged physical attack/skill damage. (Default: 0)
+#   MagicDefense            Magic defense of the monster, reduces magical skill damage. (Default: 0)
+#   Resistance              Physical resistance of the monster, reduces melee and ranged physical attack/skill damage. (Default: 0)
+#   MagicResistance         Magic resistance of the monster, reduces magical skill damage. (Default: 0)
+#   Str                     Strength which affects attack. (Default: 1)
+#   Agi                     Agility which affects flee. (Default: 1)
+#   Vit                     Vitality which affects defense. (Default: 1)
+#   Int                     Intelligence which affects magic attack. (Default: 1)
+#   Dex                     Dexterity which affects hit rate. (Default: 1)
+#   Luk                     Luck which affects perfect dodge/lucky flee/perfect flee/lucky dodge rate. (Default: 1)
+#   AttackRange             Attack range. (Default: 0)
+#   SkillRange              Skill cast range. (Default: 0)
+#   ChaseRange              Chase range. (Default: 0)
+#   Size                    Size. (Default: Small)
+#   Race                    Race. (Default: Formless)
+#   RaceGroups:             List of secondary groups the monster may be part of. (Optional)
+#     <group>: <value>      Group to toggle.
+#   Element                 Element. (Default: Neutral)
+#   ElementLevel            Level of element. (Default: 1)
+#   WalkSpeed               Walk speed. (Default: DEFAULT_WALK_SPEED)
+#   AttackDelay             Attack speed. (Default: 0)
+#   AttackMotion            Attack animation speed. (Default: 0)
+#   ClientAttackMotion      Client attack speed. (Default: AttackMotion)
+#   DamageMotion            Damage animation speed. (Default: 0)
+#   DamageTaken             Rate at which the monster will receive incoming damage. (Default: 100)
+#   GroupId                 Monster group ID. (Default: 0)
+#   Title                   Monster title. (Default: None)
+#   Ai                      Aegis monster type AI behavior. (Default: 06)
+#   Class                   Aegis monster class. (Default: Normal)
+#   Modes:                  List of unique behavior not defined by AI, Class, or Attribute. (Optional)
+#     <mode>: <value>       Mode to toggle.
+#   MvpDrops:               List of possible MVP prize items. Max of MAX_MVP_DROP. (Optional)
+#     - Item                Item name.
+#       Rate                Drop rate of item. (Default: 1)
+#       RandomOptionGroup   Random Option Group applied to item on drop. (Default: None)
+#       Index               Index used for overwriting item. (Optional)
+#   Drops:                  List of possible normal item drops. Max of MAX_MOB_DROP. (Optional)
+#     - Item                Item name.
+#       Rate                Drop rate of item. (Default: 1)
+#       StealProtected      If the item is shielded from TF_STEAL. (Default: false)
+#       RandomOptionGroup   Random Option Group applied to item on drop. (Default: None)
+#       Index               Index used for overwriting item. (Optional)
+###########################################################################
+
+Header:
+  Type: MOB_DB
+  Version: 5
+
+Body:
+  - Id: 3261
+    AegisName: BLUE_UNICORN
+    Name: 블루 유니콘
+    Level: 30
+    DamageMotion: 1
+  - Id: 3731
+    AegisName: SCATLETON
+    Name: 스캣레톤
+    Level: 14
+    DamageMotion: 1
+  - Id: 3971
+    AegisName: SKELION
+    Name: 스켈리온
+    DamageMotion: 1
+  - Id: 20423
+    AegisName: BACSOJIN2
+    Name: 백소진
+    Level: 97
+    Hp: 720500
+    BaseExp: 668160
+    JobExp: 542880
+    MvpExp: 200448
+    Attack: 1414
+    Attack2: 2036
+    Defense: 210
+    MagicDefense: 178
+    Str: 118
+    Agi: 244
+    Vit: 98
+    Int: 126
+    Dex: 205
+    Luk: 102
+    AttackRange: 3
+    SkillRange: 10
+    ChaseRange: 12
+    Size: Large
+    Race: Demihuman
+    Element: Wind
+    ElementLevel: 3
+    WalkSpeed: 130
+    AttackDelay: 576
+    AttackMotion: 960
+    DamageMotion: 480
+    Ai: 04
+    Class: Boss
+    Modes:
+      Mvp: true
+  - Id: 20424
+    AegisName: MOONLIGHT2
+    Name: 월야화
+    Level: 79
+    Hp: 324000
+    BaseExp: 334080
+    JobExp: 271440
+    MvpExp: 91872
+    Attack: 2232
+    Attack2: 1251
+    Defense: 154
+    MagicDefense: 81
+    Str: 86
+    Agi: 102
+    Vit: 93
+    Int: 82
+    Dex: 131
+    Luk: 120
+    AttackRange: 1
+    SkillRange: 10
+    ChaseRange: 12
+    Size: Medium
+    Race: Demon
+    Element: Fire
+    ElementLevel: 3
+    WalkSpeed: 150
+    AttackDelay: 1276
+    AttackMotion: 576
+    DamageMotion: 288
+    Ai: 21
+    Class: Boss
+    Modes:
+      Mvp: true
+  - Id: 20425
+    AegisName: PHREEONI2
+    Name: 프리오니
+    Level: 71
+    Hp: 300000
+    BaseExp: 116000
+    JobExp: 180000
+    MvpExp: 31900
+    Attack: 693
+    Attack2: 967
+    Defense: 269
+    MagicDefense: 98
+    Str: 88
+    Agi: 70
+    Vit: 112
+    Int: 87
+    Dex: 102
+    Luk: 71
+    AttackRange: 1
+    SkillRange: 10
+    ChaseRange: 12
+    Size: Large
+    Race: Brute
+    Element: Neutral
+    ElementLevel: 3
+    WalkSpeed: 200
+    AttackDelay: 1020
+    AttackMotion: 1020
+    DamageMotion: 288
+    Ai: 21
+    Class: Boss
+    Modes:
+      Mvp: true
+  - Id: 20525
+    AegisName: ILL_BAPHOMET_J
+    Name: 혼돈의 바포메트 주니어
+    Level: 177
+    Hp: 1057444
+    BaseExp: 488
+    JobExp: 435
+    Attack: 195
+    Attack2: 33
+    Defense: 327
+    MagicDefense: 108
+    Str: 185
+    Agi: 101
+    Vit: 50
+    Int: 158
+    Dex: 178
+    Luk: 77
+    AttackRange: 1
+    SkillRange: 10
+    ChaseRange: 12
+    Size: Small
+    Race: Demon
+    Element: Dark
+    ElementLevel: 1
+    WalkSpeed: 100
+    AttackDelay: 868
+    AttackMotion: 480
+    DamageMotion: 120
+    Ai: 21
+    Modes:
+      Detector: true
+  - Id: 20571
+    AegisName: ORK_HERO2
+    Name: 오크 히어로
+    Level: 50
+    Hp: 362000
+    BaseExp: 106920
+    JobExp: 97200
+    MvpExp: 26730
+    Attack: 662
+    Attack2: 441
+    Defense: 197
+    MagicDefense: 70
+    Str: 97
+    Agi: 82
+    Vit: 107
+    Int: 71
+    Dex: 144
+    Luk: 43
+    AttackRange: 1
+    SkillRange: 10
+    ChaseRange: 12
+    Size: Large
+    Race: Demihuman
+    Element: Earth
+    ElementLevel: 2
+    WalkSpeed: 150
+    AttackDelay: 1678
+    AttackMotion: 780
+    DamageMotion: 648
+    Ai: 21
+    Class: Boss
+    Modes:
+      Mvp: true
+  - Id: 20619
+    AegisName: GLOOMUNDERNIGHT2
+    Name: 그룸 언더 나이트
+    Level: 139
+    Hp: 3005000
+    BaseExp: 2160000
+    JobExp: 1800000
+    MvpExp: 702000
+    Attack: 6592
+    Attack2: 2785
+    Defense: 479
+    MagicDefense: 262
+    Str: 191
+    Agi: 223
+    Vit: 187
+    Int: 155
+    Dex: 241
+    Luk: 163
+    AttackRange: 3
+    SkillRange: 10
+    ChaseRange: 12
+    Size: Large
+    Race: Formless
+    Element: Ghost
+    ElementLevel: 3
+    WalkSpeed: 200
+    AttackDelay: 1344
+    AttackMotion: 2880
+    DamageMotion: 576
+    Ai: 21
+    Class: Boss
+    Modes:
+      Mvp: true
+  - Id: 21089
+    AegisName: WANDERING_DUCK
+    Name: 방황하는 오리인형
+    Level: 10
+    DamageMotion: 1
+    Ai: 03
+  - Id: 21290
+    AegisName: KIEL_D_01_2
+    Name: 키엘-D-01
+    Level: 125
+    Hp: 2502000
+    BaseExp: 1800000
+    JobExp: 1440000
+    MvpExp: 585000
+    Attack: 4112
+    Attack2: 3580
+    Defense: 314
+    MagicDefense: 232
+    Str: 166
+    Agi: 187
+    Vit: 155
+    Int: 141
+    Dex: 199
+    Luk: 180
+    AttackRange: 3
+    SkillRange: 10
+    ChaseRange: 15
+    Size: Medium
+    Race: Formless
+    Element: Dark
+    ElementLevel: 2
+    WalkSpeed: 130
+    AttackDelay: 1152
+    AttackMotion: 576
+    DamageMotion: 432
+    Ai: 21
+    Class: Boss
+    Modes:
+      Mvp: true
+  - Id: 21502
+    AegisName: BAPHOMET2
+    Name: 바포메트
+    Level: 81
+    Hp: 668000
+    BaseExp: 218089
+    JobExp: 167053
+    MvpExp: 198262
+    Attack: 3150
+    Attack2: 1984
+    Defense: 379
+    MagicDefense: 45
+    Str: 120
+    Agi: 125
+    Vit: 30
+    Int: 85
+    Dex: 186
+    Luk: 85
+    AttackRange: 2
+    SkillRange: 10
+    ChaseRange: 12
+    Size: Large
+    Race: Demon
+    Element: Dark
+    ElementLevel: 3
+    WalkSpeed: 100
+    AttackDelay: 768
+    AttackMotion: 768
+    DamageMotion: 576
+    DamageTaken: 1
+    Ai: 21
+    Class: Boss
+    Modes:
+      Mvp: true
+  - Id: 21630
+    AegisName: WILD_ROSE3
+    Name: 와일드 로즈
+    Level: 70
+    Hp: 2682
+    BaseExp: 677
+    JobExp: 621
+    Attack: 147
+    Attack2: 45
+    Defense: 75
+    MagicDefense: 15
+    Str: 44
+    Agi: 87
+    Vit: 31
+    Int: 35
+    Dex: 69
+    Luk: 80
+    AttackRange: 1
+    SkillRange: 10
+    ChaseRange: 12
+    Size: Small
+    Race: Brute
+    Element: Wind
+    ElementLevel: 1
+    WalkSpeed: 100
+    AttackDelay: 964
+    AttackMotion: 864
+    DamageMotion: 288
+    Ai: 02
+  - Id: 21631
+    AegisName: BLUEMOON_LOLI_RURI2
+    Name: 블루 문 로리루리
+    Level: 109
+    Hp: 15280
+    BaseExp: 1887
+    JobExp: 1801
+    Attack: 1123
+    Attack2: 280
+    Defense: 53
+    MagicDefense: 44
+    Str: 111
+    Agi: 50
+    Vit: 47
+    Int: 79
+    Dex: 95
+    Luk: 79
+    AttackRange: 2
+    SkillRange: 10
+    ChaseRange: 12
+    Size: Large
+    Race: Demon
+    Element: Dark
+    ElementLevel: 4
+    WalkSpeed: 125
+    AttackDelay: 747
+    AttackMotion: 1632
+    DamageMotion: 576
+    Ai: 04
+    Modes:
+      Detector: true
+  - Id: 23000
+    AegisName: DARK_ILLUSION2
+    Name: 다크일루젼
+    Level: 96
+    Hp: 46255
+    BaseExp: 4954
+    JobExp: 4549
+    Attack: 1166
+    Attack2: 360
+    Defense: 145
+    MagicDefense: 30
+    Str: 82
+    Agi: 36
+    Vit: 55
+    Int: 100
+    Dex: 182
+    Luk: 88
+    AttackRange: 2
+    SkillRange: 10
+    ChaseRange: 12
+    Size: Large
+    Race: Demon
+    Element: Undead
+    ElementLevel: 4
+    WalkSpeed: 145
+    AttackDelay: 1024
+    AttackMotion: 768
+    DamageMotion: 480
+    Ai: 21
+    Class: Boss
+  - Id: 21650
+    AegisName: CWHITEKNIGHT
+    Name: 변이하는 백색의 기사
+    Level: 188
+    Hp: 2450483
+    BaseExp: 3071
+    JobExp: 2948
+    Attack: 1734
+    Attack2: 192
+    Defense: 102
+    MagicDefense: 50
+    Str: 121
+    Agi: 55
+    Vit: 68
+    Int: 70
+    Dex: 136
+    Luk: 37
+    AttackRange: 1
+    SkillRange: 10
+    ChaseRange: 12
+    Size: Large
+    Race: Demihuman
+    RaceGroups:
+      Clocktower: true
+    Element: Dark
+    ElementLevel: 4
+    WalkSpeed: 300
+    AttackDelay: 1500
+    AttackMotion: 500
+    DamageMotion: 1000
+    Ai: 21
+  - Id: 21651
+    AegisName: KNIGHT_OF_ABYSS2
+    Name: 심연의 기사
+    Level: 122
+    Hp: 23297
+    BaseExp: 3071
+    JobExp: 2948
+    Attack: 1734
+    Attack2: 192
+    Defense: 102
+    MagicDefense: 50
+    Str: 121
+    Agi: 55
+    Vit: 68
+    Int: 70
+    Dex: 136
+    Luk: 37
+    AttackRange: 1
+    SkillRange: 10
+    ChaseRange: 12
+    Size: Large
+    Race: Demihuman
+    RaceGroups:
+      Clocktower: true
+    Element: Dark
+    ElementLevel: 4
+    WalkSpeed: 300
+    AttackDelay: 1500
+    AttackMotion: 500
+    DamageMotion: 1000
+    Ai: 21
+  - Id: 21652
+    AegisName: GH_WHITEKNIGHT
+    Name: 백색의 기사
+    Level: 111
+    Hp: 58650
+    BaseExp: 3071
+    JobExp: 2948
+    Attack: 1734
+    Attack2: 192
+    Defense: 102
+    MagicDefense: 50
+    Str: 121
+    Agi: 55
+    Vit: 68
+    Int: 70
+    Dex: 136
+    Luk: 37
+    AttackRange: 1
+    SkillRange: 10
+    ChaseRange: 12
+    Size: Large
+    Race: Demihuman
+    RaceGroups:
+      Clocktower: true
+    Element: Dark
+    ElementLevel: 4
+    WalkSpeed: 300
+    AttackDelay: 1500
+    AttackMotion: 500
+    DamageMotion: 1000
+    Ai: 21
+  - Id: 21653
+    AegisName: EDDGA3
+    Name: 에드가
+    Level: 65
+    Hp: 947500
+    BaseExp: 103950
+    JobExp: 74250
+    MvpExp: 51975
+    Attack: 1509
+    Attack2: 776
+    Defense: 166
+    MagicDefense: 70
+    Str: 92
+    Agi: 80
+    Vit: 103
+    Int: 66
+    Dex: 139
+    Luk: 85
+    AttackRange: 1
+    SkillRange: 10
+    ChaseRange: 12
+    Size: Large
+    Race: Brute
+    Element: Fire
+    ElementLevel: 1
+    WalkSpeed: 300
+    AttackDelay: 872
+    AttackMotion: 1344
+    DamageMotion: 432
+    DamageTaken: 10
+    Ai: 21
+    Class: Boss
+    Modes:
+      Mvp: true
+  - Id: 21919
+    AegisName: LARVA_VIOLET
+    Name: 바이올렛
+    Level: 65
+    Hp: 947500
+    BaseExp: 103950
+    JobExp: 74250
+    MvpExp: 51975
+    Attack: 1509
+    Attack2: 776
+    Defense: 166
+    MagicDefense: 70
+    Str: 92
+    Agi: 80
+    Vit: 103
+    Int: 66
+    Dex: 139
+    Luk: 85
+    AttackRange: 1
+    SkillRange: 10
+    ChaseRange: 12
+    Size: Large
+    Race: Brute
+    Element: Fire
+    ElementLevel: 1
+    WalkSpeed: 300
+    AttackDelay: 872
+    AttackMotion: 1344
+    DamageMotion: 432
+    Ai: 21
+  - Id: 21965
+    AegisName: EP20_COPO
+    Name: 꼬뽀
+    Level: 220
+    Hp: 947500
+    BaseExp: 103950
+    JobExp: 74250
+    MvpExp: 51975
+    Attack: 1509
+    Attack2: 776
+    Defense: 166
+    MagicDefense: 70
+    Str: 92
+    Agi: 80
+    Vit: 103
+    Int: 66
+    Dex: 139
+    Luk: 85
+    AttackRange: 1
+    SkillRange: 10
+    ChaseRange: 12
+    Size: Large
+    Race: Brute
+    Element: Fire
+    ElementLevel: 1
+    WalkSpeed: 300
+    AttackDelay: 872
+    AttackMotion: 1344
+    DamageMotion: 432
+    Ai: 21
+  - Id: 21966
+    AegisName: EP20_ICEWIND1
+    Name: 잿빛 아이스윈드
+    Level: 220
+    Hp: 947500
+    BaseExp: 103950
+    JobExp: 74250
+    MvpExp: 51975
+    Attack: 1509
+    Attack2: 776
+    Defense: 166
+    MagicDefense: 70
+    Str: 92
+    Agi: 80
+    Vit: 103
+    Int: 66
+    Dex: 139
+    Luk: 85
+    AttackRange: 1
+    SkillRange: 10
+    ChaseRange: 12
+    Size: Large
+    Race: Brute
+    Element: Fire
+    ElementLevel: 1
+    WalkSpeed: 300
+    AttackDelay: 872
+    AttackMotion: 1344
+    DamageMotion: 432
+    Ai: 21
+  - Id: 21967
+    AegisName: EP20_ICEWIND2
+    Name: 아이스윈드
+    Level: 244
+    Hp: 947500
+    BaseExp: 103950
+    JobExp: 74250
+    MvpExp: 51975
+    Attack: 1509
+    Attack2: 776
+    Defense: 166
+    MagicDefense: 70
+    Str: 92
+    Agi: 80
+    Vit: 103
+    Int: 66
+    Dex: 139
+    Luk: 85
+    AttackRange: 1
+    SkillRange: 10
+    ChaseRange: 12
+    Size: Large
+    Race: Brute
+    Element: Fire
+    ElementLevel: 1
+    WalkSpeed: 300
+    AttackDelay: 872
+    AttackMotion: 1344
+    DamageMotion: 432
+    Ai: 21
+  - Id: 22185
+    AegisName: DARK_LORD2
+    Name: 다크 로드
+    Level: 96
+    Hp: 1190900
+    BaseExp: 428544
+    JobExp: 279000
+    MvpExp: 214272
+    Attack: 3935
+    Attack2: 2585
+    Defense: 330
+    MagicDefense: 168
+    Str: 118
+    Agi: 136
+    Vit: 154
+    Int: 142
+    Dex: 193
+    Luk: 66
+    AttackRange: 2
+    SkillRange: 10
+    ChaseRange: 12
+    Size: Large
+    Race: Demon
+    Element: Undead
+    ElementLevel: 4
+    WalkSpeed: 100
+    AttackDelay: 868
+    AttackMotion: 768
+    DamageMotion: 480
+    DamageTaken: 10
+    Ai: 21
+    Class: Boss
+    Modes:
+      Mvp: true
+  - Id: 22299
+    AegisName: VR_CHAO
+    Name: 차오
+    DamageMotion: 480
+  - Id: 22318
+    AegisName: EP21_ICESEAHORSE
+    Name: 얼음해마
+    Level: 240
+    DamageMotion: 1
+  - Id: 22381
+    AegisName: CLB_SS_FC
+    Name: 페이차이
+    Level: 1
+    DamageMotion: 1
+  - Id: 22382
+    AegisName: CLB_SS_TZ
+    Name: 타이즈
+    Level: 1
+    DamageMotion: 1
+  - Id: 22405
+    AegisName: MISTRESS3
+    Name: 미스트레스
+    Level: 78
+    Hp: 378000
+    BaseExp: 184140
+    JobExp: 150660
+    MvpExp: 92070
+    Attack: 985
+    Attack2: 1967
+    Defense: 287
+    MagicDefense: 192
+    Str: 76
+    Agi: 186
+    Vit: 88
+    Int: 113
+    Dex: 172
+    Luk: 79
+    AttackRange: 1
+    SkillRange: 10
+    ChaseRange: 12
+    Size: Small
+    Race: Insect
+    Element: Wind
+    ElementLevel: 4
+    WalkSpeed: 100
+    AttackDelay: 1148
+    AttackMotion: 648
+    ClientAttackMotion: 504
+    DamageMotion: 300
+    DamageTaken: 10
+    Ai: 21
+    Class: Boss
+    Modes:
+      Mvp: true
+  - Id: 22406
+    AegisName: GIANT_HONET2
+    Name: 자이언트 호넷
+    Level: 120
+    Hp: 18495
+    Sp: 0
+    BaseExp: 2652
+    JobExp: 2544
+    Attack: 793
+    Attack2: 132
+    Defense: 80
+    MagicDefense: 43
+    Str: 70
+    Agi: 45
+    Vit: 47
+    Int: 32
+    Dex: 74
+    Luk: 34
+    AttackRange: 1
+    SkillRange: 10
+    ChaseRange: 12
+    Size: Small
+    Race: Insect
+    Element: Wind
+    ElementLevel: 1
+    WalkSpeed: 155
+    AttackDelay: 1292
+    AttackMotion: 792
+    ClientAttackMotion: 648
+    DamageMotion: 340
+    Ai: 21
+    Modes:
+      Detector: true
+  - Id: 22504
+    AegisName: C_TOWER_MANAGER2
+    Name: 시계탑 관리자
+    Level: 90
+    Hp: 6425
+    BaseExp: 1103
+    JobExp: 1038
+    Attack: 397
+    Attack2: 70
+    Defense: 96
+    MagicDefense: 60
+    Str: 80
+    Agi: 28
+    Vit: 40
+    Int: 25
+    Dex: 88
+    Luk: 45
+    AttackRange: 3
+    SkillRange: 10
+    ChaseRange: 12
+    Size: Large
+    Race: Formless
+    RaceGroups:
+      Clocktower: true
+    Element: Neutral
+    ElementLevel: 4
+    WalkSpeed: 200
+    AttackDelay: 1072
+    AttackMotion: 672
+    ClientAttackMotion: 384
+    DamageMotion: 384
+    Ai: 17
+  - Id: 22505
+    AegisName: ANGELGOLT3
+    Name: 엔젤골트
+    Level: 196
+    DamageMotion: 1
+  - Id: 22506
+    AegisName: TIMEHOLDER3
+    Name: 타임홀더
+    Level: 170
+    Hp: 25000000
+    BaseExp: 4582500
+    JobExp: 3877500
+    MvpExp: 2291250
+    Attack: 5250
+    Attack2: 2100
+    Defense: 288
+    MagicDefense: 265
+    Str: 224
+    Agi: 152
+    Vit: 251
+    Int: 257
+    Dex: 402
+    Luk: 77
+    AttackRange: 1
+    SkillRange: 10
+    ChaseRange: 12
+    Size: Large
+    Race: Demon
+    RaceGroups:
+      Clocktower: true
+    Element: Neutral
+    ElementLevel: 4
+    WalkSpeed: 150
+    AttackDelay: 100
+    AttackMotion: 576
+    ClientAttackMotion: 960
+    DamageMotion: 480
+    DamageTaken: 10
+    Ai: 04
+    Class: Boss
+    Modes:
+      Mvp: true

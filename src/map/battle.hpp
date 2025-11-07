@@ -778,6 +778,8 @@ struct Battle_Config
 	int32 major_overweight_rate;
 	int32 trade_count_stackable;
 	int32 enable_bonus_map_drops;
+	int32 pet_greeting;
+	int32 pet_greeting_type;
 
 	int32 feature_goldpc_active;
 	int32 feature_goldpc_time;

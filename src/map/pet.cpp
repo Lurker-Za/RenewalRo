@@ -287,16 +287,16 @@ uint64 PetDatabase::parseBodyNode( const ryml::NodeRef& node ){
 	}
 
 	if( this->nodeExists( node, "SpecialPerformance" ) ){
-		bool performance;
+		int32 performance;
 
-		if( !this->asBool( node, "SpecialPerformance", performance ) ){
+		if( !this->asInt32( node, "SpecialPerformance", performance ) ){
 			return 0;
 		}
 
 		pet->s_perfor = performance;
 	}else{
 		if( !exists ){
-			pet->s_perfor = true;
+			pet->s_perfor = 4;
 		}
 	}
 
@@ -315,7 +315,7 @@ uint64 PetDatabase::parseBodyNode( const ryml::NodeRef& node ){
 		pet->attack_rate = rate;
 	}else{
 		if( !exists ){
-			pet->attack_rate = 10001; // unreachable
+			pet->attack_rate = 0;
 		}
 	}
 
@@ -334,7 +334,7 @@ uint64 PetDatabase::parseBodyNode( const ryml::NodeRef& node ){
 		pet->defence_attack_rate = rate;
 	}else{
 		if( !exists ){
-			pet->defence_attack_rate = 10001; // unreachable
+			pet->defence_attack_rate = 0;
 		}
 	}
 
@@ -681,7 +681,7 @@ bool pet_create_egg(map_session_data *sd, t_itemid item_id)
 	if (!pc_inventoryblank(sd))
 		return false; // Inventory full
 
-	intif_create_pet(sd->status.account_id, sd->status.char_id, pet->class_, mdb->lv, pet->EggID, 0, pet->intimate, 100, 0, 1, mdb->jname.c_str());
+	intif_create_pet(sd->status.account_id, sd->status.char_id, pet->class_, mdb->lv, pet->EggID, 0, pet->intimate, 25, 0, 1, mdb->jname.c_str());
 
 	return true;
 }
@@ -1346,7 +1346,7 @@ void pet_catch_process_end( map_session_data& sd, int32 target_id ){
 
 		std::shared_ptr<s_mob_db> mdb = mob_db.find(pet->class_);
 
-		intif_create_pet(sd.status.account_id, sd.status.char_id, pet->class_, mdb->lv, pet->EggID, 0, pet->intimate, 100, 0, 1, mdb->jname.c_str());
+		intif_create_pet(sd.status.account_id, sd.status.char_id, pet->class_, mdb->lv, pet->EggID, 0, pet->intimate, 25, 0, 1, mdb->jname.c_str());
 	} else {
 		clif_pet_roulette( sd, false );
 	}
@@ -2305,49 +2305,17 @@ void pet_evolution(map_session_data *sd, int16 pet_id) {
 		clif_pet_evolution_result(sd, e_pet_evolution_result::FAIL_NOTEXIST_CALLPET);
 		return;
 	}
-
-	// Virtually delete the old egg
-	log_pick_pc(sd, LOG_TYPE_OTHER, -1, &sd->inventory.u.items_inventory[idx]);
-	clif_delitem( *sd, idx, 1, 0 );
-
-	// Change the old egg to the new one
-	sd->inventory.u.items_inventory[idx].nameid = new_data->EggID;
-	sd->inventory_data[idx] = itemdb_search(new_data->EggID);
-
-	// Virtually add it to the inventory
-	log_pick_pc(sd, LOG_TYPE_OTHER, 1, &sd->inventory.u.items_inventory[idx]);
-	clif_additem(sd, idx, 1, 0);
-
-	// Remove the old pet from sight
-	unit_remove_map(sd->pd, CLR_OUTSIGHT);
-
+	
 	// Prepare the new pet
 	sd->pd->pet.class_ = pet_id;
 	sd->pd->pet.egg_id = new_data->EggID;
 	pet_set_intimate(sd->pd, new_data->intimate);
-	if( !sd->pd->pet.rename_flag ){
-		std::shared_ptr<s_mob_db> mdb = mob_db.find( pet_id );
+	intif_create_pet(sd->status.account_id, sd->status.char_id, sd->pd->pet.class_, mob_db.find(pet_id)->lv, sd->pd->pet.egg_id, 0, new_data->intimate, 25, 0, 1, mob_db.find(pet_id)->jname.c_str());
 
-		safestrncpy(sd->pd->pet.name, mdb->jname.c_str(), NAME_LENGTH);
-	}
-	status_set_viewdata(sd->pd, pet_id);
+	// Delete the old egg
+	pet_return_egg(sd, sd->pd);
 
-	// Save the pet and inventory data
-	intif_save_petdata(sd->status.account_id, &sd->pd->pet);
-	if (save_settings&CHARSAVE_PET)
-		chrif_save(sd, CSAVE_INVENTORY);
-
-	// Spawn it
-	if (map_addblock(sd->pd))
-		return;
-
-	clif_spawn(sd->pd);
-	clif_send_petdata( sd, *sd->pd, CHANGESTATEPET_INIT );
-	clif_send_petdata( sd, *sd->pd, CHANGESTATEPET_HAIRSTYLE );
-	clif_send_petdata( nullptr, *sd->pd, CHANGESTATEPET_ACCESSORY );
-	clif_send_petstatus( *sd, *sd->pd );
-	clif_emotion( *sd, ET_BEST );
-	clif_specialeffect(sd->pd, EF_HO_UP, AREA);
+	pc_delitem(sd, idx, 1, 0, 0, LOG_TYPE_OTHER);
 
 	clif_pet_evolution_result(sd, e_pet_evolution_result::SUCCESS);
 	clif_inventorylist(sd);

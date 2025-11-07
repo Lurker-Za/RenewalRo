@@ -12378,6 +12378,8 @@ static const struct _battle_data {
 	{ "major_overweight_rate",              &battle_config.major_overweight_rate,           90,     0,      100             },
 	{ "trade_count_stackable",              &battle_config.trade_count_stackable,           1,      0,      1,              },
 	{ "enable_bonus_map_drops",             &battle_config.enable_bonus_map_drops,          1,      0,      1,              },
+	{ "pet_greeting",						&battle_config.pet_greeting,					1,      0,      1,              },
+	{ "pet_greeting_type",					&battle_config.pet_greeting_type,				4,		0,      9,				},
 
 	{ "feature.goldpc_active",              &battle_config.feature_goldpc_active,           1,      0,      1,              },
 	{ "feature.goldpc_time",                &battle_config.feature_goldpc_time,          3600,      0,   3600,              },

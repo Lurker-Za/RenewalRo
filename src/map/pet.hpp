@@ -41,7 +41,7 @@ struct s_pet_db {
 	int32 die; ///< Intimacy increased when die
 	int32 hungry_intimacy_dec; ///< Intimacy increased when hungry
 	uint16 capture; ///< Capture success rate 10000 = 100%
-	bool s_perfor; ///< Special performance
+	int32 s_perfor; ///< Special performance //This is a custom, changing from bool to int, to prevent the pet from just flinching and not performing.
 	uint16 attack_rate; ///< Rate of which the pet will attack (requires at least pet_support_min_friendly intimacy).
 	uint16 defence_attack_rate; ///< Rate of which the pet will retaliate when master is being attacked (requires at least pet_support_min_friendly intimacy).
 	uint16 change_target_rate; ///< Rate of which the pet will change its attack target.
@@ -78,7 +78,7 @@ enum e_pet_intimate_level : uint16 {
 	PET_INTIMATE_SHY = 100,
 	PET_INTIMATE_NEUTRAL = 250,
 	PET_INTIMATE_CORDIAL = 750,
-	PET_INTIMATE_LOYAL = 910,
+	PET_INTIMATE_LOYAL = 900,
 	PET_INTIMATE_MAX = 1000
 };
 

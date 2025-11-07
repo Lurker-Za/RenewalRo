@@ -1026,12 +1026,6 @@ static int32 clif_setlevel(block_list* bl) {
 	int32 lv = status_get_lv(bl);
 	if( battle_config.client_limit_unit_lv&bl->type )
 		return clif_setlevel_sub(lv);
-	switch( bl->type ) {
-		case BL_NPC:
-		case BL_PET:
-			// npcs and pets do not have level
-			return 0;
-	}
 	return lv;
 }
 
@@ -8262,17 +8256,28 @@ void clif_send_petdata( map_session_data* sd, pet_data& pd, e_changestate_pet da
 			value = pd.vd.look[LOOK_HEAD_BOTTOM];
 			break;
 		case CHANGESTATEPET_PERFORMANCE: {
-			int32 num;
+			int32 num = 0;
+			int32 randnum = 1;
 
 			// data = 1~3: normal, 4: special
 			if (pd.pet.intimate > PET_INTIMATE_LOYAL)
-				num = pd.get_pet_db()->s_perfor ? 4 : 3;
-			else if (pd.pet.intimate > PET_INTIMATE_CORDIAL) //TODO: this is way too high
-				num = 2;
+				num = pd.get_pet_db()->s_perfor;
+			else if (pd.pet.intimate > PET_INTIMATE_SHY)
+				num = min(pd.get_pet_db()->s_perfor, 2);
 			else
-				num = 1;
+				num = min(pd.get_pet_db()->s_perfor, 1);
+			
+			if (pd.pet.intimate > PET_INTIMATE_NEUTRAL)
+				randnum = 4; //custom chance : just an inference based on experiment from official KRo
+			else if (pd.pet.intimate > PET_INTIMATE_SHY)
+				randnum = 3;
+			else if (pd.pet.intimate > PET_INTIMATE_AWKWARD)
+				randnum = 2;
 
-			value = rnd_value(1, num);
+			if ((pd.pet.intimate <= PET_INTIMATE_CORDIAL && rnd() % randnum < 1) || pd.pet.hungry <= PET_HUNGRY_HUNGRY)
+				return;
+			else
+				value = rnd_value(1, num);
 			break;
 		}
 		case CHANGESTATEPET_HAIRSTYLE:
@@ -10899,8 +10904,8 @@ void clif_parse_LoadEndAck(int32 fd,map_session_data *sd)
 				sc_start(sd,sd, SC_KNOWLEDGE, 100, lv, skill_get_time(SG_KNOWLEDGE, lv));
 		}
 
-		if(sd->pd && sd->pd->pet.intimate > 900)
-			clif_pet_emotion( *sd->pd, (sd->pd->pet.class_ - 100)*100 + 50 + pet_hungry_val(sd->pd) );
+		if(sd->pd && sd->pd->pet.intimate >= 900 && battle_config.pet_greeting) //In KRo, pets no longer greet user. Just leave this for the legacy [eppc0330]
+			clif_pet_emotion(*sd->pd, sd->pd->pet.class_ * 1000 + battle_config.pet_greeting_type * 100 + pet_hungry_val(sd->pd) * 10);
 
 		if(hom_is_active(sd->hd))
 			hom_init_timers(sd->hd);

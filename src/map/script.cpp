@@ -11114,7 +11114,7 @@ BUILDIN_FUNC(makepet)
 
 	std::shared_ptr<s_mob_db> mdb = mob_db.find(pet->class_);
 
-	intif_create_pet( sd->status.account_id, sd->status.char_id, pet->class_, mdb->lv, pet->EggID, 0, pet->intimate, 100, 0, 1, mdb->jname.c_str() );
+	intif_create_pet( sd->status.account_id, sd->status.char_id, pet->class_, mdb->lv, pet->EggID, 0, pet->intimate, 25, 0, 1, mdb->jname.c_str() );
 
 	return SCRIPT_CMD_SUCCESS;
 }
