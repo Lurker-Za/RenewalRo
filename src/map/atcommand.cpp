@@ -11263,7 +11263,7 @@ ACMD_FUNC(setcard)
 		clif_displaymessage(fd, atcmd_output);
 		return -1;
 	}
-	if (position < EQP_HEAD_LOW || position > EQP_HEAD_MID) {
+	if (position < EQP_HEAD_LOW || position > EQP_COSTUME_GARMENT) {
 		clif_displaymessage(fd, msg_txt(sd,1531)); // Invalid position.
 		return -1;
 	}
