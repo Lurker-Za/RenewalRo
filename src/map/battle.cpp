@@ -48,6 +48,7 @@ static struct eri *delay_damage_ers; //For battle delay damage structures.
 int32 battle_get_weapon_element(struct Damage *wd, block_list *src, block_list *target, uint16 skill_id, uint16 skill_lv, int16 weapon_position, bool calc_for_damage_only);
 int32 battle_get_magic_element(block_list* src, block_list* target, uint16 skill_id, uint16 skill_lv, int32 mflag);
 int32 battle_get_misc_element(block_list* src, block_list* target, uint16 skill_id, uint16 skill_lv, int32 mflag);
+int32 battle_calc_defense(struct Damage* wd, block_list* src, block_list* target, uint16 skill_id, uint16 skill_lv, int type);
 static void battle_calc_defense_reduction(struct Damage* wd, block_list* src, block_list* target, uint16 skill_id, uint16 skill_lv);
 
 /**
@@ -3167,19 +3168,17 @@ static int32 is_attack_piercing(struct Damage* wd, block_list *src, block_list *
 				sd->right_weapon.def_ratio_atk_race & (1<<tstatus->race) || sd->right_weapon.def_ratio_atk_race & (1<<RC_ALL) ||
 				sd->right_weapon.def_ratio_atk_class & (1<<tstatus->class_) || sd->right_weapon.def_ratio_atk_class & (1<<CLASS_ALL))
 			)
-				if (weapon_position == EQI_HAND_R)
-					return 1;
+				return 1; //Affects both hands, no matter which hand has the option
 
 			if(sd && (sd->left_weapon.def_ratio_atk_ele & (1<<tstatus->def_ele) || sd->left_weapon.def_ratio_atk_ele & (1<<ELE_ALL) ||
 				sd->left_weapon.def_ratio_atk_race & (1<<tstatus->race) || sd->left_weapon.def_ratio_atk_race & (1<<RC_ALL) ||
 				sd->left_weapon.def_ratio_atk_class & (1<<tstatus->class_) || sd->left_weapon.def_ratio_atk_class & (1<<CLASS_ALL))
 			)
 			{ //Pass effect onto right hand if configured so. [Skotlex]
-				if (battle_config.left_cardfix_to_right && is_attack_right_handed(src, skill_id)){
-					if (weapon_position == EQI_HAND_R)
-						return 1;
+				if (battle_config.left_cardfix_to_right){
+					return 1; //Affects both hands, no matter which hand has the option
 				}
-				else if (weapon_position == EQI_HAND_L)
+				else if (weapon_position == EQI_HAND_L && !is_attack_right_handed(src, skill_id))
 					return 1;
 			}
 		}
@@ -3435,17 +3434,15 @@ static bool attack_ignores_def(struct Damage* wd, block_list *src, block_list *t
 		if (sd && (sd->right_weapon.ignore_def_ele & (1<<tstatus->def_ele) || sd->right_weapon.ignore_def_ele & (1<<ELE_ALL) ||
 			sd->right_weapon.ignore_def_race & (1<<tstatus->race) || sd->right_weapon.ignore_def_race & (1<<RC_ALL) ||
 			sd->right_weapon.ignore_def_class & (1<<tstatus->class_) || sd->right_weapon.ignore_def_class & (1<<CLASS_ALL)))
-			if (weapon_position == EQI_HAND_R)
-				return true;
+			return true; //Affects both hands, no matter which hand has the option
 
 		if (sd && (sd->left_weapon.ignore_def_ele & (1<<tstatus->def_ele) || sd->left_weapon.ignore_def_ele & (1<<ELE_ALL) ||
 			sd->left_weapon.ignore_def_race & (1<<tstatus->race) || sd->left_weapon.ignore_def_race & (1<<RC_ALL) ||
 			sd->left_weapon.ignore_def_class & (1<<tstatus->class_) || sd->left_weapon.ignore_def_class & (1<<CLASS_ALL)))
 		{
-			if(battle_config.left_cardfix_to_right && is_attack_right_handed(src, skill_id)) {//Move effect to right hand. [Skotlex]
-				if (weapon_position == EQI_HAND_R)
-					return true;
-			} else if (weapon_position == EQI_HAND_L)
+			if(battle_config.left_cardfix_to_right) {//Move effect to right hand. [Skotlex]
+				return true; //Affects both hands, no matter which hand has the option
+			} else if (weapon_position == EQI_HAND_L && !is_attack_right_handed(src, skill_id))
 				return true;
 		}
 	}
@@ -3518,6 +3515,146 @@ static int32 battle_calc_equip_attack(block_list *src, int32 skill_id)
 	return 0; // shouldn't happen but just in case
 }
 #endif
+
+/*====================================
+ * Calculate defense
+ *------------------------------------
+ */
+int32 battle_calc_defense(struct Damage* wd, block_list* src, block_list* target, uint16 skill_id, uint16 skill_lv, int type) {
+	
+	if (attack_ignores_def(wd, src, target, skill_id, skill_lv, EQI_HAND_L) || attack_ignores_def(wd, src, target, skill_id, skill_lv, EQI_HAND_R))
+		return 0;
+
+	map_session_data *sd = BL_CAST(BL_PC, src);
+	map_session_data *tsd = BL_CAST(BL_PC, target);
+	status_change *sc = status_get_sc(src);
+	status_change *tsc = status_get_sc(target);
+	status_data* sstatus = status_get_status_data(*src);
+	status_data* tstatus = status_get_status_data(*target);
+
+	//Defense reduction
+	int16 vit_def;
+	defType def1 = status_get_def(target); //Don't use tstatus->def1 due to skill timer reductions.
+	int16 def2 = tstatus->def2;
+
+	if (sd) {
+		int32 i = sd->indexed_bonus.ignore_def_by_race[tstatus->race] + sd->indexed_bonus.ignore_def_by_race[RC_ALL];
+		i += sd->indexed_bonus.ignore_def_by_class[tstatus->class_] + sd->indexed_bonus.ignore_def_by_class[CLASS_ALL];
+		if (i) {
+			i = min(i,100); //cap it to 100 for 0 def min
+			def1 -= def1 * i / 100;
+			def2 -= def2 * i / 100;
+		}
+
+		//Kagerou/Oboro Earth Charm effect +10% eDEF
+		if(sd->spiritcharm_type == CHARM_TYPE_LAND && sd->spiritcharm > 0) {
+			int16 si = 10 * sd->spiritcharm;
+			def1 = (def1 * (100 + si)) / 100;
+		}
+	}
+
+	if (sc && sc->getSCE(SC_EXPIATIO)) {
+		int16 i = 5 * sc->getSCE(SC_EXPIATIO)->val1; // 5% per level
+
+		i = min(i,100); //cap it to 100 for 0 def min
+		def1 = (def1*(100-i))/100;
+		def2 = (def2*(100-i))/100;
+	}
+
+	if (tsc) {
+		if (tsc->getSCE(SC_FORCEOFVANGUARD)) {
+			int16 i = 2 * tsc->getSCE(SC_FORCEOFVANGUARD)->val1;
+
+			def1 = (def1 * (100 + i)) / 100;
+		}
+
+		if( tsc->getSCE(SC_CAMOUFLAGE) ){
+			int16 i = 5 * tsc->getSCE(SC_CAMOUFLAGE)->val3; //5% per second
+
+			i = min(i,100); //cap it to 100 for 0 def min
+			def1 = (def1*(100-i))/100;
+			def2 = (def2*(100-i))/100;
+		}
+
+		if (tsc->getSCE(SC_GT_REVITALIZE))
+			def1 += tsc->getSCE(SC_GT_REVITALIZE)->val4;
+
+		if (tsc->getSCE(SC_OVERED_BOOST) && target->type == BL_PC)
+			def1 = (def1 * tsc->getSCE(SC_OVERED_BOOST)->val4) / 100;
+	}
+
+	if( battle_config.vit_penalty_type && battle_config.vit_penalty_target&target->type ) {
+		unsigned char target_count; //256 max targets should be a sane max
+
+		//Official servers limit the count to 22 targets
+		target_count = min(unit_counttargeted(target), (100 / battle_config.vit_penalty_num) + (battle_config.vit_penalty_count - 1));
+		if(target_count >= battle_config.vit_penalty_count) {
+			if(battle_config.vit_penalty_type == 1) {
+				if( !tsc || !tsc->getSCE(SC_STEELBODY) )
+					def1 = (def1 * (100 - (target_count - (battle_config.vit_penalty_count - 1))*battle_config.vit_penalty_num))/100;
+				def2 = (def2 * (100 - (target_count - (battle_config.vit_penalty_count - 1))*battle_config.vit_penalty_num))/100;
+			} else { //Assume type 2
+				if( !tsc || !tsc->getSCE(SC_STEELBODY) )
+					def1 -= (target_count - (battle_config.vit_penalty_count - 1))*battle_config.vit_penalty_num;
+				def2 -= (target_count - (battle_config.vit_penalty_count - 1))*battle_config.vit_penalty_num;
+			}
+		}
+		if(def2 < 1)
+			def2 = 1;
+	}
+
+#ifdef RENEWAL
+	if (skill_id == AM_ACIDTERROR)
+		def2 = 0; // Ignore only status defense.
+#endif
+
+	//Damage reduction based on vitality
+	if (tsd) {	//Sd vit-eq
+		int32 skill;
+#ifndef RENEWAL
+		//Damage reduction: [VIT*0.3] + RND(0, [VIT^2/150] - [VIT*0.3] - 1) + [VIT*0.5]
+		vit_def = ((3 * def2) / 10);
+		vit_def += rnd_value(0, max(0, (def2 * def2) / 150 - ((3 * def2) / 10) - 1));
+		vit_def += (def2 / 2);
+#else
+		vit_def = def2;
+#endif
+		if (src->type == BL_MOB && (battle_check_undead(sstatus->race, sstatus->def_ele) || sstatus->race == RC_DEMON) && //This bonus already doesn't work vs players
+			(skill = pc_checkskill(tsd, AL_DP)) > 0)
+			vit_def += (int32)(((float)tsd->status.base_level / 25.0 + 3.0) * skill + 0.5);
+		if( src->type == BL_MOB && (skill=pc_checkskill(tsd,RA_RANGERMAIN))>0 &&
+			(sstatus->race == RC_BRUTE || sstatus->race == RC_PLAYER_DORAM || sstatus->race == RC_FISH || sstatus->race == RC_PLANT) )
+			vit_def += skill*5;
+		if( src->type == BL_MOB && (skill = pc_checkskill(tsd, NC_RESEARCHFE)) > 0 &&
+			(sstatus->def_ele == ELE_FIRE || sstatus->def_ele == ELE_EARTH) )
+			vit_def += skill * 10;
+	} else { //Mob-Pet vit-eq
+#ifndef RENEWAL
+		//VIT + rnd(0,[VIT/20]^2-1)
+		if (tsc && tsc->getSCE(SC_SKA))
+			vit_def = 90; //Eska sets the random part of the formula to 90
+		else
+			vit_def = (def2 / 20) * (def2 / 20);
+		vit_def = def2 + (vit_def>0?rnd()%vit_def:0);
+#else
+		//SoftDEF of monsters is floor((BaseLevel+Vit)/2)
+		vit_def = def2;
+#endif
+	}
+
+	if (battle_config.weapon_defense_type) {
+		vit_def += def1*battle_config.weapon_defense_type;
+		def1 = 0;
+	}
+
+	if (type == 1)
+		return def1;
+	else if (type == 2)
+		return def2;
+	else
+		return vit_def;
+
+}
 
 /*========================================
  * Returns the element type of attack
@@ -6984,119 +7121,9 @@ static void battle_calc_defense_reduction(struct Damage* wd, block_list *src,blo
 	status_data* tstatus = status_get_status_data(*target);
 
 	//Defense reduction
-	int16 vit_def;
-	defType def1 = status_get_def(target); //Don't use tstatus->def1 due to skill timer reductions.
-	int16 def2 = tstatus->def2;
-
-	if (sd) {
-		int32 i = sd->indexed_bonus.ignore_def_by_race[tstatus->race] + sd->indexed_bonus.ignore_def_by_race[RC_ALL];
-		i += sd->indexed_bonus.ignore_def_by_class[tstatus->class_] + sd->indexed_bonus.ignore_def_by_class[CLASS_ALL];
-		if (i) {
-			i = min(i,100); //cap it to 100 for 0 def min
-			def1 -= def1 * i / 100;
-			def2 -= def2 * i / 100;
-		}
-
-		//Kagerou/Oboro Earth Charm effect +10% eDEF
-		if(sd->spiritcharm_type == CHARM_TYPE_LAND && sd->spiritcharm > 0) {
-			int16 si = 10 * sd->spiritcharm;
-			def1 = (def1 * (100 + si)) / 100;
-		}
-	}
-
-	if (sc && sc->getSCE(SC_EXPIATIO)) {
-		int16 i = 5 * sc->getSCE(SC_EXPIATIO)->val1; // 5% per level
-
-		i = min(i,100); //cap it to 100 for 0 def min
-		def1 = (def1*(100-i))/100;
-		def2 = (def2*(100-i))/100;
-	}
-
-	if (tsc) {
-		if (tsc->getSCE(SC_FORCEOFVANGUARD)) {
-			int16 i = 2 * tsc->getSCE(SC_FORCEOFVANGUARD)->val1;
-
-			def1 = (def1 * (100 + i)) / 100;
-		}
-
-		if( tsc->getSCE(SC_CAMOUFLAGE) ){
-			int16 i = 5 * tsc->getSCE(SC_CAMOUFLAGE)->val3; //5% per second
-
-			i = min(i,100); //cap it to 100 for 0 def min
-			def1 = (def1*(100-i))/100;
-			def2 = (def2*(100-i))/100;
-		}
-
-		if (tsc->getSCE(SC_GT_REVITALIZE))
-			def1 += tsc->getSCE(SC_GT_REVITALIZE)->val4;
-
-		if (tsc->getSCE(SC_OVERED_BOOST) && target->type == BL_PC)
-			def1 = (def1 * tsc->getSCE(SC_OVERED_BOOST)->val4) / 100;
-	}
-
-	if( battle_config.vit_penalty_type && battle_config.vit_penalty_target&target->type ) {
-		unsigned char target_count; //256 max targets should be a sane max
-
-		//Official servers limit the count to 22 targets
-		target_count = min(unit_counttargeted(target), (100 / battle_config.vit_penalty_num) + (battle_config.vit_penalty_count - 1));
-		if(target_count >= battle_config.vit_penalty_count) {
-			if(battle_config.vit_penalty_type == 1) {
-				if( !tsc || !tsc->getSCE(SC_STEELBODY) )
-					def1 = (def1 * (100 - (target_count - (battle_config.vit_penalty_count - 1))*battle_config.vit_penalty_num))/100;
-				def2 = (def2 * (100 - (target_count - (battle_config.vit_penalty_count - 1))*battle_config.vit_penalty_num))/100;
-			} else { //Assume type 2
-				if( !tsc || !tsc->getSCE(SC_STEELBODY) )
-					def1 -= (target_count - (battle_config.vit_penalty_count - 1))*battle_config.vit_penalty_num;
-				def2 -= (target_count - (battle_config.vit_penalty_count - 1))*battle_config.vit_penalty_num;
-			}
-		}
-		if(def2 < 1)
-			def2 = 1;
-	}
-
-#ifdef RENEWAL
-	if (skill_id == AM_ACIDTERROR)
-		def2 = 0; // Ignore only status defense.
-#endif
-
-	//Damage reduction based on vitality
-	if (tsd) {	//Sd vit-eq
-		int32 skill;
-#ifndef RENEWAL
-		//Damage reduction: [VIT*0.3] + RND(0, [VIT^2/150] - [VIT*0.3] - 1) + [VIT*0.5]
-		vit_def = ((3 * def2) / 10);
-		vit_def += rnd_value(0, max(0, (def2 * def2) / 150 - ((3 * def2) / 10) - 1));
-		vit_def += (def2 / 2);
-#else
-		vit_def = def2;
-#endif
-		if (src->type == BL_MOB && (battle_check_undead(sstatus->race, sstatus->def_ele) || sstatus->race == RC_DEMON) && //This bonus already doesn't work vs players
-			(skill = pc_checkskill(tsd, AL_DP)) > 0)
-			vit_def += (int32)(((float)tsd->status.base_level / 25.0 + 3.0) * skill + 0.5);
-		if( src->type == BL_MOB && (skill=pc_checkskill(tsd,RA_RANGERMAIN))>0 &&
-			(sstatus->race == RC_BRUTE || sstatus->race == RC_PLAYER_DORAM || sstatus->race == RC_FISH || sstatus->race == RC_PLANT) )
-			vit_def += skill*5;
-		if( src->type == BL_MOB && (skill = pc_checkskill(tsd, NC_RESEARCHFE)) > 0 &&
-			(sstatus->def_ele == ELE_FIRE || sstatus->def_ele == ELE_EARTH) )
-			vit_def += skill * 10;
-	} else { //Mob-Pet vit-eq
-#ifndef RENEWAL
-		//VIT + rnd(0,[VIT/20]^2-1)
-		if (tsc && tsc->getSCE(SC_SKA))
-			vit_def = 90; //Eska sets the random part of the formula to 90
-		else
-			vit_def = (def2 / 20) * (def2 / 20);
-		vit_def = def2 + (vit_def>0?rnd()%vit_def:0);
-#else
-		//SoftDEF of monsters is floor((BaseLevel+Vit)/2)
-		vit_def = def2;
-#endif
-	}
-
-	if (battle_config.weapon_defense_type) {
-		vit_def += def1*battle_config.weapon_defense_type;
-		def1 = 0;
-	}
+	int16 vit_def = battle_calc_defense(wd, src, target, skill_id, skill_lv, 0);
+	defType def1 = battle_calc_defense(wd, src, target, skill_id, skill_lv, 1);
+	int16 def2 = battle_calc_defense(wd, src, target, skill_id, skill_lv, 2);
 
 #ifdef RENEWAL
 	std::bitset<NK_MAX> nk = battle_skill_get_damage_properties(skill_id, wd->miscflag);
@@ -7116,13 +7143,9 @@ static void battle_calc_defense_reduction(struct Damage* wd, block_list *src,blo
 		 */
 		if (def1 == -400) /* -400 creates a division by 0 and subsequently crashes */
 			def1 = -399;
-		ATK_ADD2(wd->damage, wd->damage2,
-			is_attack_piercing(wd, src, target, skill_id, skill_lv, EQI_HAND_R) ? (def1 * battle_calc_attack_skill_ratio(wd, src, target, skill_id, skill_lv)) / 200 : 0,
-			is_attack_piercing(wd, src, target, skill_id, skill_lv, EQI_HAND_L) ? (def1 * battle_calc_attack_skill_ratio(wd, src, target, skill_id, skill_lv)) / 200 : 0
-		);
-		if (!attack_ignores_def(wd, src, target, skill_id, skill_lv, EQI_HAND_R) && !is_attack_piercing(wd, src, target, skill_id, skill_lv, EQI_HAND_R))
+		if (!is_attack_piercing(wd, src, target, skill_id, skill_lv, EQI_HAND_R))
 			wd->damage = wd->damage * (4000 + def1) / (4000 + 10 * def1) - vit_def;
-		if (is_attack_left_handed(src, skill_id) && !attack_ignores_def(wd, src, target, skill_id, skill_lv, EQI_HAND_L) && !is_attack_piercing(wd, src, target, skill_id, skill_lv, EQI_HAND_L))
+		if (!is_attack_piercing(wd, src, target, skill_id, skill_lv, EQI_HAND_L) && is_attack_left_handed(src, skill_id))
 			wd->damage2 = wd->damage2 * (4000 + def1) / (4000 + 10 * def1) - vit_def;
 	}
 #else
@@ -7916,6 +7939,15 @@ static struct Damage battle_calc_weapon_attack(block_list *src, block_list *targ
 			}
 		}
 
+#ifdef RENEWAL
+		int def1 = battle_calc_defense(&wd, src, target, skill_id, skill_lv, 1);
+
+		if (is_attack_piercing(&wd, src, target, skill_id, skill_lv, EQI_HAND_R) ||
+			is_attack_piercing(&wd, src, target, skill_id, skill_lv, EQI_HAND_L)) {
+			ATK_ADD(wd.equipAtk, wd.equipAtk2, def1 / 2);
+		}
+#endif
+
 		// final attack bonuses that aren't affected by cards
 		battle_attack_sc_bonus(&wd, src, target, skill_id, skill_lv);
 
@@ -8010,10 +8042,7 @@ static struct Damage battle_calc_weapon_attack(block_list *src, block_list *targ
 #endif
 
 		if (wd.damage + wd.damage2) {
-#ifdef RENEWAL
-			// Check if attack ignores DEF (in pre-renewal we need to update base damage even when the skill ignores DEF)
-			if(!attack_ignores_def(&wd, src, target, skill_id, skill_lv, EQI_HAND_L) || !attack_ignores_def(&wd, src, target, skill_id, skill_lv, EQI_HAND_R))
-#else
+#ifndef RENEWAL
 			// Shield Boomerang and Rapid Smiting already calculated the defense before the skill ratio was applied
 			if(skill_id != PA_SHIELDCHAIN && skill_id != CR_SHIELDBOOMERANG)
 #endif
