@@ -2479,7 +2479,8 @@ int32 unit_skilluse_id2(block_list *src, int32 target_id, uint16 skill_id, uint1
 #endif
 
 	// In official this is triggered even if no cast time.
-	clif_skillcasting(*src, target, 0,0, skill_id, skill_lv, static_cast<e_element>(skill_get_ele(skill_id, skill_lv)), casttime);
+	if (skill_id != ALL_EQSWITCH)
+		clif_skillcasting(*src, target, 0,0, skill_id, skill_lv, static_cast<e_element>(skill_get_ele(skill_id, skill_lv)), casttime);
 
 	if (sd != nullptr && target->type == BL_MOB
 #ifndef RENEWAL

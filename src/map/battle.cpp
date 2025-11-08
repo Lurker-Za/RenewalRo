@@ -7768,9 +7768,7 @@ void battle_do_reflect(int32 attack_type, struct Damage *wd, block_list* src, bl
 
 			if (sc && sc->getSCE(SC_VITALITYACTIVATION))
 				rdamage /= 2;
-			if( attack_type == BF_WEAPON && tsc->getSCE(SC_REFLECTDAMAGE) ) // Don't reflect your own damage (Grand Cross)
-				map_foreachinshootrange(battle_damage_area,target,skill_get_splash(LG_REFLECTDAMAGE,1),BL_CHAR,tick,target,wd->amotion,sstatus->dmotion,rdamage,wd->flag);
-			else if( attack_type == BF_WEAPON || attack_type == BF_MISC) {
+			if( attack_type == BF_WEAPON || attack_type == BF_MISC) {
 				clif_damage(*src, (d_bl == nullptr) ? *src : *d_bl, tick, wd->amotion, sstatus->dmotion, rdamage, 1, DMG_ENDURE, 0, false);
 				if( tsd )
 					battle_drain(tsd, src, rdamage, rdamage, sstatus->race, sstatus->class_);
@@ -10862,10 +10860,10 @@ enum damage_lv battle_weapon_attack(block_list* src, block_list* target, t_tick 
 			uint16 duple_rate = 10 + 2 * sc->getSCE(SC_DUPLELIGHT)->val1;
 
 			if (rand() % 100 < duple_rate)
-				skill_castend_damage_id(src, target, AB_DUPLELIGHT_MELEE, sc->getSCE(SC_DUPLELIGHT)->val1, tick, flag | SD_LEVEL);
+				skill_castend_damage_id(src, target, AB_DUPLELIGHT_MELEE, sc->getSCE(SC_DUPLELIGHT)->val1, tick, flag);
 
 			if (rand() % 100 < duple_rate)
-				skill_castend_damage_id(src, target, AB_DUPLELIGHT_MAGIC, sc->getSCE(SC_DUPLELIGHT)->val1, tick, flag | SD_LEVEL);
+				skill_castend_damage_id(src, target, AB_DUPLELIGHT_MAGIC, sc->getSCE(SC_DUPLELIGHT)->val1, tick, flag);
 		}
 	}
 
@@ -11075,7 +11073,7 @@ enum damage_lv battle_weapon_attack(block_list* src, block_list* target, t_tick 
 			}
 
 			// TODO: Whats the official success chance? Is SP consumed for every autocast? [Rytech]
-			if( sc->getSCE(SC_DUPLELIGHT) && pc_checkskill(sd, CD_PETITIO) > 0 && rnd() % 100 < 20 ){
+			if( sc->getSCE(SC_DUPLELIGHT) && pc_checkskill(sd, CD_PETITIO) > 0 && rnd() % 100 < 10 ){
 				uint16 skill_id = CD_PETITIO;
 				uint16 skill_lv = pc_checkskill( sd, CD_PETITIO );
 
@@ -11085,7 +11083,7 @@ enum damage_lv battle_weapon_attack(block_list* src, block_list* target, t_tick 
 				sd->state.autocast = 0;
 			}
 
-			if( sc->getSCE(SC_ABYSSFORCEWEAPON) && sd->abyssball > 0 && rnd_chance( 25, 100 ) ){
+			if( sc->getSCE(SC_ABYSSFORCEWEAPON) && sd->abyssball > 0 && rnd_chance( 5 * sc->getSCE( SC_ABYSSFORCEWEAPON )->val1, 100 ) ){ 
 				uint16 skill_id = ABC_FROM_THE_ABYSS_ATK;
 				uint16 skill_lv = sc->getSCE(SC_ABYSSFORCEWEAPON)->val1;
 
@@ -11098,7 +11096,7 @@ enum damage_lv battle_weapon_attack(block_list* src, block_list* target, t_tick 
 
 			// It has a success chance of triggering even tho the description says nothing about it.
 			// TODO: Need to find out what the official success chance is. [Rytech]
-			if( sc->getSCE(SC_ABYSSFORCEWEAPON) && rnd() % 100 < 20 ){
+			if( sc->getSCE(SC_ABYSSFORCEWEAPON) && rnd() % 100 < 10 ){
 				uint16 skill_id = ABC_ABYSS_SQUARE;
 				uint16 skill_lv = pc_checkskill(sd, ABC_ABYSS_SQUARE);
 
@@ -12345,7 +12343,7 @@ static const struct _battle_data {
 	{ "macro_detection_punishment_time",    &battle_config.macro_detection_punishment_time, 0,      0,      INT_MAX,        },
 	{ "macrochecker_delay",                 &battle_config.macrochecker_delay,              600000, 0,      INT_MAX,        },
 
-	{ "feature.dynamicnpc_timeout",         &battle_config.feature_dynamicnpc_timeout,      1000,   60000,  INT_MAX,        },
+	{ "feature.dynamicnpc_timeout",         &battle_config.feature_dynamicnpc_timeout,      60000,  1000,	INT_MAX,        },
 	{ "feature.dynamicnpc_rangex",          &battle_config.feature_dynamicnpc_rangex,       2,      0,      INT_MAX,        },
 	{ "feature.dynamicnpc_rangey",          &battle_config.feature_dynamicnpc_rangey,       2,      0,      INT_MAX,        },
 	{ "feature.dynamicnpc_direction",       &battle_config.feature_dynamicnpc_direction,    0,      0,      1,              },

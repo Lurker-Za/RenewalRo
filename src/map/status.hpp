@@ -78,8 +78,8 @@ enum e_refine_type : uint16{
 /// Refine cost type
 enum e_refine_cost_type : uint16{
 	REFINE_COST_NORMAL = 0,
-	REFINE_COST_HD,
 	REFINE_COST_ENRICHED,
+	REFINE_COST_HD,
 	REFINE_COST_MAX
 };
 
