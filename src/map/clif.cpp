@@ -8274,7 +8274,7 @@ void clif_send_petdata( map_session_data* sd, pet_data& pd, e_changestate_pet da
 			else if (pd.pet.intimate > PET_INTIMATE_AWKWARD)
 				randnum = 2;
 
-			if ((pd.pet.intimate <= PET_INTIMATE_CORDIAL && rnd() % randnum < 1) || pd.pet.hungry <= PET_HUNGRY_HUNGRY)
+			if ((pd.pet.intimate <= PET_INTIMATE_CORDIAL && rnd() % randnum < 1) || pd.pet.hungry <= PET_HUNGRY_HUNGRY || num == 0)
 				return;
 			else
 				value = rnd_value(1, num);

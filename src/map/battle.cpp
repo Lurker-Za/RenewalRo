@@ -12262,7 +12262,7 @@ static const struct _battle_data {
 	{ "autoloot_adjust",                    &battle_config.autoloot_adjust,                 0,      0,      1,              },
 	{ "feature.petevolution",               &battle_config.feature_petevolution,            1,      0,      1,              },
 	{ "feature.petautofeed",                &battle_config.feature_pet_autofeed,            1,      0,      1,              },
-	{ "feature.pet_autofeed_rate",          &battle_config.feature_pet_autofeed_rate,      89,      0,    100,              },
+	{ "feature.pet_autofeed_rate",          &battle_config.feature_pet_autofeed_rate,      25,      0,    100,              },
 	{ "pet_autofeed_always",                &battle_config.pet_autofeed_always,             1,      0,      1,              },
 	{ "broadcast_hide_name",                &battle_config.broadcast_hide_name,             2,      0,      NAME_LENGTH,    },
 	{ "skill_drop_items_full",              &battle_config.skill_drop_items_full,           0,      0,      1,              },
@@ -12376,7 +12376,7 @@ static const struct _battle_data {
 	{ "major_overweight_rate",              &battle_config.major_overweight_rate,           90,     0,      100             },
 	{ "trade_count_stackable",              &battle_config.trade_count_stackable,           1,      0,      1,              },
 	{ "enable_bonus_map_drops",             &battle_config.enable_bonus_map_drops,          1,      0,      1,              },
-	{ "pet_greeting",						&battle_config.pet_greeting,					1,      0,      1,              },
+	{ "pet_greeting",						&battle_config.pet_greeting,					0,      0,      1,              },
 	{ "pet_greeting_type",					&battle_config.pet_greeting_type,				4,		0,      9,				},
 
 	{ "feature.goldpc_active",              &battle_config.feature_goldpc_active,           1,      0,      1,              },

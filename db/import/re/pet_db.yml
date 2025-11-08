@@ -2588,6 +2588,7 @@ Body:
     IntimacyFed: 15   # unknow
     CaptureRate: 0   # unknown
     SpecialPerformance: 3
+    AllowAutoFeed: true
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
       
@@ -2612,6 +2613,7 @@ Body:
     IntimacyFed: 15   # unknow
     CaptureRate: 0   # unknown
     SpecialPerformance: 1
+    AllowAutoFeed: true
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
       
@@ -2666,6 +2668,17 @@ Body:
       else if (.@i >= PET_INTIMATE_CORDIAL) {
          bonus bAspdRate,1;
       }
+    Evolution:
+      - Target: C_TOWER_MANAGER2
+        ItemRequirements:
+          - Item: Burnt_Parts
+            Amount: 100
+          - Item: Needle_Of_Alarm
+            Amount: 200
+          - Item: Screw
+            Amount: 300
+          - Item: Clock_Card
+            Amount: 10
   - Mob: C_TOWER_MANAGER2
     EggItem: aegis_9169
     FoodItem: Pet_Food
@@ -2674,6 +2687,7 @@ Body:
     IntimacyFed: 15   # unknow
     CaptureRate: 0   # unknown
     SpecialPerformance: 0
+    AllowAutoFeed: true
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
       
@@ -2692,6 +2706,17 @@ Body:
       else if (.@i >= PET_INTIMATE_AWKWARD || .@i >= PET_INTIMATE_SHY) {
          bonus bAspdRate,1;
       }
+    Evolution:
+      - Target: TIMEHOLDER3
+        ItemRequirements:
+          - Item: Big_Ben_Card
+            Amount: 10
+          - Item: Big_Bell_Card
+            Amount: 10
+          - Item: Neo_Punk_Card
+            Amount: 10
+          - Item: Mightysoul_Essence
+            Amount: 30
   - Mob: SKEGGIOLD
     EggItem: Skeggiold_Egg
     FoodItem: Morning_Dew
@@ -2711,6 +2736,17 @@ Body:
          bonus bVariableCastrate,-1;
          bonus2 bMagicAtkEle,Ele_Holy,1;
       }
+    Evolution:
+      - Target: ANGELGOLT3
+        ItemRequirements:
+          - Item: Angel_Dream
+            Amount: 50
+          - Item: Soft_Feather
+            Amount: 100
+          - Item: Rune_Of_Darkness
+            Amount: 100
+          - Item: Skeggiold_Card
+            Amount: 10
   - Mob: ANGELGOLT3
     EggItem: aegis_9170
     FoodItem: Pet_Food
@@ -2719,6 +2755,7 @@ Body:
     IntimacyFed: 15   # unknow
     CaptureRate: 0   # unknown
     SpecialPerformance: 0
+    AllowAutoFeed: true
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
       
@@ -2744,6 +2781,7 @@ Body:
     IntimacyFed: 15   # unknow
     CaptureRate: 0   # unknown
     SpecialPerformance: 3
+    AllowAutoFeed: true
     Script: >
       .@i = getpetinfo(PETINFO_INTIMATE);
       
