@@ -23736,9 +23736,48 @@ BUILDIN_FUNC(vip_time) {
 #ifdef VIP_ENABLE //would be a pain for scripting npc otherwise
 	TBL_PC *sd;
 	int32 viptime = script_getnum(st, 2) * 60; // Convert since it's given in minutes.
+	int32 year,month,day,hour,minute,second;
+	char days[10], hours[10], minutes[10];
+	char words[CHAT_SIZE_MAX];
+	char e_msg[CHAT_SIZE_MAX];
 
 	if( !script_nick2sd(3,sd) )
 		return SCRIPT_CMD_FAILURE;
+
+	time_t now = time(nullptr);
+
+	if (sd->vip.time == 0) {
+		sd->vip.time = now;
+		clif_displaymessage(sd->fd, msg_txt(sd, 705));
+	}
+
+	sd->vip.time += viptime; //increase or reduce VIP duration
+		
+	memset(words, 0, sizeof(words));
+
+	split_time((int32)(viptime),&year,&month,&day,&hour,&minute,&second);
+	sscanf(msg_txt(sd, 707), "%s / %s / %s", days, hours, minutes);
+
+	if (day > 0)
+	    snprintf(words + strlen(words), sizeof(words) - strlen(words), "%d%s", day, days);
+
+	if (hour > 0) {
+		snprintf(words + strlen(words), sizeof(words) - strlen(words), " ");
+		snprintf(words + strlen(words), sizeof(words) - strlen(words), "%d%s", hour, hours);
+	}
+
+	if (minute > 0) {
+		snprintf(words + strlen(words), sizeof(words) - strlen(words), " ");
+		snprintf(words + strlen(words), sizeof(words) - strlen(words), "%d%s", minute, minutes);
+	}
+	
+	if (sd->vip.time <= now) {
+		clif_displaymessage(sd->fd, msg_txt(sd, 438));
+	} else {
+
+		sprintf(e_msg, msg_txt(sd, 705), words); // Your VIP status has been started.
+		clif_displaymessage(sd->fd, e_msg);
+	}
 
 	chrif_req_login_operation(sd->status.account_id, sd->status.name, CHRIF_OP_LOGIN_VIP, viptime, 7, 0); 
 #endif

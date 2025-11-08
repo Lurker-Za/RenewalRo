@@ -10591,15 +10591,33 @@ ACMD_FUNC(vip) {
 	} else {
 		int32 year,month,day,hour,minute,second;
 		char timestr[21];
+		char days[10], hours[10], minutes[10];
+		char words[CHAT_SIZE_MAX];
 		
-		split_time((int32)(pl_sd->vip.time-now),&year,&month,&day,&hour,&minute,&second);
-		sprintf(atcmd_output,msg_txt(pl_sd,705),year,month,day,hour,minute,second); // Your VIP status is valid for %d years, %d months, %d days, %d hours, %d minutes and %d seconds.
-		clif_displaymessage(pl_sd->fd,atcmd_output);
-		timestamp2string(timestr,20,pl_sd->vip.time,"%Y-%m-%d %H:%M:%S");
-		sprintf(atcmd_output,msg_txt(pl_sd,707),timestr); // You are VIP until: %s
-		clif_displaymessage(pl_sd->fd,atcmd_output);
+		memset(words, 0, sizeof(words));
+
+		split_time((int32)(vipdifftime),&year,&month,&day,&hour,&minute,&second);
+		sscanf(msg_txt(pl_sd, 707), "%s / %s / %s", days, hours, minutes);
+
+		if (day > 0)
+		    snprintf(words + strlen(words), sizeof(words) - strlen(words), "%d%s", day, days);
+
+		if (hour > 0) {
+			snprintf(words + strlen(words), sizeof(words) - strlen(words), " ");
+			snprintf(words + strlen(words), sizeof(words) - strlen(words), "%d%s", hour, hours);
+		}
+
+		if (minute > 0) {
+			snprintf(words + strlen(words), sizeof(words) - strlen(words), " ");
+			snprintf(words + strlen(words), sizeof(words) - strlen(words), "%d%s", minute, minutes);
+		}
+
+		sprintf(atcmd_output, msg_txt(pl_sd, 705), words); // Your VIP status has been started.
+		clif_displaymessage(pl_sd->fd, atcmd_output);
 
 		if (pl_sd != sd) {
+			split_time((int32)(pl_sd->vip.time - now), &year, &month, &day, &hour, &minute, &second);
+			timestamp2string(timestr, 20, pl_sd->vip.time, "%Y-%m-%d %H:%M:%S");
 			sprintf(atcmd_output,msg_txt(sd,706),pl_sd->status.name,year,month,day,hour,minute,second); // Player '%s' is now VIP for %d years, %d months, %d days, %d hours, %d minutes and %d seconds.
 			clif_displaymessage(fd,atcmd_output);
 			sprintf(atcmd_output,msg_txt(sd,708),timestr); // The player is now VIP until: %s
