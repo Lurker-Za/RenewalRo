@@ -1,0 +1,138 @@
+//===== rAthena Script ======================================= 
+//= Gym Pass Cash Item NPC
+//===== By: ================================================== 
+//= Kisuka
+//===== Current Version: ===================================== 
+//= 1.3
+//===== Compatible With: ===================================== 
+//= rAthena Project
+//===== Description: ========================================= 
+//= [Official Conversion]
+//= Exchange Gym Passes to learn "Enlarge Weight Limit"
+//= iRO NPC situated in Payon beside Kafra Shop.
+//===== Additional Comments: ================================= 
+//= 1.0 First version [L0ne_W0lf]
+//= 1.1 Fixed the NPC saying you "00" [L0ne_W0lf]
+//= 1.2 Replaced effect numerics with constants. [Samuray22]
+//= 1.3 Updated script, and fixed potential errors. [L0ne_W0lf]
+//= 1.3a 한글화 및 NPC 위치 이동 [richard]
+//============================================================ 
+
+itemmall,15,77,4	script	중력성인#GymPass	899,{
+	mes "[성인]";
+	mes "Oh~ 반갑소~";
+	mes "Me는 저 멀리 중력성에서 온";
+	mes "중력성인이라고 하오.";
+	next;
+	mes "[성인]";
+	mes "Why 여기에 왔느냐! 하면 여기";
+	mes "사람들은 너무 가볍게 하고 다녀서";
+	mes "참다 못해 여기로 슝~하고";
+	mes "중력 점프를 해 왔다오~";
+	next;
+	mes "[성인]";
+	mes "So~ 어떻게 무겁게 하고 다닐수 있게";
+	mes "하느냐오!";
+	mes "Me에게 ^FF0000'헬스장 회원권'^000000을 가져오면";
+	mes "중력의 마법을 부려 당신의 소지량을";
+	mes "200 만큼 늘려주지오!";
+	next;
+	mes "[성인]";
+	mes "But! 조심할게 있지오.";
+	mes "This~ 사람들은 너무 나약해오.";
+	mes "So~ 중력의 마법을 ^FF000010번^000000 이상 받으면";
+	mes "견디질 못해요.";
+	next;
+	mes "[성인]";
+	mes "Hey~! 중력의 마법을 받을건가 당신은?";
+	next;
+	switch(select("예:아니오:마법이 사라졌어요~")) {
+	case 1:
+		if (gympassmemory < 10) {
+			set .@add_carry,gympassmemory + 1;
+			set .@remain_carry,10 - .@add_carry;
+			if (countitem(7776) > 0) {
+				mes "[성인]";
+				mes "Oh, awesome, I see you";
+				mes "brought your Gym Pass.";
+				mes "Alright, just do what I do,";
+				mes "and try to feel the burn.";
+				mes "Ready? Let's do this.";
+				next;
+				specialeffect2 EF_EARTHSPIKE;
+				next;
+				specialeffect2 EF_DEVIL;
+				next;
+				specialeffect2 EF_COIN;
+				next;
+				specialeffect2 EF_SIGHTRASHER;
+				next;
+				mes "[성인]";
+				mes "There, you should be able";
+				mes "to carry more stuff with you.";
+				mes "Let's see, we can increase";
+				mes "your item carrying capacity";
+				mes "^FF00000" + .@remain_carry + "^000000 more times if we continue";
+				mes "training together like this.";
+				delitem 7776,1; //Max_Weight_Up_Scroll
+				set gympassmemory,.@add_carry;
+				skill "ALL_INCCARRY",.@add_carry,SKILL_PERM_GRANT;
+				close;
+			}
+			else {
+				mes "[성인]";
+				mes "Boo~ 당신은 ^FF0000'헬스장 회원권'^000000이";
+				mes "없어오!~";
+				mes "That없으면 중력의 마법을 쓸 수";
+				mes "없어오~";
+				close;
+			}
+		}
+		else {
+			mes "[성인]";
+			mes "Oh~ 중력의 마법을 너무";
+			mes "받았군요! 당신은~";
+			mes "You는 이제 중력의 마법을";
+			mes "받을 수 없어오!";
+			mes "Bye~ 잘가오~";
+			close;
+		}
+	case 2:
+		mes "[성인]";
+		mes "Oh~ 전 실망했어오~";
+		mes "You는 너무 나약해오.";
+		close;
+	case 3:
+		if (gympassmemory > 0) {
+			mes "[성인]";
+			mes "Ouh~ 마법이 사라졌어오!";
+			mes "It's 부작용이에오~";
+			mes "But 걱정하지 말아오~";
+			mes "Me가 해결해 줄께오~";
+			next;
+			specialeffect2 EF_EARTHSPIKE;
+			next;
+			specialeffect2 EF_DEVIL;
+			next;
+			specialeffect2 EF_COIN;
+			next;
+			specialeffect2 EF_SIGHTRASHER;
+			next;
+			mes "[성인]";
+			mes "Oh! 사라졌던 10만큼의 마법이";
+			mes "돌아왔어오~";
+			mes "Me의 마법은 불안정하지만 실패하지";
+			mes "않아오~";
+			mes "Again~ 중력의 마법을 느껴봐오~";
+			skill "ALL_INCCARRY",gympassmemory,SKILL_PERM_GRANT;
+			close;
+		}
+		else {
+			mes "[성인]";
+			mes "Opps~ 당신은 마법을 받은 적이";
+			mes "없군오!";
+			mes "So! 없는게 당연해오~ 마법이~";
+			close;
+		}
+	}
+}

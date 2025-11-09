@@ -1,0 +1,93 @@
+//===== rAthena Script =======================================
+//= Mergician
+//===== By: ==================================================
+//= Euphy
+//===== Current Version: =====================================
+//= 1.1
+//===== Compatible With: =====================================
+//= rAthena Project
+//===== Description: =========================================
+//= [Official Conversion]
+//= Merges items taking up multiple slots in a player's
+//= inventory.
+//===== Additional Comments: =================================
+//= 1.0 First version, currently useless/disabled.
+//= 1.1 Implemented the 'mergeitem' script command. [Cydh]
+//= 1.2 Updated and moved to Cash Mall [Lemongrass]
+//= 1.2a 한글화 [richard]
+//============================================================
+
+//prontera,146,95,3	script	Mergician#pron	1_M_WIZARD,{
+itemmall,35,75,3	script	하챠브라#mall	1_M_WIZARD,{
+	if (checkweight(1301,1) == 0) {
+		mes "- Wait a second !! -";
+		mes "- You are carrying too many items -";
+		mes "- or too much weight to proceed. -";
+		mes "- Come back after -";
+		mes "- arranging your inventory. -";
+		close;
+	}
+	mes "[하챠브라]";
+	mes "하챠교의 기적을 믿는가? 믿는다면";
+	mes "나를 따라 마법의 주문을 외시게!";
+	mes "하챠브라 하챠브라 다하챠브라~~~!!";
+	next;
+	switch(select("하챠브라!", "하챠교의 기적이란?", "대화를 마친다")) {
+	case 2:
+		mes "[하챠브라]";
+		mes "세계는 하나의 질서를 유지하며";
+		mes "굴러가고 있다.";
+		next;
+		mes "[하챠브라]";
+		mes "하지만 그 질서를 무시하는 일이";
+		mes "얼마전까지 벌어지고 있었지.";
+		next;
+		mes "[하챠브라]";
+		mes "같은 물질로 구성되어 있음에도";
+		mes "불구하고 다른 존재인냥 무리를 벗어나";
+		mes "있는 것들 말야!";
+		next;
+		mes "[하챠브라]";
+		mes "그대는 그런 경험이 없는가?";
+		mes "마치 ^0000FF똑같은 포션임에도 불구하고";
+		mes "하나의 묶음으로 겹쳐지지 않던 경험^000000";
+		mes "말이다!";
+		next;
+		mes "[하챠브라]";
+		mes "하챠교를 믿거라.";
+		mes "그렇다면 하챠신의 기적이 너를 행복케";
+		mes "하리라.";
+		close;
+	case 1:
+		mes "[하챠브라]";
+		mes "이것은 미천한 인간의 몸으로 위대한";
+		mes "신 하챠님의 힘을 빌리는 불경한 의식!";
+		next;
+		mes "[하챠브라]";
+		mes "진정 하챠교의 기적을 바란다면 머리를";
+		mes "조아려 경건한 마음으로 소리높여";
+		mes "외치거라 하챠브라 다하챠브라!!";
+		next;
+		mes "^FF0000[경고]^000000";
+		mes "^FF0000하차브라를 통해 아이템을 합칠 수 있습니다.^000000";
+		mes "^FF0000합쳐진 아이템은 청약철회대상에 포함되지 않으며, 재교환 역시 불가능합니다. 아이템을 합치시겠습니까?^000000";
+		next;
+		switch(select("다하챠브라!:외치지않는다")) {
+		case 1:
+			mergeitem;
+			mes "[하챠브라]";
+			mes "그대의 진심이 신께 닿았다!";
+			mes "가방을 열어 위대한 기적의 결과를";
+			mes "확인하거라!";
+			close;
+		case 2:
+			mes "[하챠브라]";
+			mes "네 이노오오옴! 리듬이 깨지지";
+			mes "않았느냐! 왜 쿵하면 짝하고 말하지";
+			mes "못하는게냐!";
+			close;
+		}
+	case 3:
+		close;
+	}
+}

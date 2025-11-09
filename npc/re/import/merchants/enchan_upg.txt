@@ -1,0 +1,283 @@
+//===== rAthena Script =======================================
+//= Upgrade Weapon Enchants
+//===== By: ==================================================
+//= Skorm
+//===== Current Version: =====================================
+//= 1.1
+//===== Compatible With: =====================================
+//= rAthena Project
+//===== Description: =========================================
+//= [Official Conversion]
+//= Adds enchantments to Upgrade weapons.
+//===== Additional Comments: =================================
+//= 1.0 First version.
+//= 1.1 Standardizing, grammar and bug fixes. [Euphy]
+//= 1.2 Moved to Cash Mall [Lemongrass]
+//= 1.2a 한글화 [richard]
+//============================================================
+
+// Main NPC :: 201105_luk_enc
+//============================================================
+itemmall,29,71,3	script	마성의강화사#prq	63,{
+	disable_items;
+	if (checkweight(1201,1) == 0) {
+		mes "너무 많은 아이템을 들고 있군, 줄이고 다시 오게나.";
+		close;
+	}
+	if (MaxWeight - Weight < 10000) {
+		mes "무게 한도를 초과 했네. 줄이고 다시 오게.";
+		close;
+	}
+	mes "[마성의강화사]";
+	mes "음?";
+	mes "나한테 무슨 볼일이라도 있나?";
+	next;
+	switch(select("처음 보는 분이네요:최고라고 들었습니다:강화 초기화를 부탁합니다.")) {
+	case 1:
+		mes "[마성의강화사]";
+		mes "후후후, 당연하지 난 아무하고나 거래를 하는 사람은 아니니까.";
+		next;
+		mes "[마성의강화사]";
+		mes "물론 너도 마찬가지! 네가 아무리 큰 돈을 짊어지고 내게 부탁해도 난 너에게 어떤 강화도 해 주지 않을것이야.";
+		next;
+		mes "[마성의강화사]";
+		mes "내 이름이 보이나? 이건 아무에게나 붙는 이름이 아니야. 이 대륙 전체에서 손꼽는 몇몇의 장비 강화사들에게만 붙는 명칭이지.";
+		next;
+		mes "[마성의강화사]";
+		mes "우린 지정된 거래처가 아니면 거래를 하지 않아. 만약 네가 나와 거래를 하고싶다면 아마도 ^0000FF인챈트 소개장^000000을 들고 와야 할거야";
+		next;
+		mes "[마성의강화사]";
+		mes "그렇지 않다면 어떤 댓가를 지불한다 하더라도 네게 강화를 해주는 일은 없을테지. 난 아직 널 못믿으니까...";
+		close;
+	case 2:
+		if (!countitem(6484)) {
+			mes "[마성의강화사]";
+			mes "말했지 않나? 내게 강화를 부탁하려면 소개장을 들고 오라고... 혹시 이전에 내가 한 설명을 귓등으로 들은 건 아닌가?";
+			close;
+		}
+		set .@select,1;
+		break;
+	case 3:
+		mes "[마성의강화사]";
+		if (Zeny < 100000) {
+			mes "초기화에는 10만제니가 필요해. 그런데 자네 돈이 좀 모자란 것 같군...";
+			close;
+		}
+		mes "초기화에는 10만제니가 필요하다네. 그리고 쓸만한 강화치가 부여되어 있는건 아닌지 다시 확인해보게나";
+		next;
+		if (select("다시 생각해보겠습니다:그냥 초기화 해주세요") == 1) {
+			mes "[마성의강화사]";
+			mes "마음이 약한 친구구만.";
+			close;
+		}
+		set .@select,2;
+		break;
+	}
+	set .@part, EQI_HAND_R;
+
+	mes "[마성의강화사]";
+	if (!getequipisequiped(.@part)) {
+		mes "인챈트 된 장비를 제거 할려고 하는거야?";
+		close;
+	}
+	setarray .@equip_card[0], getequipcardid(.@part,0), getequipcardid(.@part,1), getequipcardid(.@part,2), getequipcardid(.@part,3);
+	// if (!getequipisequiped(.@part)) {
+	// 	mes "It is dangerous to remove equipment during enchant process!";
+	// 	close;
+	// }
+	set .@equip_id, getequipid(.@part);
+	.@equip_refine = getequiprefinerycnt(.@part);
+	set .@item$, "|1292|1394|1491|1585|2015|13071|13115|16019|18112|21000|";
+	if (!compare(.@item$,"|"+.@equip_id+"|")) {
+		mes "지금 자네가 장착한 장비는 내가 건드리고 싶은 물건은 아니군.";
+		close;
+	}
+
+	if (.@select == 1) {
+		if (!countitem(6484)) {
+			mes "말했지 않나? 내게 강화를 부탁하려면 소개장을 들고 오라고... 혹시 이전에 내가 한 설명을 귓등으로 들은 건 아닌가?";
+			close;
+		}
+		mes "그래 좋아 어떤 능력치를 강화하고 싶은거지?";
+		next;
+		switch(select("잠시 생각좀 해보고요:물리계열:마법계열")) {
+		case 1:
+			mes "[마성의강화사]";
+			mes "흥, 마음이 바뀌면 다시 찾아오게";
+			close;
+		case 2:
+			set .@enc_type,1;
+			break;
+		case 3:
+			set .@enc_type,2;
+			break;
+		}
+		mes "[마성의강화사]";
+		if (.@equip_card[3]) {
+			mes "이 장비는 이미 인챈트 되어 있군. 다시 인챈트를 할려면 먼저 초기화 부터 하고 와.";
+			close;
+		}
+		mes "인챈트 과정이 실패할 수도 있고, ^ff0000일부 제련 레벨이 감소할^000000 수 있지만, 카드와 무기는 깨지지 않는다네. 그래도 계속하겠나?";
+		next;
+		if (select("다음에 할께요:지금 해주세요") == 1) {
+			mes "[마성의강화사]";
+			mes "결정이 되면 다시 찾아오게.";
+			close;
+		}
+		if (.@equip_card[3]) {
+			mes "[마성의강화사]";
+			mes "뭔가 문제가 있는거 같군.";
+			close;
+		}
+
+		if (.@enc_type == 1) { // Physical Series
+			set .@i, rand(1,1300);
+			     if (.@i < 51)    set .@enchant,4734; //AGI+5
+			else if (.@i < 76)    set .@enchant,4735; //AGI+6
+			else if (.@i < 88)    set .@enchant,4736; //AGI+7
+			else if (.@i < 93)    set .@enchant,4737; //AGI+8
+			else if (.@i < 95)    set .@enchant,4738; //AGI+9
+			else if (.@i < 96)    set .@enchant,4739; //AGI+10
+			else if (.@i < 146)   set .@enchant,4724; //DEX+5
+			else if (.@i < 171)   set .@enchant,4725; //DEX+6
+			else if (.@i < 183)   set .@enchant,4726; //DEX+7
+			else if (.@i < 188)   set .@enchant,4727; //DEX+8
+			else if (.@i < 190)   set .@enchant,4728; //DEX+9
+			else if (.@i < 191)   set .@enchant,4729; //DEX+10
+			else if (.@i < 291)   set .@enchant,4704; //STR+5
+			else if (.@i < 341)   set .@enchant,4705; //STR+6
+			else if (.@i < 366)   set .@enchant,4706; //STR+7
+			else if (.@i < 378)   set .@enchant,4707; //STR+8
+			else if (.@i < 383)   set .@enchant,4708; //STR+9
+			else if (.@i < 384)   set .@enchant,4709; //STR+10
+			else if (.@i < 434)   set .@enchant,4754; //LUK+5
+			else if (.@i < 459)   set .@enchant,4755; //LUK+6
+			else if (.@i < 471)   set .@enchant,4756; //LUK+7
+			else if (.@i < 476)   set .@enchant,4757; //LUK+8
+			else if (.@i < 478)   set .@enchant,4758; //LUK+9
+			else if (.@i < 479)   set .@enchant,4759; //LUK+10
+			else if (.@i < 679)   set .@enchant,4744; //VIT+5
+			else if (.@i < 779)   set .@enchant,4745; //VIT+6
+			else if (.@i < 829)   set .@enchant,4746; //VIT+7
+			else if (.@i < 854)   set .@enchant,4747; //VIT+8
+			else if (.@i < 866)   set .@enchant,4748; //VIT+9
+			else if (.@i < 867)   set .@enchant,4749; //VIT+10
+			else if (.@i < 967)   set .@enchant,4808; //투지4
+			else if (.@i < 992)   set .@enchant,4820; //투지5
+			else if (.@i < 1092)  set .@enchant,4835; //명궁4
+			else if (.@i < 1117)  set .@enchant,4836; //명궁5
+			else if (.@i < 1217)  set .@enchant,4835; //명궁4
+			else if (.@i < 1242)  set .@enchant,4836; //명궁5
+			else set .@enchant,0;
+		} else if (.@enc_type == 2) { // Magical Series
+			set .@i, rand(1,1200);
+			     if (.@i < 51)    set .@enchant,4714; //INT+5
+			else if (.@i < 76)    set .@enchant,4715; //INT+6
+			else if (.@i < 88)    set .@enchant,4716; //INT+7
+			else if (.@i < 93)    set .@enchant,4717; //INT+8
+			else if (.@i < 95)    set .@enchant,4718; //INT+9
+			else if (.@i < 96)    set .@enchant,4719; //INT+10
+			else if (.@i < 146)   set .@enchant,4724; //DEX+5
+			else if (.@i < 171)   set .@enchant,4725; //DEX+6
+			else if (.@i < 183)   set .@enchant,4726; //DEX+7
+			else if (.@i < 188)   set .@enchant,4727; //DEX+8
+			else if (.@i < 190)   set .@enchant,4728; //DEX+9
+			else if (.@i < 191)   set .@enchant,4729; //DEX+10
+			else if (.@i < 291)   set .@enchant,4734; //AGI+5
+			else if (.@i < 341)   set .@enchant,4735; //AGI+6
+			else if (.@i < 366)   set .@enchant,4736; //AGI+7
+			else if (.@i < 378)   set .@enchant,4737; //AGI+8
+			else if (.@i < 383)   set .@enchant,4738; //AGI+9
+			else if (.@i < 384)   set .@enchant,4739; //AGI+10
+			else if (.@i < 484)   set .@enchant,4754; //LUK+5
+			else if (.@i < 534)   set .@enchant,4755; //LUK+6
+			else if (.@i < 559)   set .@enchant,4756; //LUK+7
+			else if (.@i < 571)   set .@enchant,4757; //LUK+8
+			else if (.@i < 576)   set .@enchant,4758; //LUK+9
+			else if (.@i < 577)   set .@enchant,4759; //LUK+10
+			else if (.@i < 777)   set .@enchant,4744; //VIT+5
+			else if (.@i < 877)   set .@enchant,4745; //VIT+6
+			else if (.@i < 927)   set .@enchant,4746; //VIT+7
+			else if (.@i < 952)   set .@enchant,4747; //VIT+8
+			else if (.@i < 964)   set .@enchant,4748; //VIT+9
+			else if (.@i < 969)   set .@enchant,4749; //VIT+10
+			else if (.@i < 1069)  set .@enchant,4812; //마력4Lv
+			else if (.@i < 1094)  set .@enchant,4826; //마력5Lv
+			else if (.@i < 1119)  set .@enchant,4761; //MATK2Lv
+			else if (.@i < 1124)  set .@enchant,4806; //MATK3Lv
+			else set .@enchant,0;
+		} else {
+			mes "[마성의강화사]";
+			mes "흠, 뭔가 문제가 있어. 다시 한번 확인을 해봐.";
+			close;
+		}
+		mes "[마성의강화사]";
+		if (.@equip_card[3]) {
+			mes "인챈트가 되었네.";
+			close;
+		}
+		if (!countitem(6484)) {
+			mes "말했지 않나? 내게 강화를 부탁하려면 소개장을 들고 오라고... 혹시 이전에 내가 한 설명을 귓등으로 들은 건 아닌가?";
+			close;
+		}
+		if (.@enchant == 0) {
+			specialeffect EF_SHIELDCHARGE;
+			mes "오! 믿을 수 없군!! 실패 했어!! 다시 오게나!";
+			set .@lost_refine, rand(0,.@equip_refine);
+			set .@equip_refine, .@equip_refine - .@lost_refine;
+		} else {
+			specialeffect EF_REPAIRWEAPON;
+			mes "슬롯 ^9900004^000000에 인챈트 되었네!";
+		}
+		delitem 6484,1; //Enchant_Book
+
+		// anti-hack
+		if (callfunc("F_IsEquipIDHack", .@part, .@equip_id) || callfunc("F_IsEquipRefineHack", .@part, .@equip_refine) || 
+		    callfunc("F_IsEquipCardHack", .@part, .@equip_card[0], .@equip_card[1], .@equip_card[2], .@equip_card[3]))
+			close;
+
+		delequip .@part;
+
+//		GetNonSlotItemSock2 .@equip_refine .@equip_id .@equip_card[0] .@equip_card[1] .@equip_card[2] .@enchant
+		getitem2 .@equip_id,1,1,.@equip_refine,0,.@equip_card[0],.@equip_card[1],.@equip_card[2],.@enchant;
+
+		if (.@lost_refine) {
+			next;
+			mes "[마성의강화사]";
+			mes "인챈트 실패로 제련수치 "+callfunc("F_InsertPlural",.@lost_refine,"level")+"가 감소되었다네. 너무 우울해 하지 말게.";
+		}
+		close;
+	} else if (.@select == 2) {
+		if (Zeny < 100000) {
+			mes "초기화에는 10만제니가 필요하다네.";
+			mes "그리고 쓸만한 강화치가 부여되어 있는건 아닌지 다시 확인해보게나";
+			close;
+		}
+		if (getiteminfo(.@equip_card[3], ITEMINFO_SUBTYPE) != CARD_ENCHANT) {
+			mes "아이템이 인챈트되어 있지 않군.";
+			close;
+		}
+		if (!getequipisequiped(.@part)) {
+			mes "자네 혹시 지금 아이템 착용을 해제 했나?";
+			close;
+		}
+		specialeffect EF_REPAIRWEAPON;
+		mes "인첸트 초기화를 하겠네.";
+		set Zeny, Zeny - 100000;
+
+		// anti-hack
+		if (callfunc("F_IsEquipIDHack", .@part, .@equip_id) || callfunc("F_IsEquipRefineHack", .@part, .@equip_refine) || 
+		    callfunc("F_IsEquipCardHack", .@part, .@equip_card[0], .@equip_card[1], .@equip_card[2], .@equip_card[3]))
+			close;
+
+		delequip .@part;
+
+//		GetNonSlotItemSock2 .@equip_refine .@equip_id .@equip_card[0] .@equip_card[1] .@equip_card[2] 0
+		getitem2 .@equip_id,1,1,.@equip_refine,0,.@equip_card[0],.@equip_card[1],.@equip_card[2],0;
+
+		close;
+	} else {
+		mes "자네 직업을 잘 못 선택한거 같군.";
+		close;
+	}
+}

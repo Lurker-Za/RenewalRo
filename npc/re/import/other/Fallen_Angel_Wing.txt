@@ -1,0 +1,718 @@
+//===== rAthena Script =======================================
+//= 다크 루히르
+//===== Compatible With: =====================================
+//= rAthena Project
+//===== Description: =========================================
+//= [Official Conversion]
+//= 타락천사의 날개 아이템의 인챈트 및 초기화
+//===== Additional Comments: =================================
+//= 1.0 [카츄아]타락천사의 날개 아이템 추가 [richard]
+//============================================================
+itemmall,28,66,2	script	다크 루히르	403,{
+	set .@Incentzeny,100000;
+	set .@npcname$, "[다크 루히르]";
+
+	mes .@npcname$;
+	mes "^0000ff타락천사의 날개^000000 시리즈를 장비하신",
+		"분들께 아무런 댓가없이 원하는 효능을",
+		"부여해 드리고 있습니다.";
+	next;
+
+	//장비변경이 안되도록 LOCk
+	disable_items;
+
+	//타락천사 장비 확인 없으면 대화 종료
+	if ((getequipid(EQI_GARMENT) != 2589) && (getequipid(EQI_GARMENT) != 20835)) { // 장착중이 아닐때 대화 본문
+		mes .@npcname$;
+		mes "타락천사의 날개를 구하셨다면 ^0000FF반드시";
+		mes "장착을 하신 뒤에^000000 제게 말을 걸어주세요";
+		close;
+	}
+
+	set .@equip_id, getequipid(EQI_GARMENT); // 장비 아이디를 가져온다
+	switch(.@equip_id) {
+		case 2589:
+			set .@itemname$, "타락천사의 날개";
+			break;
+		case 20835:
+			set .@itemname$, "[카츄아]타락천사의 날개";
+			break;
+	}
+	.@menu$ = select("타락천사의 날개 인챈트:인챈트 초기화:취소");
+	switch(.@menu$) {
+		case 1: // 인챈트
+			setarray .@equip_card[0], getequipcardid(EQI_GARMENT,0),getequipcardid(EQI_GARMENT,1),getequipcardid(EQI_GARMENT,2),getequipcardid(EQI_GARMENT,3); // 인챈트 된 카드를 가져온다.
+			set .@equip_refine, getequiprefinerycnt(EQI_GARMENT); // 제련도를 가져온다.
+			if(.@equip_card[3] == 0) { // 4번 소켓
+				set .@enchan3_rand, rand(1,6);
+				mes .@npcname$;
+				mes "^0000ff" + .@itemname$ + "^000000 인챈트가가능합니다. ";
+				mes "인챈트를 하시겠습니까?";
+				next;
+				switch(select("인챈트한다:취소")){
+					case 1: // 인챈트
+						if(.@equip_card[3] != 0) { goto EnBug; }
+						mes .@npcname$;
+						mes "어느 계열을 인챈트 하시겠습니까?";
+						next;
+						switch(select("투지:마력:명궁:치명:MHP:MSP:공격속도:STR:AGI:VIT:INT:DEX:LUK")){
+							case 1: //투지
+								set .@equip_id, getequipid(EQI_GARMENT);
+								setarray .@equip_card[0], getequipcardid(EQI_GARMENT,0),getequipcardid(EQI_GARMENT,1),getequipcardid(EQI_GARMENT,2),getequipcardid(EQI_GARMENT,3); // 인챈트 된 카드를 가져온다.
+								set .@equip_refine, getequiprefinerycnt(EQI_GARMENT); // 제련도를 가져온다.
+								if((.@equip_id != 2589) && (.@equip_id != 20835)) { goto EnBug; }
+								if(.@equip_card[3] != 0) { goto EnBug; }
+								if(.@enchan3_rand == 1) set .@equip_card[3],4809; //투지3
+								if(.@enchan3_rand == 2) set .@equip_card[3],4809; //투지3
+								if(.@enchan3_rand == 3) set .@equip_card[3],4808; //투지4
+								if(.@enchan3_rand == 4) set .@equip_card[3],4808; //투지4
+								if(.@enchan3_rand == 5) set .@equip_card[3],4820; //투지5
+								if(.@enchan3_rand == 6) set .@equip_card[3],4820; //투지5
+								break;
+							case 2: //마력
+								set .@equip_id, getequipid(EQI_GARMENT);
+								setarray .@equip_card[0], getequipcardid(EQI_GARMENT,0),getequipcardid(EQI_GARMENT,1),getequipcardid(EQI_GARMENT,2),getequipcardid(EQI_GARMENT,3); // 인챈 된 카드를 가져온다.
+								set .@equip_refine, getequiprefinerycnt(EQI_GARMENT); // 제련도를 가져온다.
+								if((.@equip_id != 2589) && (.@equip_id != 20835)) { goto EnBug; }
+								if(.@equip_card[3] != 0) { goto EnBug; }
+								if(.@enchan3_rand == 1) set .@equip_card[3],4812; //마력4
+								if(.@enchan3_rand == 2) set .@equip_card[3],4812; //마력4
+								if(.@enchan3_rand == 3) set .@equip_card[3],4826; //마력5
+								if(.@enchan3_rand == 4) set .@equip_card[3],4826; //마력5
+								if(.@enchan3_rand == 5) set .@equip_card[3],4827; //마력6
+								if(.@enchan3_rand == 6) set .@equip_card[3],4827; //마력6
+								break;
+							case 3: //명궁
+								set .@equip_id, getequipid(EQI_GARMENT);
+								setarray .@equip_card[0], getequipcardid(EQI_GARMENT,0),getequipcardid(EQI_GARMENT,1),getequipcardid(EQI_GARMENT,2),getequipcardid(EQI_GARMENT,3); // 인챈 된 카드를 가져온다.
+								set .@equip_refine, getequiprefinerycnt(EQI_GARMENT); // 제련도를 가져온다.
+								if((.@equip_id != 2589) && (.@equip_id != 20835)) { goto EnBug; }
+								if(.@equip_card[3] != 0) { goto EnBug; }
+								if(.@enchan3_rand == 1) set .@equip_card[3],4832; //명궁1
+								if(.@enchan3_rand == 2) set .@equip_card[3],4832; //명궁1
+								if(.@enchan3_rand == 3) set .@equip_card[3],4833; //명궁2
+								if(.@enchan3_rand == 4) set .@equip_card[3],4833; //명궁2
+								if(.@enchan3_rand == 5) set .@equip_card[3],4834; //명궁3
+								if(.@enchan3_rand == 6) set .@equip_card[3],4834; //명궁3
+								break;
+							case 4: //치명
+								set .@equip_id, getequipid(EQI_GARMENT);
+								setarray .@equip_card[0], getequipcardid(EQI_GARMENT,0),getequipcardid(EQI_GARMENT,1),getequipcardid(EQI_GARMENT,2),getequipcardid(EQI_GARMENT,3); // 인챈 된 카드를 가져온다.
+								set .@equip_refine, getequiprefinerycnt(EQI_GARMENT); // 제련도를 가져온다.
+								if((.@equip_id != 2589) && (.@equip_id != 20835)) { goto EnBug; }
+								if(.@equip_card[3] != 0) { goto EnBug; }
+								if(.@enchan3_rand == 1) set .@equip_card[3],4863; //치명1
+								if(.@enchan3_rand == 2) set .@equip_card[3],4863; //치명1
+								if(.@enchan3_rand == 3) set .@equip_card[3],4864; //치명2
+								if(.@enchan3_rand == 4) set .@equip_card[3],4864; //치명2
+								if(.@enchan3_rand == 5) set .@equip_card[3],4865; //치명3
+								if(.@enchan3_rand == 6) set .@equip_card[3],4865; //치명3
+								break;
+							case 5: //MHP
+								set .@equip_id, getequipid(EQI_GARMENT);
+								setarray .@equip_card[0], getequipcardid(EQI_GARMENT,0),getequipcardid(EQI_GARMENT,1),getequipcardid(EQI_GARMENT,2),getequipcardid(EQI_GARMENT,3); // 인챈 된 카드를 가져온다.
+								set .@equip_refine, getequiprefinerycnt(EQI_GARMENT); // 제련도를 가져온다.
+								if((.@equip_id != 2589) && (.@equip_id != 20835)) { goto EnBug; }
+								if(.@equip_card[3] != 0) { goto EnBug; }
+								if(.@enchan3_rand == 1) set .@equip_card[3],4861; //MHP1
+								if(.@enchan3_rand == 2) set .@equip_card[3],4861; //MHP1
+								if(.@enchan3_rand == 3) set .@equip_card[3],4862; //MHP2
+								if(.@enchan3_rand == 4) set .@equip_card[3],4862; //MHP2
+								if(.@enchan3_rand == 5) set .@equip_card[3],4867; //MHP3
+								if(.@enchan3_rand == 6) set .@equip_card[3],4867; //MHP3
+								break;
+							case 6: //SP
+								set .@equip_id, getequipid(EQI_GARMENT);
+								setarray .@equip_card[0], getequipcardid(EQI_GARMENT,0),getequipcardid(EQI_GARMENT,1),getequipcardid(EQI_GARMENT,2),getequipcardid(EQI_GARMENT,3); // 인챈 된 카드를 가져온다.
+								set .@equip_refine, getequiprefinerycnt(EQI_GARMENT); // 제련도를 가져온다.
+								if((.@equip_id != 2589) && (.@equip_id != 20835)) { goto EnBug; }
+								if(.@equip_card[3] != 0) { goto EnBug; }
+								if(.@enchan3_rand == 1) set .@equip_card[3],4870; //SP+25
+								if(.@enchan3_rand == 2) set .@equip_card[3],4870; //SP+25
+								if(.@enchan3_rand == 3) set .@equip_card[3],4800; //SP+50
+								if(.@enchan3_rand == 4) set .@equip_card[3],4800; //SP+50
+								if(.@enchan3_rand == 5) set .@equip_card[3],4871; //SP+75
+								if(.@enchan3_rand == 6) set .@equip_card[3],4871; //SP+75
+								break;
+							case 7: //공격속도
+								set .@equip_id, getequipid(EQI_GARMENT);
+								setarray .@equip_card[0], getequipcardid(EQI_GARMENT,0),getequipcardid(EQI_GARMENT,1),getequipcardid(EQI_GARMENT,2),getequipcardid(EQI_GARMENT,3); // 인챈 된 카드를 가져온다.
+								set .@equip_refine, getequiprefinerycnt(EQI_GARMENT); // 제련도를 가져온다.
+								if((.@equip_id != 2589) && (.@equip_id != 20835)) { goto EnBug; }
+								if(.@equip_card[3] != 0) { goto EnBug; }
+								if(.@enchan3_rand == 1) set .@equip_card[3],4869; //공후딜1
+								if(.@enchan3_rand == 2) set .@equip_card[3],4869; //공후딜1
+								if(.@enchan3_rand == 3) set .@equip_card[3],4872; //공후딜2
+								if(.@enchan3_rand == 4) set .@equip_card[3],4872; //공후딜2
+								if(.@enchan3_rand == 5) set .@equip_card[3],4873; //공후딜3
+								if(.@enchan3_rand == 6) set .@equip_card[3],4873; //공후딜3
+								break;
+							case 8: //STR
+								set .@equip_id, getequipid(EQI_GARMENT);
+								setarray .@equip_card[0], getequipcardid(EQI_GARMENT,0),getequipcardid(EQI_GARMENT,1),getequipcardid(EQI_GARMENT,2),getequipcardid(EQI_GARMENT,3); // 인챈 된 카드를 가져온다.
+								set .@equip_refine, getequiprefinerycnt(EQI_GARMENT); // 제련도를 가져온다.
+								if((.@equip_id != 2589) && (.@equip_id != 20835)) { goto EnBug; }
+								if(.@equip_card[3] != 0) { goto EnBug; }
+								if(.@enchan3_rand == 1) set .@equip_card[3],4702; //STR+3
+								if(.@enchan3_rand == 2) set .@equip_card[3],4702; //STR+3
+								if(.@enchan3_rand == 3) set .@equip_card[3],4703; //STR+4
+								if(.@enchan3_rand == 4) set .@equip_card[3],4703; //STR+4
+								if(.@enchan3_rand == 5) set .@equip_card[3],4704; //STR+5
+								if(.@enchan3_rand == 6) set .@equip_card[3],4704; //STR+5
+								break;
+							case 9: //AGI
+								set .@equip_id, getequipid(EQI_GARMENT);
+								setarray .@equip_card[0], getequipcardid(EQI_GARMENT,0),getequipcardid(EQI_GARMENT,1),getequipcardid(EQI_GARMENT,2),getequipcardid(EQI_GARMENT,3); // 인챈 된 카드를 가져온다.
+								set .@equip_refine, getequiprefinerycnt(EQI_GARMENT); // 제련도를 가져온다.
+								if((.@equip_id != 2589) && (.@equip_id != 20835)) { goto EnBug; }
+								if(.@equip_card[3] != 0) { goto EnBug; }
+								if(.@enchan3_rand == 1) set .@equip_card[3],4731; //AGI+2
+								if(.@enchan3_rand == 2) set .@equip_card[3],4731; //AGI+2
+								if(.@enchan3_rand == 3) set .@equip_card[3],4732; //AGI+3
+								if(.@enchan3_rand == 4) set .@equip_card[3],4732; //AGI+3
+								if(.@enchan3_rand == 5) set .@equip_card[3],4733; //AGI+4
+								if(.@enchan3_rand == 6) set .@equip_card[3],4733; //AGI+4
+								break;
+							case 10: //VIT
+								set .@equip_id, getequipid(EQI_GARMENT);
+								setarray .@equip_card[0], getequipcardid(EQI_GARMENT,0),getequipcardid(EQI_GARMENT,1),getequipcardid(EQI_GARMENT,2),getequipcardid(EQI_GARMENT,3); // 인챈 된 카드를 가져온다.
+								set .@equip_refine, getequiprefinerycnt(EQI_GARMENT); // 제련도를 가져온다.
+								if((.@equip_id != 2589) && (.@equip_id != 20835)) { goto EnBug; }
+								if(.@equip_card[3] != 0) { goto EnBug; }
+								if(.@enchan3_rand == 1) set .@equip_card[3],4742; //VIT+3
+								if(.@enchan3_rand == 2) set .@equip_card[3],4742; //VIT+3
+								if(.@enchan3_rand == 3) set .@equip_card[3],4743; //VIT+4
+								if(.@enchan3_rand == 4) set .@equip_card[3],4743; //VIT+4
+								if(.@enchan3_rand == 5) set .@equip_card[3],4744; //VIT+5
+								if(.@enchan3_rand == 6) set .@equip_card[3],4744; //VIT+5
+								break;
+							case 11: //INT
+								set .@equip_id, getequipid(EQI_GARMENT);
+								setarray .@equip_card[0], getequipcardid(EQI_GARMENT,0),getequipcardid(EQI_GARMENT,1),getequipcardid(EQI_GARMENT,2),getequipcardid(EQI_GARMENT,3); // 인챈 된 카드를 가져온다.
+								set .@equip_refine, getequiprefinerycnt(EQI_GARMENT); // 제련도를 가져온다.
+								if((.@equip_id != 2589) && (.@equip_id != 20835)) { goto EnBug; }
+								if(.@equip_card[3] != 0) { goto EnBug; }
+								if(.@enchan3_rand == 1) set .@equip_card[3],4712; //INT+3
+								if(.@enchan3_rand == 2) set .@equip_card[3],4712; //INT+3
+								if(.@enchan3_rand == 3) set .@equip_card[3],4713; //INT+4
+								if(.@enchan3_rand == 4) set .@equip_card[3],4713; //INT+4
+								if(.@enchan3_rand == 5) set .@equip_card[3],4714; //INT+5
+								if(.@enchan3_rand == 6) set .@equip_card[3],4714; //INT+5
+								break;
+							case 12: //DEX
+								set .@equip_id, getequipid(EQI_GARMENT);
+								setarray .@equip_card[0], getequipcardid(EQI_GARMENT,0),getequipcardid(EQI_GARMENT,1),getequipcardid(EQI_GARMENT,2),getequipcardid(EQI_GARMENT,3); // 인챈 된 카드를 가져온다.
+								set .@equip_refine, getequiprefinerycnt(EQI_GARMENT); // 제련도를 가져온다.
+								if((.@equip_id != 2589) && (.@equip_id != 20835)) { goto EnBug; }
+								if(.@equip_card[3] != 0) { goto EnBug; }
+								if(.@enchan3_rand == 1) set .@equip_card[3],4722; //DEX+3
+								if(.@enchan3_rand == 2) set .@equip_card[3],4722; //DEX+3
+								if(.@enchan3_rand == 3) set .@equip_card[3],4723; //DEX+4
+								if(.@enchan3_rand == 4) set .@equip_card[3],4723; //DEX+4
+								if(.@enchan3_rand == 5) set .@equip_card[3],4724; //DEX+5
+								if(.@enchan3_rand == 6) set .@equip_card[3],4724; //DEX+5
+								break;
+							case 13: //LUK
+								set .@equip_id, getequipid(EQI_GARMENT);
+								setarray .@equip_card[0], getequipcardid(EQI_GARMENT,0),getequipcardid(EQI_GARMENT,1),getequipcardid(EQI_GARMENT,2),getequipcardid(EQI_GARMENT,3); // 인챈 된 카드를 가져온다.
+								set .@equip_refine, getequiprefinerycnt(EQI_GARMENT); // 제련도를 가져온다.
+								if((.@equip_id != 2589) && (.@equip_id != 20835)) { goto EnBug; }
+								if(.@equip_card[3] != 0) { goto EnBug; }
+								if(.@enchan3_rand == 1) set .@equip_card[3],4752; //LUK+3
+								if(.@enchan3_rand == 2) set .@equip_card[3],4752; //LUK+3
+								if(.@enchan3_rand == 3) set .@equip_card[3],4753; //LUK+4
+								if(.@enchan3_rand == 4) set .@equip_card[3],4753; //LUK+4
+								if(.@enchan3_rand == 5) set .@equip_card[3],4754; //LUK+5
+								if(.@enchan3_rand == 6) set .@equip_card[3],4754; //LUK+5
+								break;
+						}
+						delequip EQI_GARMENT;
+						specialeffect2 EF_REPAIRWEAPON;
+						getitem2 .@equip_id,1,1,.@equip_refine,0,.@equip_card[0],.@equip_card[1],.@equip_card[2],.@equip_card[3];
+						goto suend;
+						close;
+					case 2: // 취소
+						mes .@npcname$;
+						mes "취소하셨습니다.";
+					close;
+				}
+			} else if(.@equip_card[2] == 0) { // 3번 소켓
+				if(getequiprefinerycnt(EQI_GARMENT) < 7) {
+					mes .@npcname$;
+					mes "이 아이템을 인챈트하려면 좀더 제련을 해야합니다.";
+					close;
+				} else {
+					set .@enchan2_rand, rand(1,6);
+					mes .@npcname$;
+					mes "정말로 인챈트를 하시겠습니까?";
+					next;
+					switch(select("인챈트한다:취소")){
+					case 1:
+						set .@equip_id, getequipid(EQI_GARMENT);
+						setarray .@equip_card[0], getequipcardid(EQI_GARMENT,0),getequipcardid(EQI_GARMENT,1),getequipcardid(EQI_GARMENT,2),getequipcardid(EQI_GARMENT,3); // 인챈트 된 카드를 가져온다.
+						set .@equip_refine, getequiprefinerycnt(EQI_GARMENT); // 제련도를 가져온다.
+						if((.@equip_id != 2589) && (.@equip_id != 20835)) { goto EnBug; }
+						if(.@equip_card[2] != 0) { goto EnBug; }
+						switch(.@equip_card[3]){
+							case 4808:
+							case 4809:
+							case 4820:
+								if(.@enchan2_rand == 1) set .@equip_card[2],4809; //투지3
+								if(.@enchan2_rand == 2) set .@equip_card[2],4809; //투지3
+								if(.@enchan2_rand == 3) set .@equip_card[2],4808; //투지4
+								if(.@enchan2_rand == 4) set .@equip_card[2],4808; //투지4
+								if(.@enchan2_rand == 5) set .@equip_card[2],4820; //투지5
+								if(.@enchan2_rand == 6) set .@equip_card[2],4820; //투지5
+								delequip EQI_GARMENT;
+								specialeffect2 EF_REPAIRWEAPON;
+								getitem2 .@equip_id,1,1,.@equip_refine,0,.@equip_card[0],.@equip_card[1],.@equip_card[2],.@equip_card[3];
+								goto suend;
+								close;
+							case 4812:
+							case 4826:
+							case 4827:
+								if(.@enchan2_rand == 1) set .@equip_card[2],4812; //마력4
+								if(.@enchan2_rand == 2) set .@equip_card[2],4812; //마력4
+								if(.@enchan2_rand == 3) set .@equip_card[2],4826; //마력5
+								if(.@enchan2_rand == 4) set .@equip_card[2],4826; //마력5
+								if(.@enchan2_rand == 5) set .@equip_card[2],4827; //마력6
+								if(.@enchan2_rand == 6) set .@equip_card[2],4827; //마력6
+								delequip EQI_GARMENT;
+								specialeffect2 EF_REPAIRWEAPON;
+								getitem2 .@equip_id,1,1,.@equip_refine,0,.@equip_card[0],.@equip_card[1],.@equip_card[2],.@equip_card[3];
+								goto suend;
+								close;
+							case 4832:
+							case 4833:
+							case 4834:
+								if(.@enchan2_rand == 1) set .@equip_card[2],4832; //명궁1
+								if(.@enchan2_rand == 2) set .@equip_card[2],4832; //명궁1
+								if(.@enchan2_rand == 3) set .@equip_card[2],4833; //명궁2
+								if(.@enchan2_rand == 4) set .@equip_card[2],4833; //명궁2
+								if(.@enchan2_rand == 5) set .@equip_card[2],4834; //명궁3
+								if(.@enchan2_rand == 6) set .@equip_card[2],4834; //명궁3
+								delequip EQI_GARMENT;
+								specialeffect2 EF_REPAIRWEAPON;
+								getitem2 .@equip_id,1,1,.@equip_refine,0,.@equip_card[0],.@equip_card[1],.@equip_card[2],.@equip_card[3];
+								goto suend;
+								close;
+							case 4863:
+							case 4864:
+							case 4865:
+								if(.@enchan2_rand == 1) set .@equip_card[2],4863; //치명1
+								if(.@enchan2_rand == 2) set .@equip_card[2],4863; //치명1
+								if(.@enchan2_rand == 3) set .@equip_card[2],4864; //치명2
+								if(.@enchan2_rand == 4) set .@equip_card[2],4864; //치명2
+								if(.@enchan2_rand == 5) set .@equip_card[2],4865; //치명3
+								if(.@enchan2_rand == 6) set .@equip_card[2],4865; //치명3
+								delequip EQI_GARMENT;
+								specialeffect2 EF_REPAIRWEAPON;
+								getitem2 .@equip_id,1,1,.@equip_refine,0,.@equip_card[0],.@equip_card[1],.@equip_card[2],.@equip_card[3];
+								goto suend;
+								close;
+							case 4861:
+							case 4862:
+							case 4867:
+								if(.@enchan2_rand == 1) set .@equip_card[2],4861; //MHP1
+								if(.@enchan2_rand == 2) set .@equip_card[2],4861; //MHP1
+								if(.@enchan2_rand == 3) set .@equip_card[2],4862; //MHP2
+								if(.@enchan2_rand == 4) set .@equip_card[2],4862; //MHP2
+								if(.@enchan2_rand == 5) set .@equip_card[2],4867; //MHP3
+								if(.@enchan2_rand == 6) set .@equip_card[2],4867; //MHP3
+								delequip EQI_GARMENT;
+								specialeffect2 EF_REPAIRWEAPON;
+								getitem2 .@equip_id,1,1,.@equip_refine,0,.@equip_card[0],.@equip_card[1],.@equip_card[2],.@equip_card[3];
+								goto suend;
+								close;
+							case 4870:
+							case 4800:
+							case 4871:
+								if(.@enchan2_rand == 1) set .@equip_card[2],4870; //SP+25
+								if(.@enchan2_rand == 2) set .@equip_card[2],4870; //SP+25
+								if(.@enchan2_rand == 3) set .@equip_card[2],4800; //SP+50
+								if(.@enchan2_rand == 4) set .@equip_card[2],4800; //SP+50
+								if(.@enchan2_rand == 5) set .@equip_card[2],4871; //SP+75
+								if(.@enchan2_rand == 6) set .@equip_card[2],4871; //SP+75
+								delequip EQI_GARMENT;
+								specialeffect2 EF_REPAIRWEAPON;
+								getitem2 .@equip_id,1,1,.@equip_refine,0,.@equip_card[0],.@equip_card[1],.@equip_card[2],.@equip_card[3];
+								goto suend;
+								close;
+							case 4869:
+							case 4872:
+							case 4873:
+								if(.@enchan2_rand == 1) set .@equip_card[2],4869; //공후딜1
+								if(.@enchan2_rand == 2) set .@equip_card[2],4869; //공후딜2
+								if(.@enchan2_rand == 3) set .@equip_card[2],4872; //공후딜2
+								if(.@enchan2_rand == 4) set .@equip_card[2],4872; //공후딜2
+								if(.@enchan2_rand == 5) set .@equip_card[2],4873; //공후딜3
+								if(.@enchan2_rand == 6) set .@equip_card[2],4873; //공후딜3
+								delequip EQI_GARMENT;
+								specialeffect2 EF_REPAIRWEAPON;
+								getitem2 .@equip_id,1,1,.@equip_refine,0,.@equip_card[0],.@equip_card[1],.@equip_card[2],.@equip_card[3];
+								goto suend;
+								close;
+							case 4702:
+							case 4703:
+							case 4704:
+								if(.@enchan2_rand == 1) set .@equip_card[2],4702; //STR+3
+								if(.@enchan2_rand == 2) set .@equip_card[2],4702; //STR+3
+								if(.@enchan2_rand == 3) set .@equip_card[2],4703; //STR+4
+								if(.@enchan2_rand == 4) set .@equip_card[2],4703; //STR+4
+								if(.@enchan2_rand == 5) set .@equip_card[2],4704; //STR+5
+								if(.@enchan2_rand == 6) set .@equip_card[2],4704; //STR+5
+								delequip EQI_GARMENT;
+								specialeffect2 EF_REPAIRWEAPON;
+								getitem2 .@equip_id,1,1,.@equip_refine,0,.@equip_card[0],.@equip_card[1],.@equip_card[2],.@equip_card[3];
+								goto suend;
+								close;
+							case 4731:
+							case 4732:
+							case 4733:
+								if(.@enchan2_rand == 1) set .@equip_card[2],4731; //AGI+2
+								if(.@enchan2_rand == 2) set .@equip_card[2],4731; //AGI+2
+								if(.@enchan2_rand == 3) set .@equip_card[2],4732; //AGI+3
+								if(.@enchan2_rand == 4) set .@equip_card[2],4732; //AGI+3
+								if(.@enchan2_rand == 5) set .@equip_card[2],4733; //AGI+4
+								if(.@enchan2_rand == 6) set .@equip_card[2],4733; //AGI+4
+								delequip EQI_GARMENT;
+								specialeffect2 EF_REPAIRWEAPON;
+								getitem2 .@equip_id,1,1,.@equip_refine,0,.@equip_card[0],.@equip_card[1],.@equip_card[2],.@equip_card[3];
+								goto suend;
+								close;
+							case 4742:
+							case 4743:
+							case 4744:
+								if(.@enchan2_rand == 1) set .@equip_card[2],4742; //VIT+3
+								if(.@enchan2_rand == 2) set .@equip_card[2],4742; //VIT+3
+								if(.@enchan2_rand == 3) set .@equip_card[2],4743; //VIT+4
+								if(.@enchan2_rand == 4) set .@equip_card[2],4743; //VIT+4
+								if(.@enchan2_rand == 5) set .@equip_card[2],4744; //VIT+5
+								if(.@enchan2_rand == 6) set .@equip_card[2],4744; //VIT+5
+								delequip EQI_GARMENT;
+								specialeffect2 EF_REPAIRWEAPON;
+								getitem2 .@equip_id,1,1,.@equip_refine,0,.@equip_card[0],.@equip_card[1],.@equip_card[2],.@equip_card[3];
+								goto suend;
+								close;
+							case 4712:
+							case 4713:
+							case 4714:
+								if(.@enchan2_rand == 1) set .@equip_card[2],4712; //INT+3
+								if(.@enchan2_rand == 2) set .@equip_card[2],4712; //INT+3
+								if(.@enchan2_rand == 3) set .@equip_card[2],4713; //INT+4
+								if(.@enchan2_rand == 4) set .@equip_card[2],4713; //INT+4
+								if(.@enchan2_rand == 5) set .@equip_card[2],4714; //INT+5
+								if(.@enchan2_rand == 6) set .@equip_card[2],4714; //INT+5
+								delequip EQI_GARMENT;
+								specialeffect2 EF_REPAIRWEAPON;
+								getitem2 .@equip_id,1,1,.@equip_refine,0,.@equip_card[0],.@equip_card[1],.@equip_card[2],.@equip_card[3];
+								goto suend;
+								close;
+							case 4722:
+							case 4723:
+							case 4724:
+								if(.@enchan2_rand == 1) set .@equip_card[2],4722; //DEX+3
+								if(.@enchan2_rand == 2) set .@equip_card[2],4722; //DEX+3
+								if(.@enchan2_rand == 3) set .@equip_card[2],4723; //DEX+4
+								if(.@enchan2_rand == 4) set .@equip_card[2],4723; //DEX+4
+								if(.@enchan2_rand == 5) set .@equip_card[2],4724; //DEX+5
+								if(.@enchan2_rand == 6) set .@equip_card[2],4725; //DEX+6
+								delequip EQI_GARMENT;
+								specialeffect2 EF_REPAIRWEAPON;
+								getitem2 .@equip_id,1,1,.@equip_refine,0,.@equip_card[0],.@equip_card[1],.@equip_card[2],.@equip_card[3];
+								goto suend;
+								close;
+							case 4752:
+							case 4753:
+							case 4754:
+								if(.@enchan2_rand == 1) set .@equip_card[2],4752; //LUK+3
+								if(.@enchan2_rand == 2) set .@equip_card[2],4752; //LUK+3
+								if(.@enchan2_rand == 3) set .@equip_card[2],4753; //LUK+4
+								if(.@enchan2_rand == 4) set .@equip_card[2],4753; //LUK+4
+								if(.@enchan2_rand == 5) set .@equip_card[2],4754; //LUK+5
+								if(.@enchan2_rand == 6) set .@equip_card[2],4754; //LUK+5
+								delequip EQI_GARMENT;
+								specialeffect2 EF_REPAIRWEAPON;
+								getitem2 .@equip_id,1,1,.@equip_refine,0,.@equip_card[0],.@equip_card[1],.@equip_card[2],.@equip_card[3];
+								goto suend;
+								close;
+						}
+					case 2:
+						mes .@npcname$;
+						mes "취소하셨습니다."; 
+						close;
+					}
+				}
+			} else { // 2번 소켓
+				if(getequiprefinerycnt(EQI_GARMENT) < 9) {
+					mes .@npcname$;
+					mes "이 아이템을 인챈트하려면 좀더 제련을 해야합니다.";
+					close;
+				} else {
+					set .@enchan1_rand, rand(1,6);
+					mes .@npcname$;
+					mes "정말로 인챈트를 하시겠습니까?";
+					next;
+					switch(select("인챈트한다:취소")){
+					case 1:
+						if(.@equip_card[1] != 0) { goto EnMAX; } // 2번 소켓이 인챈트 된 경우
+						if(Zeny < .@Incentzeny) goto Misszeny; // 인챈트 비용(100000 zeny)이 없는 경우
+						set .@equip_id, getequipid(EQI_GARMENT);
+						setarray .@equip_card[0], getequipcardid(EQI_GARMENT,0),getequipcardid(EQI_GARMENT,1),getequipcardid(EQI_GARMENT,2),getequipcardid(EQI_GARMENT,3); // 인챈 된 카드를 가져온다.
+						set .@equip_refine, getequiprefinerycnt(EQI_GARMENT); // 제련도를 가져온다.
+						if((.@equip_id != 2589) && (.@equip_id != 20835)) { goto EnBug; } // 타락천사의 날개가 장착이 안된 경우
+						if(.@equip_card[1] != 0) { goto EnBug; } // 2번 소켓이 인챈트가 된 경우
+						switch(.@equip_card[2]){
+							case 4808:
+							case 4809:
+							case 4820:
+								if(.@enchan1_rand == 1) set .@equip_card[1],4808; //투지4
+								if(.@enchan1_rand == 2) set .@equip_card[1],4808; //투지4
+								if(.@enchan1_rand == 3) set .@equip_card[1],4820; //투지5
+								if(.@enchan1_rand == 4) set .@equip_card[1],4820; //투지5
+								if(.@enchan1_rand == 5) set .@equip_card[1],4821; //투지6
+								if(.@enchan1_rand == 6) set .@equip_card[1],4821; //투지6
+								delequip EQI_GARMENT;
+								specialeffect2 EF_REPAIRWEAPON;
+								getitem2 .@equip_id,1,1,.@equip_refine,0,.@equip_card[0],.@equip_card[1],.@equip_card[2],.@equip_card[3];
+								goto suend;
+								close;
+							case 4812:
+							case 4826:
+							case 4827:
+								if(.@enchan1_rand == 1) set .@equip_card[1],4826; //마력5
+								if(.@enchan1_rand == 2) set .@equip_card[1],4826; //마력5
+								if(.@enchan1_rand == 3) set .@equip_card[1],4827; //마력6
+								if(.@enchan1_rand == 4) set .@equip_card[1],4827; //마력6
+								if(.@enchan1_rand == 5) set .@equip_card[1],4828; //마력7
+								if(.@enchan1_rand == 6) set .@equip_card[1],4828; //마력7
+								delequip EQI_GARMENT;
+								specialeffect2 EF_REPAIRWEAPON;
+								getitem2 .@equip_id,1,1,.@equip_refine,0,.@equip_card[0],.@equip_card[1],.@equip_card[2],.@equip_card[3];
+								goto suend;
+								close;
+							case 4832:
+							case 4833:
+							case 4834:
+								if(.@enchan1_rand == 1) set .@equip_card[1],4833; //명궁2
+								if(.@enchan1_rand == 2) set .@equip_card[1],4833; //명궁2
+								if(.@enchan1_rand == 3) set .@equip_card[1],4834; //명궁3
+								if(.@enchan1_rand == 4) set .@equip_card[1],4834; //명궁3
+								if(.@enchan1_rand == 5) set .@equip_card[1],4835; //명궁4
+								if(.@enchan1_rand == 6) set .@equip_card[1],4835; //명궁4
+								delequip EQI_GARMENT;
+								specialeffect2 EF_REPAIRWEAPON;
+								getitem2 .@equip_id,1,1,.@equip_refine,0,.@equip_card[0],.@equip_card[1],.@equip_card[2],.@equip_card[3];
+								goto suend;
+								close;
+							case 4863:
+							case 4864:
+							case 4865:
+								if(.@enchan1_rand == 1) set .@equip_card[1],4864; //치명2
+								if(.@enchan1_rand == 2) set .@equip_card[1],4864; //치명2
+								if(.@enchan1_rand == 3) set .@equip_card[1],4865; //치명3
+								if(.@enchan1_rand == 4) set .@equip_card[1],4865; //치명3
+								if(.@enchan1_rand == 5) set .@equip_card[1],4866; //치명4
+								if(.@enchan1_rand == 6) set .@equip_card[1],4866; //치명4
+								delequip EQI_GARMENT;
+								specialeffect2 EF_REPAIRWEAPON;
+								getitem2 .@equip_id,1,1,.@equip_refine,0,.@equip_card[0],.@equip_card[1],.@equip_card[2],.@equip_card[3];
+								goto suend;
+								close;
+							case 4861:
+							case 4862:
+							case 4867:
+								if(.@enchan1_rand == 1) set .@equip_card[1],4862; //MHP2
+								if(.@enchan1_rand == 2) set .@equip_card[1],4862; //MHP2
+								if(.@enchan1_rand == 3) set .@equip_card[1],4867; //MHP3
+								if(.@enchan1_rand == 4) set .@equip_card[1],4867; //MHP3
+								if(.@enchan1_rand == 5) set .@equip_card[1],4868; //MHP4
+								if(.@enchan1_rand == 6) set .@equip_card[1],4868; //MHP4
+								delequip EQI_GARMENT;
+								specialeffect2 EF_REPAIRWEAPON;
+								getitem2 .@equip_id,1,1,.@equip_refine,0,.@equip_card[0],.@equip_card[1],.@equip_card[2],.@equip_card[3];
+								goto suend;
+								close;
+							case 4870:
+							case 4800:
+							case 4871:
+								if(.@enchan1_rand == 1) set .@equip_card[1],4800; //SP+50
+								if(.@enchan1_rand == 2) set .@equip_card[1],4800; //SP+50
+								if(.@enchan1_rand == 3) set .@equip_card[1],4871; //SP+75
+								if(.@enchan1_rand == 4) set .@equip_card[1],4871; //SP+75
+								if(.@enchan1_rand == 5) set .@equip_card[1],4801; //SP+100
+								if(.@enchan1_rand == 6) set .@equip_card[1],4801; //SP+100
+								delequip EQI_GARMENT;
+								specialeffect2 EF_REPAIRWEAPON;
+								getitem2 .@equip_id,1,1,.@equip_refine,0,.@equip_card[0],.@equip_card[1],.@equip_card[2],.@equip_card[3];
+								goto suend;
+								close;
+							case 4869:
+							case 4872:
+							case 4873:
+								if(.@enchan1_rand == 1) set .@equip_card[1],4872; //공후딜2
+								if(.@enchan1_rand == 2) set .@equip_card[1],4872; //공후딜2
+								if(.@enchan1_rand == 3) set .@equip_card[1],4873; //공후딜3
+								if(.@enchan1_rand == 4) set .@equip_card[1],4873; //공후딜3
+								if(.@enchan1_rand == 5) set .@equip_card[1],4881; //공후딜4
+								if(.@enchan1_rand == 6) set .@equip_card[1],4881; //공후딜4
+								delequip EQI_GARMENT;
+								specialeffect2 EF_REPAIRWEAPON;
+								getitem2 .@equip_id,1,1,.@equip_refine,0,.@equip_card[0],.@equip_card[1],.@equip_card[2],.@equip_card[3];
+								goto suend;
+								close;
+							case 4702:
+							case 4703:
+							case 4704:
+								if(.@enchan1_rand == 1) set .@equip_card[1],4703; //STR+4
+								if(.@enchan1_rand == 2) set .@equip_card[1],4703; //STR+4
+								if(.@enchan1_rand == 3) set .@equip_card[1],4704; //STR+5
+								if(.@enchan1_rand == 4) set .@equip_card[1],4704; //STR+5
+								if(.@enchan1_rand == 5) set .@equip_card[1],4753; //스페셜STR
+								if(.@enchan1_rand == 6) set .@equip_card[1],4753; //스페셜STR
+								delequip EQI_GARMENT;
+								specialeffect2 EF_REPAIRWEAPON;
+								getitem2 .@equip_id,1,1,.@equip_refine,0,.@equip_card[0],.@equip_card[1],.@equip_card[2],.@equip_card[3];
+								goto suend;
+								close;
+							case 4731:
+							case 4732:
+							case 4733:
+								if(.@enchan1_rand == 1) set .@equip_card[1],4732; //AGI+3
+								if(.@enchan1_rand == 2) set .@equip_card[1],4732; //AGI+3
+								if(.@enchan1_rand == 3) set .@equip_card[1],4733; //AGI+4
+								if(.@enchan1_rand == 4) set .@equip_card[1],4733; //AGI+4
+								if(.@enchan1_rand == 5) set .@equip_card[1],4854; //스페셜AGI
+								if(.@enchan1_rand == 6) set .@equip_card[1],4854; //스페셜AGI
+								delequip EQI_GARMENT;
+								specialeffect2 EF_REPAIRWEAPON;
+								getitem2 .@equip_id,1,1,.@equip_refine,0,.@equip_card[0],.@equip_card[1],.@equip_card[2],.@equip_card[3];
+								goto suend;
+								close;
+							case 4742:
+							case 4743:
+							case 4744:
+								if(.@enchan1_rand == 1) set .@equip_card[1],4743; //VIT+4
+								if(.@enchan1_rand == 2) set .@equip_card[1],4743; //VIT+4
+								if(.@enchan1_rand == 3) set .@equip_card[1],4744; //VIT+5
+								if(.@enchan1_rand == 4) set .@equip_card[1],4744; //VIT+5
+								if(.@enchan1_rand == 5) set .@equip_card[1],4855; //스페셜VIT
+								if(.@enchan1_rand == 6) set .@equip_card[1],4855; //스페셜VIT
+								delequip EQI_GARMENT;
+								specialeffect2 EF_REPAIRWEAPON;
+								getitem2 .@equip_id,1,1,.@equip_refine,0,.@equip_card[0],.@equip_card[1],.@equip_card[2],.@equip_card[3];
+								goto suend;
+								close;
+							case 4712:
+							case 4713:
+							case 4714:
+								if(.@enchan1_rand == 1) set .@equip_card[1],4713; //INT+4
+								if(.@enchan1_rand == 2) set .@equip_card[1],4713; //INT+4
+								if(.@enchan1_rand == 3) set .@equip_card[1],4714; //INT+5
+								if(.@enchan1_rand == 4) set .@equip_card[1],4714; //INT+5
+								if(.@enchan1_rand == 5) set .@equip_card[1],4856; //스페셜INT
+								if(.@enchan1_rand == 6) set .@equip_card[1],4856; //스페셜INT
+								delequip EQI_GARMENT;
+								specialeffect2 EF_REPAIRWEAPON;
+								getitem2 .@equip_id,1,1,.@equip_refine,0,.@equip_card[0],.@equip_card[1],.@equip_card[2],.@equip_card[3];
+								goto suend;
+								close;
+							case 4722:
+							case 4723:
+							case 4724:
+								if(.@enchan1_rand == 1) set .@equip_card[1],4723; //DEX+4
+								if(.@enchan1_rand == 2) set .@equip_card[1],4723; //DEX+4
+								if(.@enchan1_rand == 3) set .@equip_card[1],4724; //DEX+5
+								if(.@enchan1_rand == 4) set .@equip_card[1],4724; //DEX+5
+								if(.@enchan1_rand == 5) set .@equip_card[1],4857; //스페셜DEX
+								if(.@enchan1_rand == 6) set .@equip_card[1],4857; //스페셜DEX
+								delequip EQI_GARMENT;
+								specialeffect2 EF_REPAIRWEAPON;
+								getitem2 .@equip_id,1,1,.@equip_refine,0,.@equip_card[0],.@equip_card[1],.@equip_card[2],.@equip_card[3];
+								goto suend;
+								close;
+							case 4752:
+							case 4753:
+							case 4754:
+								if(.@enchan1_rand == 1) set .@equip_card[1],4753; //LUK+4
+								if(.@enchan1_rand == 2) set .@equip_card[1],4753; //LUK+4
+								if(.@enchan1_rand == 3) set .@equip_card[1],4754; //LUK+5
+								if(.@enchan1_rand == 4) set .@equip_card[1],4754; //LUK+5
+								if(.@enchan1_rand == 5) set .@equip_card[1],4858; //스페셜LUK
+								if(.@enchan1_rand == 6) set .@equip_card[1],4858; //스페셜LUK
+								delequip EQI_GARMENT;
+								specialeffect2 EF_REPAIRWEAPON;
+								getitem2 .@equip_id,1,1,.@equip_refine,0,.@equip_card[0],.@equip_card[1],.@equip_card[2],.@equip_card[3];
+								goto suend;
+								close;
+						}
+					case 2:
+						mes .@npcname$;
+						mes "취소하셨습니다.";
+						close;
+					}
+				}
+			}
+			break;
+		case 2: // 초기화
+			mes .@npcname$;
+			mes "^0000ff" + .@itemname$ + "^000000 인챈트 초기화를 위해선",
+				"^FF3355"+ .@Incentzeny +"제니^000000가 필요합니다.";
+			next;
+			switch(select("초기화한다:취소")){
+				case 1:
+					if(Zeny < .@Incentzeny) goto Misszeny;
+					set .@equip_refine, getequiprefinerycnt(EQI_GARMENT);
+					setarray .@equip_card[0], getequipcardid(EQI_GARMENT,0),getequipcardid(EQI_GARMENT,1),getequipcardid(EQI_GARMENT,2),getequipcardid(EQI_GARMENT,3);
+					delitem2 .@equip_id, 1, 1, .@equip_refine, 0, .@equip_card[0], .@equip_card[1], .@equip_card[2], .@equip_card[3];
+					getitem2 .@equip_id, 1, 1, .@equip_refine, 0, .@equip_card[0], 0, 0, 0;
+					//mes .@npcname$;
+					mes "^0000ff" + .@itemname$ + "^000000";
+					mes "인챈트가 초기화 되었습니다.";
+					specialeffect2 261;
+					specialeffect2 119;
+					close;
+				case 2:
+					mes .@npcname$;
+					mes "취소하셨습니다.";
+					close;
+			}
+			break;
+		case 3: // 취소
+			mes .@npcname$;
+			mes "취소하셨습니다.";
+			break;
+	}
+	end;
+
+NoEqi:
+	mes .@npcname$;
+	mes "해당되는 장비가없습니다.."; // 장비없을시
+	close;
+
+suend:
+	mes .@npcname$;
+	mes "^0000ff" + .@itemname$ + "^000000 인챈트가 성공적으로 끝났습니다."; // 인챈트 성공 안내문
+	close;
+
+EnEnd:
+	mes .@npcname$;
+	mes "이 아이템은 이미 인챈트가 되어있습니다"; // 최대로 인챈트된 날개를 들고 찾아왔을시 안내문
+	close;
+
+Misszeny:
+	mes .@npcname$;
+	mes "제니가 부족합니다"; // 제니 부족 안내문
+	close;
+
+EnMAX:
+	mes .@npcname$;
+	mes "이 아이템은 인챈트가 모두 완료된 상태입니다."; // 최대인챈트시
+	close;
+
+
+EnBug:
+	mes .@npcname$;
+	mes "정상적인 방법으로 인챈트 하시기 바랍니다."; //아이템을 바꿔착용했을시
+	close;
+}
