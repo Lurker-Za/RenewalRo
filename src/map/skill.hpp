@@ -2564,6 +2564,9 @@ enum e_skill {
 	ABR_NET_REPAIR,
 	ABR_NET_SUPPORT,
 	ABR_INFINITY_BUSTER,
+
+	ALL_ASSISTANT_VENDING = 5061,
+	ALL_ASSISTANT_BUYING = 5062,
 };
 
 /// The client view ids for land skills.

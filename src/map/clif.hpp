@@ -658,6 +658,15 @@ enum e_clif_messages : uint16 {
 	// Duplicate item effects exist and cannot be used.
 	MSI_PERVENT_DUPLICATEUSE_EFSTITEM = 2804,
 
+	// Items traded at the vending shop have been sent by Rodex.
+	MSI_SEND_PURCHASES_BY_RODEX = 2917,
+
+	// Unsold items have been sent by Rodex.
+	MSI_SEND_REST_ITEMS_BY_RODEX = 2921,
+
+	// Zeny transacted at the buying shop has been sent to Rodex.
+	MSI_STORE_ASSISTANT_SEND_SELLS_BY_RODEX = 2947,
+
 	// [Grenade Launcher] weapon class must be equipped.
 	MSI_IMPOSSIBLE_CHANGE_GUILD_MASTER_IN_SIEGE_TIME = 2963,
 
@@ -1464,6 +1473,20 @@ void clif_summon_hp_bar(mob_data& md);
 void clif_laphine_synthesis_open( map_session_data *sd, std::shared_ptr<s_laphine_synthesis> synthesis );
 void clif_laphine_upgrade_open( map_session_data* sd, std::shared_ptr<s_laphine_upgrade> upgrade );
 
+void clif_stall_vending_open(map_session_data *sd);
+void clif_stall_buying_open(map_session_data *sd);
+void clif_buyingstall_entry(struct block_list* bl, uint32 stall_id, const char* message);
+void clif_parse_stall_buying_set( int fd, map_session_data* sd );
+void clif_parse_stall_vending_set( int fd, map_session_data* sd );
+void clif_stall_showunit(map_session_data *sd, struct s_stall_data *st);
+void clif_stall_ui_close(map_session_data *sd, int type, int reason);
+void clif_parse_stall_vending_cancel( int fd, map_session_data* sd );
+void clif_parse_stall_buying_cancel( int fd, map_session_data* sd );
+void clif_parse_stall_close( int fd, map_session_data* sd );
+void clif_showstallboard(struct block_list* bl, uint32 stall_id, const char* message);
+void clif_stall_vending_list(map_session_data *sd, s_stall_data *st);
+void clif_stall_buying_list(map_session_data *sd, s_stall_data *st);
+ 
 // Reputation System
 void clif_reputation_type( map_session_data& sd, int64 type, int64 points );
 void clif_reputation_list( map_session_data& sd );

@@ -3435,8 +3435,8 @@ private:
 	std::unordered_map<std::string, std::shared_ptr<item_data>> aegisNameToItemDataMap;
 
 	e_sex defaultGender( const ryml::NodeRef& node, std::shared_ptr<item_data> id );
-
-	std::string create_item_link(struct item& item, std::shared_ptr<item_data>& data);
+	
+	std::string create_item_link(struct item& item, std::shared_ptr<item_data>& data, bool slot = false); 
 
 	struct s_pricevalue {
 		bool has_buy;
@@ -3465,6 +3465,7 @@ public:
 	std::shared_ptr<item_data> search_aegisname( const char *name );
 	std::string create_item_link(struct item& item);
 	std::string create_item_link( std::shared_ptr<item_data>& data );
+	std::string create_item_link( std::shared_ptr<item_data>& data, bool slot);
 	std::string create_item_link_for_mes( std::shared_ptr<item_data>& data, bool use_brackets, const char* name );
 	std::string create_item_icon_for_mes( std::shared_ptr<item_data>& data, const char* name );
 };
