@@ -3427,8 +3427,11 @@ bool pc_addautobonus(std::vector<std::shared_ptr<s_autobonus>> &bonus, const cha
 	// Check if the same bonus already exists
 	for( std::shared_ptr<s_autobonus> autobonus : bonus ){
 		// Compare based on position and bonus script
-		if( autobonus->pos == pos && strcmp( script, autobonus->bonus_script ) == 0 ){
-			return false;
+		if (strcmp(script, autobonus->bonus_script) == 0) {
+			if (autobonus->pos == pos)
+				return false;
+			else
+				rate += autobonus->rate;
 		}
 	}
 
@@ -8409,7 +8412,8 @@ int32 pc_checkjoblevelup(map_session_data *sd)
 */
 static void pc_calcexp(map_session_data *sd, t_exp *base_exp, t_exp *job_exp, block_list *src)
 {
-	int32 bonus = 0, vip_bonus_base = 0, vip_bonus_job = 0;
+	int32 bonus = 100, bonus_bm = 0;
+	int32 server_base = battle_config.base_exp_rate, server_job = battle_config.job_exp_rate;
 
 	if (src) {
 		status_data* status = status_get_status_data(*src);
@@ -8423,44 +8427,54 @@ static void pc_calcexp(map_session_data *sd, t_exp *base_exp, t_exp *job_exp, bl
 		if( sd->indexed_bonus.expaddclass[CLASS_ALL] )
 			bonus += sd->indexed_bonus.expaddclass[CLASS_ALL];
 
-		if (battle_config.pk_mode &&
-			(int32)(status_get_lv(src) - sd->status.base_level) >= 20)
-			bonus += 15; // pk_mode additional exp if monster >20 levels [Valaris]
+#ifdef RENEWAL
+		if (sd->sc.getSCE(SC_RICHMANKIM))
+			bonus += sd->sc.getSCE(SC_RICHMANKIM)->val2;
+#endif
 
-		if (src && src->type == BL_MOB && pc_isvip(sd)) { // EXP bonus for VIP player
-			vip_bonus_base = battle_config.vip_base_exp_increase;
-			vip_bonus_job = battle_config.vip_job_exp_increase;
+		if (battle_config.pk_mode &&
+			(int32)(status_get_lv(src) - sd->status.base_level) >= 20) {
+			server_base += 15; // pk_mode additional exp if monster >20 levels [Valaris]
+			server_job += 15;
 		}
+
+		if (src->type == BL_MOB && pc_isvip(sd)) { // EXP bonus for VIP player
+			server_base += battle_config.vip_base_exp_increase;
+			server_job += battle_config.vip_job_exp_increase;
+		}
+	}
+	
+	if (sd->sc.getSCE(SC_PREMIUM_EXPBOOST)) {
+		server_base += sd->sc.getSCE(SC_PREMIUM_EXPBOOST)->val1;
+		server_job += sd->sc.getSCE(SC_PREMIUM_EXPBOOST)->val1;
+	}
+	if (sd->sc.getSCE(SC_SUB_EXPBOOST)) {
+		server_base += sd->sc.getSCE(SC_SUB_EXPBOOST)->val1;
+		server_job += sd->sc.getSCE(SC_SUB_EXPBOOST)->val1;
+	}
+	if (sd->sc.getSCE(SC_PERIOD_PLUSEXP_2ND)) {
+		server_base += sd->sc.getSCE(SC_PERIOD_PLUSEXP_2ND)->val1;
+		server_job += sd->sc.getSCE(SC_PERIOD_PLUSEXP_2ND)->val1;
 	}
 
 	// Give EXPBOOST for quests even if src is nullptr.
 	if (sd->sc.getSCE(SC_EXPBOOST)) {
-		bonus += sd->sc.getSCE(SC_EXPBOOST)->val1;
+		bonus_bm += sd->sc.getSCE(SC_EXPBOOST)->val1;
 		if (battle_config.vip_bm_increase && pc_isvip(sd)) // Increase Battle Manual EXP rate for VIP
-			bonus += (sd->sc.getSCE(SC_EXPBOOST)->val1 / battle_config.vip_bm_increase);
+			bonus_bm += (sd->sc.getSCE(SC_EXPBOOST)->val1 / battle_config.vip_bm_increase);
 	}
-	
-	if (sd->sc.getSCE(SC_PREMIUM_EXPBOOST))
-		bonus += sd->sc.getSCE(SC_PREMIUM_EXPBOOST)->val1;
-	if (sd->sc.getSCE(SC_SUB_EXPBOOST))
-		bonus += sd->sc.getSCE(SC_SUB_EXPBOOST)->val1;
-	if (sd->sc.getSCE(SC_PERIOD_PLUSEXP_2ND))
-		bonus += sd->sc.getSCE(SC_PERIOD_PLUSEXP_2ND)->val1;
 
 	if (*base_exp) {
-		t_exp exp = (t_exp)(*base_exp + ((double)*base_exp * ((bonus + vip_bonus_base) / 100.)));
+		t_exp exp = (t_exp)((double)*base_exp * (server_base / 100. * bonus / 100. + bonus_bm / 100.));
 		*base_exp = cap_value(exp, 1, MAX_EXP);
 	}
 
 	// Give JEXPBOOST for quests even if src is nullptr.
 	if (sd->sc.getSCE(SC_JEXPBOOST))
-		bonus += sd->sc.getSCE(SC_JEXPBOOST)->val1;
-
-	if (sd->sc.getSCE(SC_PERIOD_PLUSEXP_2ND))	// Increase Jexp as well
-		bonus += sd->sc.getSCE(SC_PERIOD_PLUSEXP_2ND)->val1;
+		bonus_bm += sd->sc.getSCE(SC_JEXPBOOST)->val1;
 
 	if (*job_exp) {
-		t_exp exp = (t_exp)(*job_exp + ((double)*job_exp * ((bonus + vip_bonus_job) / 100.)));
+		t_exp exp = (t_exp)((double)*job_exp * (server_job / 100. * bonus / 100. + bonus_bm / 100.));
 		*job_exp = cap_value(exp, 1, MAX_EXP);
 	}
 

@@ -1605,6 +1605,13 @@ static int32 mob_ai_sub_hard_slavemob(mob_data *md,t_tick tick)
 				if (mmd.target_id > 0)
 					tbl = map_id2bl(mmd.target_id);
 			}
+			
+			if (bl->type == BL_PC) {//Not sure if mob does this too.
+				if (ud->target)
+					tbl = map_id2bl(ud->target);
+				else if (ud->target_to)
+					tbl = map_id2bl(ud->target_to);
+			}
 
 			if (tbl != nullptr) {
 				md->last_linktime = tick;
@@ -1900,6 +1907,15 @@ static bool mob_ai_sub_hard(mob_data *md, t_tick tick)
 	can_move = (mode&MD_CANMOVE) && unit_can_move(md);
 	if (can_move)
 		md->last_canmove = tick;
+	
+	struct block_list *mbl = map_id2bl(md->master_id);
+	if (mbl && md->master_id && md->status.speed != status_get_speed(mbl)) {
+		if (md->ud.walktimer != INVALID_TIMER)
+			return 0; // Wait until the pet finishes walking back to master.
+
+		md->status.speed = status_get_speed(mbl);
+		md->ud.state.change_walk_target = 1;
+	}
 
 	if (md->target_id)
 	{	//Check validity of current target. [Skotlex]
@@ -2959,6 +2975,19 @@ int32 mob_dead(mob_data *md, block_list *src, int32 type)
 		first_sd = sd;
 	}
 
+	if (md->master_id) {
+		block_list *master_bl = map_id2bl(md->master_id);
+		if (master_bl) {
+			status_change *sc = status_get_sc(master_bl);
+			if (sc && md->mob_id) {
+				if (md->mob_id == MOBID_BIONIC_WOODENWARRIOR && sc->getSCE(SC_BIONIC_WOODENWARRIOR))
+					status_change_end(master_bl, SC_BIONIC_WOODENWARRIOR);
+				if (md->mob_id == MOBID_BIONIC_WOODEN_FAIRY && sc->getSCE(MOBID_BIONIC_WOODEN_FAIRY))
+					status_change_end(master_bl, SC_BIONIC_WOODEN_FAIRY);
+			}
+		}
+	}
+
 	if( md->guardian_data && md->guardian_data->number >= 0 && md->guardian_data->number < MAX_GUARDIANS )
 		guild_castledatasave(md->guardian_data->castle->castle_id, CD_ENABLED_GUARDIAN00 + md->guardian_data->number,0);
 
@@ -3090,9 +3119,6 @@ int32 mob_dead(mob_data *md, block_list *src, int32 type)
 #ifndef RENEWAL
 		if (md->sc.getSCE(SC_RICHMANKIM))
 			bonus += md->sc.getSCE(SC_RICHMANKIM)->val2;
-#else
-		if (sd && sd->sc.getSCE(SC_RICHMANKIM))
-			bonus += sd->sc.getSCE(SC_RICHMANKIM)->val2;
 #endif
 		if(sd) {
 			temp = status_get_class(md);
@@ -5078,7 +5104,7 @@ uint64 MobDatabase::parseBodyNode(const ryml::NodeRef& node) {
 		if (!this->asUInt64(node, "BaseExp", exp))
 			return 0;
 
-		mob->base_exp = static_cast<t_exp>(cap_value((double)exp * (double)battle_config.base_exp_rate / 100., 0, MAX_EXP));
+		mob->base_exp = static_cast<t_exp>(cap_value((double)exp, 0, MAX_EXP));
 	}
 	
 	if (this->nodeExists(node, "JobExp")) {
@@ -5087,7 +5113,7 @@ uint64 MobDatabase::parseBodyNode(const ryml::NodeRef& node) {
 		if (!this->asUInt64(node, "JobExp", exp))
 			return 0;
 
-		mob->job_exp = static_cast<t_exp>(cap_value((double)exp * (double)battle_config.job_exp_rate / 100., 0, MAX_EXP));
+		mob->job_exp = static_cast<t_exp>(cap_value((double)exp, 0, MAX_EXP));
 	}
 	
 	if (this->nodeExists(node, "MvpExp")) {
@@ -5523,12 +5549,12 @@ uint64 MobDatabase::parseBodyNode(const ryml::NodeRef& node) {
 	}
 
 	if (this->nodeExists(node, "MvpDrops")) {
-		if (!this->parseDropNode("MvpDrops", node, MAX_MVP_DROP, mob->mvpitem))
+		if (!this->parseDropNode("MvpDrops", node, MAX_MVP_DROP_TOTAL, mob->mvpitem))
 			return 0;
 	}
 
 	if (this->nodeExists(node, "Drops")) {
-		if (!this->parseDropNode("Drops", node, MAX_MOB_DROP, mob->dropitem))
+		if (!this->parseDropNode("Drops", node, MAX_MOB_DROP_TOTAL, mob->dropitem))
 			return 0;
 	}
 

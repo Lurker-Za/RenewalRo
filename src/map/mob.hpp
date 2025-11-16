@@ -30,6 +30,10 @@ struct guardian_data;
 #ifndef MAX_MVP_DROP
 	#define MAX_MVP_DROP 3
 #endif
+#define MAX_MOB_DROP_ADD 5
+#define MAX_MVP_DROP_ADD 2
+#define MAX_MOB_DROP_TOTAL (MAX_MOB_DROP+MAX_MOB_DROP_ADD)
+#define MAX_MVP_DROP_TOTAL (MAX_MVP_DROP+MAX_MVP_DROP_ADD)
 
 //Min time between AI executions
 const t_tick MIN_MOBTHINKTIME = 100;

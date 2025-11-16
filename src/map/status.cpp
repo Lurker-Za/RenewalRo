@@ -2995,7 +2995,7 @@ int32 status_calc_mob_(mob_data* md, uint8 opt)
 						status->mdef = mstatus->mdef + 4 * abr_mastery;
 						status->hit = mstatus->hit + 5 * abr_mastery / 2;
 						status->flee = mstatus->flee + 10 * abr_mastery;
-						status->speed = mstatus->speed;
+						status->speed = status_get_speed(mbl);
 
 						// The Infinity ABR appears to have a much higher attack then other
 						// ABR's and im guessing has a much higher MaxHP due to it being a AP
@@ -3025,14 +3025,14 @@ int32 status_calc_mob_(mob_data* md, uint8 opt)
 						// I decided to do something similar to elementals for now until I know.
 						// Also added hit increase from Bionic-Mastery for balance reasons. [Rytech]
 						status->max_hp = (5000 + 40000 * bionic_mastery) * mstatus->vit / 100;
-						//status->max_sp = (50 + 20 * bionic_mastery) * mstatus->int_ / 100;// Wait what??? Bionic Mastery increases MaxSP? They have SP???
+						status->max_sp = (50 + 20 * bionic_mastery) * mstatus->int_ / 100;
 						status->rhw.atk = (2 * mstatus->batk + 600 * bionic_mastery) * 70 / 100;
 						status->rhw.atk2 = 2 * mstatus->batk + 600 * bionic_mastery;
 						status->def = mstatus->def + 20 * bionic_mastery;
 						status->mdef = mstatus->mdef + 4 * bionic_mastery;
 						status->hit = mstatus->hit + 5 * bionic_mastery / 2;
 						status->flee = mstatus->flee + 10 * bionic_mastery;
-						status->speed = mstatus->speed;
+						status->speed = status_get_speed(mbl);
 
 						// The Hell Tree bionic appears to have a much higher attack then other
 						// bionic's and im guessing has a much higher MaxHP due to it being a AP
@@ -4984,6 +4984,12 @@ int32 status_calc_pc_sub(map_session_data* sd, uint8 opt)
 		sc_start(sd, sd, SC_SPRITEMABLE, 100, 1, INFINITE_TICK);
 	if (pc_checkskill(sd, SU_SOULATTACK) > 0 && !sd->sc.getSCE(SC_SOULATTACK))
 		sc_start(sd, sd, SC_SOULATTACK, 100, 1, INFINITE_TICK);
+	
+	if ((sd->bonus.speed_rate || sd->bonus.speed_add_rate) && !sd->sc.getSCE(SC_SPEEDUP2)) {
+		sc_start(sd, sd, SC_SPEEDUP2, 100, 1, INFINITE_TICK);
+	}
+	else if (sd->bonus.speed_rate == 0 && sd->bonus.speed_add_rate == 0)
+		status_change_end(sd, SC_SPEEDUP2);
 
 	calculating = 0;
 
@@ -6749,11 +6755,11 @@ void status_calc_bl_(block_list* bl, std::bitset<SCB_MAX> flag, uint8 opt)
 static uint16 status_calc_str(block_list *bl, status_change *sc, int32 str)
 {
 	if(sc == nullptr || sc->empty())
-		return cap_value(str,0,USHRT_MAX);
+		return cap_value(str, SHRT_MIN, USHRT_MAX);
 
 	if(sc->getSCE(SC_HARMONIZE)) {
 		str -= sc->getSCE(SC_HARMONIZE)->val2;
-		return (uint16)cap_value(str,0,USHRT_MAX);
+		return (uint16)cap_value(str, SHRT_MIN, USHRT_MAX);
 	}
 	if(sc->getSCE(SC_INCALLSTATUS))
 		str += sc->getSCE(SC_INCALLSTATUS)->val1;
@@ -6811,7 +6817,7 @@ static uint16 status_calc_str(block_list *bl, status_change *sc, int32 str)
 		str -= sc->getSCE(SC_ALL_STAT_DOWN)->val2;
 
 	//TODO: Stat points should be able to be decreased below 0
-	return (uint16)cap_value(str,0,USHRT_MAX);
+	return (uint16)cap_value(str, SHRT_MIN, USHRT_MAX);
 }
 
 /**
@@ -6824,11 +6830,11 @@ static uint16 status_calc_str(block_list *bl, status_change *sc, int32 str)
 static uint16 status_calc_agi(block_list *bl, status_change *sc, int32 agi)
 {
 	if(sc == nullptr || sc->empty())
-		return cap_value(agi,0,USHRT_MAX);
+		return cap_value(agi, SHRT_MIN, USHRT_MAX);
 
 	if(sc->getSCE(SC_HARMONIZE)) {
 		agi -= sc->getSCE(SC_HARMONIZE)->val2;
-		return (uint16)cap_value(agi,0,USHRT_MAX);
+		return (uint16)cap_value(agi, SHRT_MIN, USHRT_MAX);
 	}
 	if(sc->getSCE(SC_CONCENTRATE) && !sc->getSCE(SC_QUAGMIRE))
 		agi += (agi-sc->getSCE(SC_CONCENTRATE)->val3)*sc->getSCE(SC_CONCENTRATE)->val2/100;
@@ -6884,7 +6890,7 @@ static uint16 status_calc_agi(block_list *bl, status_change *sc, int32 agi)
 		agi -= sc->getSCE(SC_ALL_STAT_DOWN)->val2;
 
 	//TODO: Stat points should be able to be decreased below 0
-	return (uint16)cap_value(agi,0,USHRT_MAX);
+	return (uint16)cap_value(agi, SHRT_MIN, USHRT_MAX);
 }
 
 /**
@@ -6897,11 +6903,11 @@ static uint16 status_calc_agi(block_list *bl, status_change *sc, int32 agi)
 static uint16 status_calc_vit(block_list *bl, status_change *sc, int32 vit)
 {
 	if(sc == nullptr || sc->empty())
-		return cap_value(vit,0,USHRT_MAX);
+		return cap_value(vit, SHRT_MIN, USHRT_MAX);
 
 	if(sc->getSCE(SC_HARMONIZE)) {
 		vit -= sc->getSCE(SC_HARMONIZE)->val2;
-		return (uint16)cap_value(vit,0,USHRT_MAX);
+		return (uint16)cap_value(vit, SHRT_MIN, USHRT_MAX);
 	}
 	if(sc->getSCE(SC_INCALLSTATUS))
 		vit += sc->getSCE(SC_INCALLSTATUS)->val1;
@@ -6945,7 +6951,7 @@ static uint16 status_calc_vit(block_list *bl, status_change *sc, int32 vit)
 		vit -= sc->getSCE(SC_ALL_STAT_DOWN)->val2;
 
 	//TODO: Stat points should be able to be decreased below 0
-	return (uint16)cap_value(vit,0,USHRT_MAX);
+	return (uint16)cap_value(vit, SHRT_MIN, USHRT_MAX);
 }
 
 /**
@@ -6958,11 +6964,11 @@ static uint16 status_calc_vit(block_list *bl, status_change *sc, int32 vit)
 static uint16 status_calc_int(block_list *bl, status_change *sc, int32 int_)
 {
 	if(sc == nullptr || sc->empty())
-		return cap_value(int_,0,USHRT_MAX);
+		return cap_value(int_, SHRT_MIN, USHRT_MAX);
 
 	if(sc->getSCE(SC_HARMONIZE)) {
 		int_ -= sc->getSCE(SC_HARMONIZE)->val2;
-		return (uint16)cap_value(int_,0,USHRT_MAX);
+		return (uint16)cap_value(int_, SHRT_MIN, USHRT_MAX);
 	}
 	if(sc->getSCE(SC_INCALLSTATUS))
 		int_ += sc->getSCE(SC_INCALLSTATUS)->val1;
@@ -7023,7 +7029,7 @@ static uint16 status_calc_int(block_list *bl, status_change *sc, int32 int_)
 		int_ -= sc->getSCE(SC_ALL_STAT_DOWN)->val2;
 
 	//TODO: Stat points should be able to be decreased below 0
-	return (uint16)cap_value(int_,0,USHRT_MAX);
+	return (uint16)cap_value(int_, SHRT_MIN, USHRT_MAX);
 }
 
 /**
@@ -7036,11 +7042,11 @@ static uint16 status_calc_int(block_list *bl, status_change *sc, int32 int_)
 static uint16 status_calc_dex(block_list *bl, status_change *sc, int32 dex)
 {
 	if(sc == nullptr || sc->empty())
-		return cap_value(dex,0,USHRT_MAX);
+		return cap_value(dex, SHRT_MIN, USHRT_MAX);
 
 	if(sc->getSCE(SC_HARMONIZE)) {
 		dex -= sc->getSCE(SC_HARMONIZE)->val2;
-		return (uint16)cap_value(dex,0,USHRT_MAX);
+		return (uint16)cap_value(dex, SHRT_MIN, USHRT_MAX);
 	}
 	if(sc->getSCE(SC_CONCENTRATE) && !sc->getSCE(SC_QUAGMIRE))
 		dex += (dex-sc->getSCE(SC_CONCENTRATE)->val4)*sc->getSCE(SC_CONCENTRATE)->val2/100;
@@ -7098,7 +7104,7 @@ static uint16 status_calc_dex(block_list *bl, status_change *sc, int32 dex)
 		dex -= sc->getSCE(SC_ALL_STAT_DOWN)->val2;
 
 	//TODO: Stat points should be able to be decreased below 0
-	return (uint16)cap_value(dex,0,USHRT_MAX);
+	return (uint16)cap_value(dex, SHRT_MIN, USHRT_MAX);
 }
 
 /**
@@ -7111,11 +7117,11 @@ static uint16 status_calc_dex(block_list *bl, status_change *sc, int32 dex)
 static uint16 status_calc_luk(block_list *bl, status_change *sc, int32 luk)
 {
 	if(sc == nullptr || sc->empty())
-		return cap_value(luk,0,USHRT_MAX);
+		return cap_value(luk, SHRT_MIN, USHRT_MAX);
 
 	if(sc->getSCE(SC_HARMONIZE)) {
 		luk -= sc->getSCE(SC_HARMONIZE)->val2;
-		return (uint16)cap_value(luk,0,USHRT_MAX);
+		return (uint16)cap_value(luk, SHRT_MIN, USHRT_MAX);
 	}
 	if(sc->getSCE(SC_CURSE))
 		return 0;
@@ -7159,7 +7165,7 @@ static uint16 status_calc_luk(block_list *bl, status_change *sc, int32 luk)
 		luk -= sc->getSCE(SC_ALL_STAT_DOWN)->val2;
 
 	//TODO: Stat points should be able to be decreased below 0
-	return (uint16)cap_value(luk,0,USHRT_MAX);
+	return (uint16)cap_value(luk, SHRT_MIN, USHRT_MAX);
 }
 
 /**
@@ -9150,10 +9156,6 @@ int32 status_get_guild_id(block_list *bl)
 	switch (bl->type) {
 		case BL_PC:
 			return ((TBL_PC*)bl)->status.guild_id;
-		case BL_PET:
-			if (((TBL_PET*)bl)->master)
-				return ((TBL_PET*)bl)->master->status.guild_id;
-			break;
 		case BL_MOB:
 			{
 				map_session_data *msd;
@@ -12103,8 +12105,6 @@ static bool status_change_start_post_delay(block_list* src, block_list* bl, sc_t
 			break;
 		case SC_REFLECTDAMAGE:
 			val2 = 10 * val1; // Reflect reduction amount
-			val4 = tick/1000; // Number of SP cycles (duration)
-			tick_time = 1000; // [GodLesZ] tick time
 			break;
 		case SC_FORCEOFVANGUARD:
 			val2 = 8 + 12 * val1; // Chance
@@ -14814,15 +14814,6 @@ TIMER_FUNC(status_change_tick_timer){
 		if( status_charge(bl, 0, 7 - sce->val1) ) {
 			sce->val2 = (sd ? skill_banding_count(sd) : 1);
 			sc_timer_next(5000 + tick);
-			return 0;
-		}
-		break;
-
-	case SC_REFLECTDAMAGE:
-		if( --(sce->val4) > 0 ) {
-			if( !status_charge(bl,0,10) )
- 				break;
-			sc_timer_next(1000 + tick);
 			return 0;
 		}
 		break;

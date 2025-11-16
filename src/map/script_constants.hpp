@@ -2011,6 +2011,7 @@
 	export_constant(SC_PREMIUM_STORAGEBOOST);
 	export_constant(SC_PREMIUM_ITEMBOOST);
 	export_constant(SC_PREMIUM_EXPBOOST);
+	export_constant(SC_SPEEDUP2);
 
 /// Do not modify code below this, until the end of the API hook, since it will be automatically generated again
 /// @APIHOOK_START(EFST_CONST)

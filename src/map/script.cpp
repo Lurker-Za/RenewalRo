@@ -7507,7 +7507,7 @@ BUILDIN_FUNC(checkweight)
 		nameid = id->nameid;
 
 		amount = script_getnum(st,i+1);
-		if( amount < 1 ) {
+		if( amount < 0 ) {
 			ShowError("buildin_checkweight: Invalid amount '%d'.\n", amount);
 			script_pushint(st,0);
 			return SCRIPT_CMD_FAILURE;

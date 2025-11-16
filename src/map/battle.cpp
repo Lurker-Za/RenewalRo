@@ -8407,34 +8407,6 @@ struct Damage battle_calc_magic_attack(block_list *src,block_list *target,uint16
 			case AB_RENOVATIO:
 				ad.damage = status_get_lv(src) * 10 + sstatus->int_;
 				break;
-			case NPC_EARTHQUAKE:
-				if (mflag & NPC_EARTHQUAKE_FLAG) {
-					ad.flag |= NPC_EARTHQUAKE_FLAG; // Pass flag to battle_calc_damage
-					mflag &= ~NPC_EARTHQUAKE_FLAG; // Remove before NK_SPLASHSPLIT check
-				}
-
-				// TODO: This code is only accurate for pre-renewal
-				// In renewal, monsters should use NPC_EARTHQUAKE_K instead, but it's not implemented yet
-				if (sd != nullptr) {
-#ifdef RENEWAL
-					ad.damage = sstatus->str * 2 + battle_calc_weapon_attack(src, target, skill_id, skill_lv, mflag).damage;
-#else
-					ad.damage = sd->battle_status.batk + sd->battle_status.rhw.atk;
-#endif
-				}
-				else {
-					ad.damage = battle_calc_base_damage(src, sstatus, &sstatus->rhw, sc, tstatus->size, 0);
-#ifndef RENEWAL
-					if (sc != nullptr)
-						MATK_RATE(battle_get_atkpercent(*src, skill_id, *sc));
-#endif
-				}
-
-				MATK_RATE(200 + 100 * skill_lv + 100 * (skill_lv / 2) + ((skill_lv > 4) ? 100 : 0));
-
-				if (nk[NK_SPLASHSPLIT] && mflag > 1)
-					ad.damage /= mflag;
-				break;
 			case NPC_ICEMINE:
 			case NPC_FLAMECROSS:
 				ad.damage = static_cast<int64>( sstatus->rhw.atk ) * static_cast<int64>( 20 ) * static_cast<int64>( skill_lv );
@@ -8444,6 +8416,30 @@ struct Damage battle_calc_magic_attack(block_list *src,block_list *target,uint16
 					MATK_ADD(sstatus->matk_min+rnd()%(sstatus->matk_max-sstatus->matk_min));
 				} else {
 					MATK_ADD(sstatus->matk_min);
+				}
+				
+				if (skill_id == NPC_EARTHQUAKE) {
+					if (mflag & NPC_EARTHQUAKE_FLAG) {
+						ad.flag |= NPC_EARTHQUAKE_FLAG; // Pass flag to battle_calc_damage
+						mflag &= ~NPC_EARTHQUAKE_FLAG; // Remove before NK_SPLASHSPLIT check
+					}
+
+					// TODO: This code is only accurate for pre-renewal
+					// In renewal, monsters should use NPC_EARTHQUAKE_K instead, but it's not implemented yet
+					if (sd != nullptr) {
+#ifdef RENEWAL
+						ad.damage += sstatus->str * 2 + battle_calc_weapon_attack(src, target, skill_id, skill_lv, mflag).damage;
+#else
+						ad.damage = sd->battle_status.batk + sd->battle_status.rhw.atk;
+#endif
+					}
+					else {
+						ad.damage = battle_calc_base_damage(src, sstatus, &sstatus->rhw, sc, tstatus->size, 0);
+#ifndef RENEWAL
+						if (sc != nullptr)
+							MATK_RATE(battle_get_atkpercent(*src, skill_id, *sc));
+#endif
+					}
 				}
 
 				if (nk[NK_SPLASHSPLIT]) { // Divide MATK in case of multiple targets skill
@@ -9485,6 +9481,9 @@ struct Damage battle_calc_magic_attack(block_list *src,block_list *target,uint16
 						RE_LVL_DMOD(100);
 						if (mflag & SKILL_ALTDMG_FLAG)
 							skillratio = skillratio * 3 / 10;
+						break;
+					case NPC_EARTHQUAKE:
+						skillratio += 100 + 100 * skill_lv + 100 * (skill_lv / 2) + ((skill_lv > 4) ? 100 : 0);
 						break;
 				}
 

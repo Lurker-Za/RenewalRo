@@ -19019,7 +19019,7 @@ void clif_displayexp(map_session_data *sd, t_exp exp, char type, bool quest, boo
 	offset = 0;
 #endif
 	WFIFOW(fd,10+offset) = type;
-	WFIFOW(fd,12+offset) = (quest && type != SP_JOBEXP) ? 1 : 0; // NOTE: Somehow JobEXP always in yellow color
+	WFIFOW(fd,12+offset) = 0;
 	WFIFOSET(fd,packet_len(cmd));
 }
 

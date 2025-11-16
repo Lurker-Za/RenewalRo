@@ -1453,6 +1453,8 @@ enum sc_type : int16 {
 	SC_PREMIUM_STORAGEBOOST,
 	SC_PREMIUM_ITEMBOOST,
 	SC_PREMIUM_EXPBOOST,
+	
+	SC_SPEEDUP2,
 
 	SC_MAX, //Automatically updated max, used in for's to check we are within bounds.
 };

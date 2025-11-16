@@ -126,3 +126,14 @@ Body:
       NoClearance: true
       SendVal1: true
       NoTickSave: true
+  - Status: SPEEDUP2
+    Icon: EFST_MOVHASTE_INFINITY
+    Flags:
+      NoRemoveOnDead: true
+      NoDispell: true
+      NoBanishingBuster: true
+      NoClearance: true
+      NoSave: true
+      NoClearbuff: true
+    Fail:
+      Speedup2: true

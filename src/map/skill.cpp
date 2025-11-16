@@ -3296,13 +3296,13 @@ void skill_combo(block_list* src,block_list *dsrc, block_list *bl, uint16 skill_
 		switch (skill_id) {
 		case MO_TRIPLEATTACK:
 			if (pc_checkskill(sd, MO_CHAINCOMBO) > 0 || pc_checkskill(sd, SR_DRAGONCOMBO) > 0) {
-				duration = 1;
+				duration = 300;
 				target_id = 0; // Will target current auto-target instead
 			}
 			break;
 		case MO_CHAINCOMBO:
 			if (pc_checkskill(sd, MO_COMBOFINISH) > 0 && sd->spiritball >= 1) {
-				duration = 1;
+				duration = 300;
 				target_id = 0; // Will target current auto-target instead
 			}
 			break;
@@ -3310,27 +3310,27 @@ void skill_combo(block_list* src,block_list *dsrc, block_list *bl, uint16 skill_
 			if (sd->status.party_id > 0) //bonus from SG_FRIEND [Komurka]
 				party_skill_check(sd, sd->status.party_id, skill_id, skill_lv);
 			if (pc_checkskill(sd, CH_TIGERFIST) > 0 && sd->spiritball >= 1) {
-				duration = 1;
+				duration = 300;
 				target_id = 0; // Will target current auto-target instead
 			}
 			else if (pc_checkskill(sd, CH_CHAINCRUSH) > 0 && sd->spiritball >= 2) {
-				duration = 1;
+				duration = 300;
 				target_id = 0; // Will target current auto-target instead
 			}
 			else if (pc_checkskill(sd, MO_EXTREMITYFIST) > 0 && sd->spiritball >= 4 && sd->sc.getSCE(SC_EXPLOSIONSPIRITS) != nullptr) {
-				duration = 1;
+				duration = 300;
 				target_id = 0; // Will target current auto-target instead
 			}
 			break;
 		case CH_TIGERFIST:
 			if (pc_checkskill(sd, CH_CHAINCRUSH) > 0 && sd->spiritball >= 2) {
-				duration = 1;
+				duration = 300;
 				target_id = 0; // Will target current auto-target instead
 			}
 			break;
 		case CH_CHAINCRUSH:
 			if (pc_checkskill(sd, MO_EXTREMITYFIST) > 0 && sd->spiritball >= 1 && sd->sc.getSCE(SC_EXPLOSIONSPIRITS) != nullptr) {
-				duration = 1;
+				duration = 300;
 				target_id = 0; // Will target current auto-target instead
 			}
 #ifndef RENEWAL
@@ -18862,7 +18862,7 @@ bool skill_check_condition_castbegin( map_session_data& sd, uint16 skill_id, uin
 			if( skill_check_pc_partner(&sd,skill_id,&skill_lv,1,0) <= 0 && require.itemid[0]
 				&& sd.special_state.no_gemstone == 0
 				&& ((i = pc_search_inventory(&sd,require.itemid[0])) < 0 || sd.inventory.u.items_inventory[i].amount < require.amount[0]) ) {
-				clif_skill_fail( sd, skill_id );
+				clif_skill_fail( sd, skill_id, USESKILL_FAIL_BLUEJAMSTONE, 0);
 				return false;
 			}
 			break;
@@ -18898,6 +18898,12 @@ bool skill_check_condition_castbegin( map_session_data& sd, uint16 skill_id, uin
 					clif_skill_fail( sd, skill_id, (skill_id == WL_RELEASE) ? USESKILL_FAIL_SUMMON_NONE : USESKILL_FAIL_LEVEL );
 					return false;
 				}
+			}
+			break;
+		case GC_POISONINGWEAPON:
+			if (sd.weapontype1 == W_FIST) {
+				clif_skill_fail( sd, skill_id, USESKILL_FAIL_THIS_WEAPON, 0);
+				return false;
 			}
 			break;
 		case GC_HALLUCINATIONWALK:
@@ -20513,7 +20519,7 @@ int32 skill_delayfix(block_list *bl, uint16 skill_id, uint16 skill_lv)
 {
 	nullpo_ret(bl);
 
-	if (skill_id == SA_ABRACADABRA)
+	if (skill_id == SA_ABRACADABRA || skill_id == ALL_EQSWITCH)
 		return 0; //Will use picked skill's delay.
 
 	if (bl->type&battle_config.no_skill_delay)
@@ -23724,18 +23730,23 @@ void skill_poisoningweapon( map_session_data& sd, t_itemid nameid ){
 	const char *msg;
 
 	switch( nameid ) {
-		case ITEMID_PARALYSE:      type = SC_PARALYSE;      /*msg = 1444;*/ msg = "Paralyze"; break;
-		case ITEMID_PYREXIA:       type = SC_PYREXIA;		/*msg = 1448;*/ msg = "Pyrexia"; break;
-		case ITEMID_DEATHHURT:     type = SC_DEATHHURT;     /*msg = 1447;*/ msg = "Deathhurt"; break;
-		case ITEMID_LEECHESEND:    type = SC_LEECHESEND;    /*msg = 1450;*/ msg = "Leech End"; break;
-		case ITEMID_VENOMBLEED:    type = SC_VENOMBLEED;    /*msg = 1445;*/ msg = "Venom Bleed"; break;
-		case ITEMID_TOXIN:         type = SC_TOXIN;         /*msg = 1443;*/ msg = "Toxin"; break;
-		case ITEMID_MAGICMUSHROOM: type = SC_MAGICMUSHROOM; /*msg = 1446;*/ msg = "Magic Mushroom"; break;
-		case ITEMID_OBLIVIONCURSE: type = SC_OBLIVIONCURSE; /*msg = 1449;*/ msg = "Oblivion Curse"; break;
+		case ITEMID_PARALYSE:      type = SC_PARALYSE;      break;
+		case ITEMID_PYREXIA:       type = SC_PYREXIA;		break;
+		case ITEMID_DEATHHURT:     type = SC_DEATHHURT;     break;
+		case ITEMID_LEECHESEND:    type = SC_LEECHESEND;    break;
+		case ITEMID_VENOMBLEED:    type = SC_VENOMBLEED;    break;
+		case ITEMID_TOXIN:         type = SC_TOXIN;         break;
+		case ITEMID_MAGICMUSHROOM: type = SC_MAGICMUSHROOM; break;
+		case ITEMID_OBLIVIONCURSE: type = SC_OBLIVIONCURSE; break;
 		default:
 			clif_skill_fail( sd, GC_POISONINGWEAPON );
 			return;
 	}
+	
+	char* item_name = (char *)aMalloc( ITEM_NAME_LENGTH * sizeof( char ) );
+
+	memcpy(item_name, item_db.find(nameid)->ename.c_str(), ITEM_NAME_LENGTH);
+	msg = item_name;
 
 	status_change_end(&sd, SC_POISONINGWEAPON); // End the status so a new poison can be applied (if changed)
 	chance = 2 + 2 * sd.menuskill_val; // 2 + 2 * skill_lv

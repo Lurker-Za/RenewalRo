@@ -543,6 +543,20 @@ uint64 BarterDatabase::parseBodyNode( const ryml::NodeRef& node ){
 		}
 	}
 
+	if( this->nodeExists(node, "Extended" ) ){
+		bool extended;
+
+		if( !this->asBool(node, "Extended", extended) ){
+			return 0;
+		}
+
+		barter->extended = extended;
+	}else{
+		if( !exists ){
+			barter->extended = false;
+		}
+	}
+
 	if( this->nodeExists( node, "Items" ) ){
 		for( const ryml::NodeRef& itemNode : node["Items"] ){
 			uint16 index;
@@ -759,6 +773,9 @@ void BarterDatabase::loadingFinished(){
 		std::shared_ptr<s_npc_barter> barter = pair.second;
 
 		bool extended = false;
+		
+		if( barter->extended == true )
+			extended = true;
 
 		// Check if it has to use the extended barter feature or not
 		for( const auto& itemPair : barter->items ){
