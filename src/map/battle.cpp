@@ -5193,8 +5193,6 @@ static int32 battle_calc_attack_skill_ratio(struct Damage* wd, block_list *src,b
 #else
 			skillratio += 30 * skill_lv;
 #endif
-			if (sc && sc->getSCE(SC_SHIELD_POWER))// Whats the official increase? [Rytech]
-				skillratio += skillratio * 50 / 100;
 			break;
 		case WS_CARTTERMINATION:
 			i = 10 * (16 - skill_lv);
@@ -5479,7 +5477,7 @@ static int32 battle_calc_attack_skill_ratio(struct Damage* wd, block_list *src,b
 			skillratio += 50 * skill_lv;
 			break;
 		case NC_BOOSTKNUCKLE:
-			skillratio += -100 + 260 * skill_lv + sstatus->dex; // !TODO: What's the DEX bonus?
+			skillratio += -100 + 240 * skill_lv + sstatus->dex; // !TODO: What's the DEX bonus?
 			RE_LVL_DMOD(100);
 			break;
 		case NC_PILEBUNKER:
@@ -5525,7 +5523,7 @@ static int32 battle_calc_attack_skill_ratio(struct Damage* wd, block_list *src,b
 			RE_LVL_DMOD(100);
 			break;
 		case SC_FATALMENACE:
-			skillratio += 120 * skill_lv + sstatus->agi; // !TODO: What's the AGI bonus?
+			skillratio += -100 + 120 * skill_lv + sstatus->agi; // !TODO: What's the AGI bonus?
 
 			if( sc != nullptr && sc->getSCE( SC_ABYSS_DAGGER ) ){
 				skillratio += 30 * skill_lv;
@@ -6020,6 +6018,7 @@ static int32 battle_calc_attack_skill_ratio(struct Damage* wd, block_list *src,b
 			break;
 		case DK_SERVANT_W_DEMOL:
 			skillratio += -100 + 500 * skill_lv;
+			skillratio += 5 * sstatus->pow;
 			RE_LVL_DMOD(100);
 			break;
 		case DK_HACKANDSLASHER:
@@ -6029,7 +6028,7 @@ static int32 battle_calc_attack_skill_ratio(struct Damage* wd, block_list *src,b
 			RE_LVL_DMOD(100);
 			break;
 		case DK_DRAGONIC_AURA:
-			skillratio += 3650 * skill_lv + 10 * sstatus->pow;
+			skillratio += -100 + 3650 * skill_lv + 10 * sstatus->pow;
 			if (tstatus->race == RC_DEMIHUMAN || tstatus->race == RC_ANGEL)
 				skillratio += 150 * skill_lv;
 			RE_LVL_DMOD(100);
@@ -6095,6 +6094,7 @@ static int32 battle_calc_attack_skill_ratio(struct Damage* wd, block_list *src,b
 
 			if( tsc != nullptr && tsc->getSCE( SC_HOLY_OIL ) ){
 				skillratio += 950 * skill_lv;
+				skillratio += 5 * sstatus->pow;
 			}
 
 			RE_LVL_DMOD(100);
@@ -9108,10 +9108,10 @@ struct Damage battle_calc_magic_attack(block_list *src,block_list *target,uint16
 						break;
 					case TR_METALIC_FURY:
 						skillratio += -100 + 3850 * skill_lv;
-						// !Todo: skill affected by SPL (without SC_SOUNDBLEND) as well?
+						skillratio += pc_checkskill(sd, TR_STAGE_MANNER) * sstatus->spl;
 						if (tsc && tsc->getSCE(SC_SOUNDBLEND)) {
 							skillratio += 800 * skill_lv;
-							skillratio += 2 * pc_checkskill(sd, TR_STAGE_MANNER) * sstatus->spl;
+							skillratio += pc_checkskill(sd, TR_STAGE_MANNER) * sstatus->spl;
 						}
 						RE_LVL_DMOD(100);
 						break;
