@@ -2369,19 +2369,30 @@ int32 skill_additional_effect( block_list* src, block_list *bl, uint16 skill_id,
 #endif
 
 			sd->state.autocast = 1;
+
+			int32 flag = SKILL_NOCONSUME_REQ;
+			if (it.flag & AUTOSPELL_FORCE_CONSUME) {
+				sd->state.autocast = 2;
+				if (!skill_check_condition_castbegin(*sd, skill, autospl_skill_lv) || !skill_check_condition_castend(*sd, skill, autospl_skill_lv)) {
+					sd->state.autocast = 0;
+					continue;
+				}
+				flag = 0;
+			}
+
 			skill_consume_requirement(sd,skill,autospl_skill_lv,1);
 #ifndef RENEWAL
 			skill_toggle_magicpower(src, skill);
 #endif
 			switch (type) {
 				case CAST_GROUND:
-					skill_castend_pos2(src, tbl->x, tbl->y, skill, autospl_skill_lv, tick, 0);
+					skill_castend_pos2(src, tbl->x, tbl->y, skill, autospl_skill_lv, tick, flag);
 					break;
 				case CAST_NODAMAGE:
-					skill_castend_nodamage_id(src, tbl, skill, autospl_skill_lv, tick, 0);
+					skill_castend_nodamage_id(src, tbl, skill, autospl_skill_lv, tick, flag);
 					break;
 				case CAST_DAMAGE:
-					skill_castend_damage_id(src, tbl, skill, autospl_skill_lv, tick, 0);
+					skill_castend_damage_id(src, tbl, skill, autospl_skill_lv, tick, flag);
 					break;
 			}
 			sd->state.autocast = 0;
@@ -2462,16 +2473,27 @@ int32 skill_onskillusage(map_session_data *sd, block_list *bl, uint16 skill_id, 
 
 		sd->state.autocast = 1;
 		it.lock = true;
+
+		int32 flag = SKILL_NOCONSUME_REQ;
+		if (it.flag & AUTOSPELL_FORCE_CONSUME) {
+			sd->state.autocast = 2;
+			if (!skill_check_condition_castbegin(*sd, skill, skill_lv) || !skill_check_condition_castend(*sd, skill, skill_lv)) {
+				sd->state.autocast = 0;
+				continue;
+			}
+			flag = 0;
+		}
+
 		skill_consume_requirement(sd,skill,skill_lv,1);
 		switch( type ) {
 			case CAST_GROUND:
-				skill_castend_pos2(sd, tbl->x, tbl->y, skill, skill_lv, tick, 0);
+				skill_castend_pos2(sd, tbl->x, tbl->y, skill, skill_lv, tick, flag);
 				break;
 			case CAST_NODAMAGE:
-				skill_castend_nodamage_id(sd, tbl, skill, skill_lv, tick, 0);
+				skill_castend_nodamage_id(sd, tbl, skill, skill_lv, tick, flag);
 				break;
 			case CAST_DAMAGE:
-				skill_castend_damage_id(sd, tbl, skill, skill_lv, tick, 0);
+				skill_castend_damage_id(sd, tbl, skill, skill_lv, tick, flag);
 				break;
 		}
 		it.lock = false;
@@ -2682,6 +2704,16 @@ int32 skill_counter_additional_effect (block_list* src, block_list *bl, uint16 s
 				continue;
 			}
 			dstsd->state.autocast = 0;
+			
+			int32 flag = SKILL_NOCONSUME_REQ;
+			if (it.flag & AUTOSPELL_FORCE_CONSUME) {
+				dstsd->state.autocast = 2;
+				if (!skill_check_condition_castbegin(*dstsd, autospl_skill_id, autospl_skill_lv) || !skill_check_condition_castend(*dstsd, autospl_skill_id, autospl_skill_lv)) {
+					dstsd->state.autocast = 0;
+					continue;
+				}
+				flag = 0;
+			}
 
 			if (rnd()%1000 >= autospl_rate)
 				continue;
@@ -2699,13 +2731,13 @@ int32 skill_counter_additional_effect (block_list* src, block_list *bl, uint16 s
 			skill_consume_requirement(dstsd,autospl_skill_id,autospl_skill_lv,1);
 			switch (type) {
 				case CAST_GROUND:
-					skill_castend_pos2(bl, tbl->x, tbl->y, autospl_skill_id, autospl_skill_lv, tick, 0);
+					skill_castend_pos2(bl, tbl->x, tbl->y, autospl_skill_id, autospl_skill_lv, tick, flag);
 					break;
 				case CAST_NODAMAGE:
-					skill_castend_nodamage_id(bl, tbl, autospl_skill_id, autospl_skill_lv, tick, 0);
+					skill_castend_nodamage_id(bl, tbl, autospl_skill_id, autospl_skill_lv, tick, flag);
 					break;
 				case CAST_DAMAGE:
-					skill_castend_damage_id(bl, tbl, autospl_skill_id, autospl_skill_lv, tick, 0);
+					skill_castend_damage_id(bl, tbl, autospl_skill_id, autospl_skill_lv, tick, flag);
 					break;
 			}
 			dstsd->state.autocast = 0;
@@ -19766,11 +19798,7 @@ void skill_consume_requirement(map_session_data *sd, uint16 skill_id, uint16 ski
 			case MO_KITRANSLATION:
 				//Spiritual Bestowment only uses spirit sphere when giving it to someone
 				require.spiritball = 0;
-				[[fallthrough]];
-			default:
-				if(sd->state.autocast)
-					require.sp = 0;
-			break;
+				break;
 		}
 		if(require.hp || require.sp || require.ap)
 			skill_consume_hpspap(sd, skill_id, require.hp, require.sp, require.ap);
@@ -20256,6 +20284,23 @@ struct s_skill_condition skill_get_requirement(map_session_data* sd, uint16 skil
 			req.ap = 0;
 		if (req_opt & SKILL_REQ_APRATECOST)
 			req.ap_rate = 0;
+	}
+
+	uint32 autostate = sd->state.autocast;
+	if (autostate) {
+		if (autostate == 1) {
+			req.hp = 0;
+			req.zeny = 0;
+			req.spiritball = 0;
+			req.ap = 0;
+		}
+		req.sp = 0;
+		req.state = ST_NONE;
+		req.weapon = 0;
+		req.status.clear();
+		req.status.shrink_to_fit();
+		req.eqItem.clear();
+		req.eqItem.shrink_to_fit();
 	}
 
 	return req;

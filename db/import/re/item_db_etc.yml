@@ -89,3 +89,17 @@ Header:
   Version: 3
 
 Body:
+  - Id: 4563
+    AegisName: Creator_Card
+    Name: 크리에이터 카드
+    Type: Card
+    Buy: 20
+    Weight: 10
+    Locations:
+      Armor: true
+    Flags:
+      BuyingStore: true
+      DropEffect: CLIENT
+    Script: |
+      bonus bCritical,(readparam(bStr)>=110)?40:20;
+      bonus5 bAutoSpellWhenHit,"AM_ACIDTERROR",5,100,BF_WEAPON,5;
