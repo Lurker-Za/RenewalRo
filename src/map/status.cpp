@@ -11187,6 +11187,20 @@ static bool status_change_start_post_delay(block_list* src, block_list* bl, sc_t
 			} else // Caster
 				val2 = 10; // After-cast delay % reduction
 			break;
+		case SC_S_LIFEPOTION:
+		case SC_L_LIFEPOTION:
+		case SC_M_LIFEPOTION:
+		case SC_S_MANAPOTION:
+		case SC_G_LIFEPOTION:
+			if( val1 == 0 ) return 0;
+			// val1 = heal percent/amout
+			// val2 = seconds between heals
+			// val4 = total of heals
+			if( val2 < 1 ) val2 = 1;
+			if( (val4 = tick/(val2 * 1000)) < 1 )
+				val4 = 1;
+			tick_time = val2 * 1000; // [GodLesZ] tick time
+			break;
 		case SC_GRADUAL_GRAVITY:
 			val2 = 10 * val1;
 			tick_time = status_get_sc_interval(type);
@@ -14435,6 +14449,33 @@ TIMER_FUNC(status_change_tick_timer){
 			bl->m == sd->feel_map[2].m)
 		{	// Timeout will be handled by pc_setpos
 			sce->tick_timer = INVALID_TIMER;
+			return 0;
+		}
+		break;
+
+	case SC_S_LIFEPOTION:
+	case SC_L_LIFEPOTION:
+	case SC_M_LIFEPOTION:
+	case SC_G_LIFEPOTION:
+		if( --(sce->val4) >= 0 ) {
+			// val1 < 0 = per max% | val1 > 0 = exact amount
+			int hp = 0;
+			if( status->hp < status->max_hp && !sc->getSCE(SC_BERSERK) )
+				hp = (sce->val1 < 0) ? (int)(status->max_hp * -1 * sce->val1 / 100.) : sce->val1;
+			status_heal(bl, hp, 0, 2);
+			sc_timer_next((sce->val2 * 1000) + tick);
+			return 0;
+		}
+		break;
+
+	case SC_S_MANAPOTION:
+		if( --(sce->val4) >= 0 ) {
+			// val1 < 0 = per max% | val1 > 0 = exact amount
+			int sp = 0;
+			if( status->sp < status->max_sp && !sc->getSCE(SC_BERSERK) )
+				sp = (sce->val1 < 0) ? (int)(status->max_sp * -1 * sce->val1 / 100.) : sce->val1;
+			status_heal(bl, 0, sp, 2);
+			sc_timer_next((sce->val2 * 1000) + tick);
 			return 0;
 		}
 		break;
