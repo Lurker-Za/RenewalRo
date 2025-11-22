@@ -56,13 +56,11 @@ payon,164,157,4	duplicate(cashmall_warper)	Cash Sales Guide#payon	4_M_HUMAN_02
 lighthalzen,206,144,4	duplicate(cashmall_warper)	Cash Sales Guide#lighthalzen	4_M_HUMAN_02
 rachel,128,144,4	duplicate(cashmall_warper)	Cash Sales Guide#rachel	4_M_HUMAN_02
 
-itemmall,21,45,4	script	출구 안내인#cashmall_exit	4_M_HUMAN_02,{
+itemmall,21,45,5	script	출구안내인#cashmall_exit	4_M_HUMAN_02,{
 	mes "[안내인]";
 	mes "좋은 시간 되셨습니까?";
-	mes "저희 아이템몰을 이용해주셔서 정말";
-	mes "감사합니다.";
-	mes "앞으로도 좋은 아이템을 가지고";
-	mes "찾아뵙도록 하겠습니다";
+	mes "저희 아이템몰을 이용해주셔서 정말 감사합니다.";
+	mes "앞으로도 좋은 아이템을 가지고 찾아뵙도록 하겠습니다.";
 	next;
 	mes "[안내인]";
 	mes "그럼 오셨던 곳으로 돌아가시겠습니까?";
@@ -75,8 +73,7 @@ itemmall,21,45,4	script	출구 안내인#cashmall_exit	4_M_HUMAN_02,{
 	}
 	mes "[안내인]";
 	mes "이용해주셔서 감사합니다.";
-	mes "그럼 오셨던 곳으로 다시";
-	mes "보내드리겠습니다.";
+	mes "그럼 오셨던 곳으로 다시 보내드리겠습니다.";
 	close2;
 	switch(cashmall_return) {
 		default:
@@ -119,15 +116,13 @@ itemmall,41,53,3	script	고양이손 판매원 마카롬#cashmall	4_M_MERCAT1,{
 	mes "어서오십셩!";
 	mes "날이면 날마다 오는 것이 아니에용!";
 	mes "오늘 보실 물건들은~ 짜잔!";
-	mes mesitemlink( 1000274 ) + "으로만";
-	mes "교환하실 수 있답니다!";
+	mes mesitemlink( 1000274 ) + "으로만 교환하실 수 있답니다!";
 	mes "마음껏 골라보십셩!";
 	next;
 	switch( select( "3-1차 직업군 스킬 쉐도우", "3-2차 직업군 스킬 쉐도우", "확장 직업군 스킬 쉐도우", "직업별 일반 쉐도우", "쉐도우 큐브", "제련,개조,유용한 물품", "뚝딱 상자", "마법서" ) ){
 		case 1:
 			mes "[마카롬]";
-			mes "^FF00663-1차 직업군 스킬 쉐도우^000000";
-			mes "말씀이시지요!";
+			mes "^FF00663-1차 직업군 스킬 쉐도우^000000 말씀이시지요!";
 			mes "요런 것들이 있습죠!";
 			close2;
 			callshop "CachuaCoupon01";
@@ -135,8 +130,7 @@ itemmall,41,53,3	script	고양이손 판매원 마카롬#cashmall	4_M_MERCAT1,{
 
 		case 2:
 			mes "[마카롬]";
-			mes "^FF00663-2차 직업군 스킬 쉐도우^000000";
-			mes "말씀이시지요!";
+			mes "^FF00663-2차 직업군 스킬 쉐도우^000000 말씀이시지요!";
 			mes "요런 것들이 있습죠!";
 			close2;
 			callshop "CachuaCoupon02";
@@ -190,27 +184,6 @@ itemmall,41,53,3	script	고양이손 판매원 마카롬#cashmall	4_M_MERCAT1,{
 			callshop "CachuaCoupon08";
 			end;
 	}
-}
-
-itemmall,24,77,4	script	대장장이 바스타#pr	4_M_DWARF,{
-	if( !getbattleflag( "feature.refineui" ) ){
-		end;
-	}
-
-	mes "[대장장이 바스타]";
-	mes "마이트해머, 브로크 그리고 쉐도우";
-	mes "대장장이의 일까지 내가 다 떠맡게";
-	mes "되었네. 앞으로 바빠지겠구먼";
-	close2;
-	refineui();
-	end;
-}
-
-itemmall,27,77,4	script	대장장이 마이티 해머#im	4_M_DWARF,{
-	mes "[대장장이 마이티 해머]";
-	mes "제련이라면 이제 바스타에게 의뢰하게.";
-	mes "난 은퇴했으니까...";
-	close;
 }
 
 itemmall,24,74,5	script	대장장이 브로크#im	4_M_HUMAN_01,{
@@ -356,50 +329,43 @@ itemmall,41,55,3	script	고양이손 판매원 뚱카롬#cashmall	4_M_MERCAT1,{
 	switch( select( "선악의 부츠 교환", "선악의 관 교환", "선의 무기 교환", "악의 무기 교환", "진노의 무기 교환", "진노의 관 교환", "취소" ) ) {
 	case 1:
 		mes "[뚱카롬]";
-		mes "선악의 부츠 교환이다옹. 좋은";
-		mes "선택이야옹~!";
+		mes "선악의 부츠 교환이다옹. 좋은 선택이야옹~!";
 		close2;
 		callshop( "barter_mall_coupon_1" );
 		end;
 	case 2:
 		mes "[뚱카롬]";
-		mes "선악의 관 교환이다옹. 멋진";
-		mes "선택이야옹~!";
+		mes "선악의 관 교환이다옹. 멋진 선택이야옹~!";
 		close2;
 		callshop( "barter_mall_coupon_2" );
 		end;
 	case 3:
 		mes "[뚱카롬]";
-		mes "선의 무기 교환이다옹. 훌륭한";
-		mes "선택이야옹~!";
+		mes "선의 무기 교환이다옹. 훌륭한 선택이야옹~!";
 		close2;
 		callshop( "barter_mall_coupon_3" );
 		end;
 	case 4:
 		mes "[뚱카롬]";
-		mes "악의 무기 교환이다옹. 탁월한";
-		mes "선택이야옹~!";
+		mes "악의 무기 교환이다옹. 탁월한 선택이야옹~!";
 		close2;
 		callshop( "barter_mall_coupon_4" );
 		end;
 	case 5:
 		mes "[뚱카롬]";
-		mes "진노의 무기 교환이다옹. 탁월한";
-		mes "선택이야옹~!";
+		mes "진노의 무기 교환이다옹. 탁월한 선택이야옹~!";
 		close2;
 		callshop( "barter_mall_coupon_5" );
 		end;
 	case 6:
 		mes "[뚱카롬]";
-		mes "진노의 관 교환이다옹. 탁월한";
-		mes "선택이야옹~!";
+		mes "진노의 관 교환이다옹. 탁월한 선택이야옹~!";
 		close2;
 		callshop( "barter_mall_coupon_6" );
 		end;
 	case 7:
 		mes "[뚱카롬]";
-		mes "찾는 물건이 없냐옹? 다음에";
-		mes "찾아주세옹.";
+		mes "찾는 물건이 없냐옹? 다음에 찾아주세옹.";
 		close;
 	}
 }
@@ -410,15 +376,13 @@ itemmall,41,50,3	script	고양이손 판매원 냐롬#cashmall	4_M_MERCAT1,{
 	mes "[냐롬]";
 	mes "어서 오세요, 어서오세요.";
 	mes "고양이손 상점 아이템몰점입니다.";
-	mes "당신에게 필요한 그 아이템, 바로";
-	mes "여기있습니다.";
+	mes "당신에게 필요한 그 아이템, 바로 여기있습니다.";
 	mes "부디 원하시는 물건이 있기를!";
 	next;
 	switch( select( "냥다래 열매로 구하기", "제니(zeny)로 구매하기","[카츄아]마일리지 쿠폰으로 구매하기","위대한 영웅의 용맹과 지혜 교환") ){
 		case 1:
 			mes "[냐롬]";
-			mes "약간의 냥다래 열매로";
-			mes "특별한 아이템을 만나 보세요.";
+		mes "약간의 냥다래 열매로 특별한 아이템을 만나 보세요.";
 			next;
 			mes "^FF0000[경고]^000000";
 			mes "^FF0000낭다래 열매로 아이템을 교환 하는 상점입니다.^000000";
@@ -450,8 +414,7 @@ itemmall,41,50,3	script	고양이손 판매원 냐롬#cashmall	4_M_MERCAT1,{
 
 		case 4:
 			mes "[냐롬]";
-			mes "특별한 고객님을 위해 위대한 영웅의";
-			mes "용맹과 지혜를 준비하였습니다.";
+		mes "특별한 고객님을 위해 위대한 영웅의 용맹과 지혜를 준비하였습니다.";
 			close2;
 			callshop "Nyarom_Great_Hero";
 		end;
@@ -492,46 +455,63 @@ OnClock0000:
     end;
 }
 
-itemmall,41,46,3	script	고양이손 선물포장사#cashmall	4_XMAS_CAT4,{
+itemmall,41,46,2	script	고양이손 선물포장사#I_D	4_XMAS_CAT4,{
 	mes "[고양이손 선물포장사]";
-	mes "반갑냐~ 포장하고 싶은 ^0000FF제련 보장권^000000";
-	mes "이 있는거냐?";
+	mes "반갑냐~♡ 포장하고 싶은^0080FF 제련 보장권^000000이 있는 거냐?";
 	next;
-	switch( select( "무기 보장권 포장의뢰를 맡긴다.", "방어구 보장권 포장의뢰를 맡긴다.", "포장을 해야 하는 이유","손을 흔든다.") ){
+	switch( select( "무기 보장권 포장의뢰를 맡긴다.", "방어구 보장권 포장의뢰를 맡긴다.", "포장을 해야 하는 이유", "손을 흔든다." )) {
 		case 1:
+			npctalk "선물포장사: 반가운 손님이냐~♡", "", bc_self;
+			mes "[고양이손 선물포장사]";
+			mes "반가운 손님이냐~♡";
+			next;
+			mes "^FF0000[경고]^000000";
+			mes "^FF0000냥다래 열매로 아이템을 교환하는 상점입니다.^000000";
+			mes "^FF0000교환된 아이템은 청약철회대상에 포함되지 않으며, 냥다래 열매로의 재교환 역시 불가능합니다.^000000";
+			next;
+			if( select( "상점을 연다.", "열지 않는다." ) == 2) {
+				close;
+			}
 			close2;
 			callshop "Weapon_Up_Box";
 			end;
 
 		case 2:
+			npctalk "선물포장사: 반가운 손님이냐~♡", "", bc_self;
+			mes "[고양이손 선물포장사]";
+			mes "반가운 손님이냐~♡";
+			next;
+			mes "^FF0000[경고]^000000";
+			mes "^FF0000냥다래 열매로 아이템을 교환하는 상점입니다.^000000";
+			mes "^FF0000교환된 아이템은 청약철회대상에 포함되지 않으며, 냥다래 열매로의 재교환 역시 불가능합니다.^000000";
+			next;
+			if( select( "상점을 연다.", "열지 않는다." ) == 2) {
+				close;
+			}
 			close2;
 			callshop "Armor_Up_Box";
 			end;
 
 		case 3:
+			emotion ET_HUK;
 			mes "[고양이손 선물포장사]";
 			mes "냐? 정말 몰라서 물어보는 거냐?";
 			next;
 			mes "[고양이손 선물포장사]";
-			mes "유행에 뒤떨어진 인간이다냐~ ^0000FF제련";
-			mes "보장권^000000은 다른 모험가들과는 거래가";
-			mes "불가능한 귀한 티켓이다냐~";
+			mes "유행에 뒤떨어진 인간이다냐~ ^0080FF제련 보장권^000000은 다른 모험가들과는 거래가 불가능한 귀한 티켓이다냐~";
 			next;
 			mes "[고양이손 선물포장사]";
-			mes "이 귀한 티켓은 음지에서 남모르게";
-			mes "거래되어 왔다냐~ 고양이손 상단은";
-			mes "바로 그 점에 주목했다냐~";
+			mes "이 귀한 티켓은 음지에서 남모르게 거래되어 왔다냐~ 고양이손 상단은 바로 그 점에 주목했다냐~";
 			next;
 			mes "[고양이손 선물포장사]";
-			mes "그래서냐~ 수수료로 ^FF0000낭다래 열매^000000 주면";
-			mes "다른 모험가와 정.상.적.인. 거래가";
-			mes "가능하도록 예쁘게 포장해준다냐~";
-		close;
+			mes "그래서냐~ 수수료로^A52A2A 냥다래 열매 ^000000주면 다른 모험가와 정.상.적.인. 거래가 가능하도록 예쁘게 포장해준다냐~";
+			close;
 
 		case 4:
+			emotion ET_WRAP;
 			mes "[고양이손 선물포장사]";
-			mes "그래 잘 가라냐~";
-		close;
+			mes "그래 잘 가라냐~♡";
+			close;
 	end;
 	}
 }

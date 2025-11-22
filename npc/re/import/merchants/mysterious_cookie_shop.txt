@@ -1,0 +1,210 @@
+//===== rAthena Script ======================================= 
+//= Mysterious Cookie Shop
+//===== Changelogs: ==========================================
+//= 1.0 Initial version from replays. [Capuche]
+//PC official translate & update
+//============================================================
+
+malangdo,124,152,3	script	신비한 과자집#stone	4_COOKIEHOUSE,{
+	mes "[신비한 과자집]";
+	mes "<ITEM>[냥다래 마일리지 쿠폰]<INFO>7000</INFO></ITEM>으로 간절히 바라는 어떤 물건과 교환이 가능합니다.";
+	//mes "" + mesitemlink(7000) + "으로 간절히 바라는 어떤 물건과 교환이 가능합니다.";
+	next;
+	switch( select( "^4d4dff상단^000000 창문", "^1C8008중단^000000 창문", "^ff0000하단^000000 창문", "^9905d8걸칠것 일반^000000은 현관문", "^8B4513걸칠것 듀얼과 이펙트^000000는 굴뚝", "^9905d8의상^000000은 ☆빨★랫☆줄★" )) {
+	case 1:
+		mes "[신비한 과자집]";
+		mes "당신이 가진 마일리지가 어떤 스톤으로 변신할 수 있는지 살펴보아요!";
+		close2;
+		callshop( "barter_stone_top" );
+		end;
+	case 2:
+		mes "[신비한 과자집]";
+		mes "당신이 가진 마일리지가 어떤 스톤으로 변신할 수 있는지 살펴보아요!";
+		close2;
+		callshop( "barter_stone_mid" );
+		end;
+	case 3:
+		mes "[신비한 과자집]";
+		mes "당신이 가진 마일리지가 어떤 스톤으로 변신할 수 있는지 살펴보아요!";
+		close2;
+		callshop( "barter_stone_low" );
+		end;
+	case 4:
+		mes "[신비한 과자집]";
+		mes "당신이 가진 마일리지가 어떤 스톤으로 변신할 수 있는지 살펴보아요!";
+		close2;
+		callshop( "barter_stone_garment" );
+		end;
+	case 5:
+		mes "[신비한 과자집]";
+		mes "당신이 가진 마일리지가 어떤 스톤으로 변신할 수 있는지 살펴보아요!";
+		close2;
+		callshop( "barter_stone_dual" );
+		end;
+	case 6:
+		mes "[신비한 과자집]";
+		mes "당신이 가진 마일리지로 각종 의상이 걸려있는 빨랫줄을 탈탈 털어보아요!";
+		next;
+		switch( select( "한결같은 첫 번째 빨랫줄", "한결같은 두 번째 빨랫줄", "^4d4dff☆★특별한 빨랫줄★☆^000000" )) {
+		case 1:
+			addtimer 1, strnpcinfo(3) + "::OnShop1"; //PC official
+			//callshop( "barter_costume_1" );
+			end;
+		case 2:
+			addtimer 1, strnpcinfo(3) + "::OnShop2"; //PC official
+			//callshop( "barter_costume_2" );
+			end;
+		Case 3: //PC custom
+			while(1) {
+				mes "[신비한 과자집]";
+				mes "몇번째 줄을 보시겠어요?";
+				mes "열한 가지나 준비되어 있답니다!";
+				next;
+				input .Num;
+				if(.Num > 11 || .Num < 1) {
+					mes "[신비한 과자집]";
+					mes "준비한 건 열한 줄 뿐이라구요. 1부터 11까지의 숫자를 골라주세요!";
+					next;
+				} else {
+					break;
+				}
+			}
+			addtimer 1, strnpcinfo(3) + "::OnShopL";
+			end;
+		}
+OnShop1: //PC official
+			callshop( "barter_costume_1" );
+			end;
+OnShop2:
+			callshop( "barter_costume_2" );
+			end;
+OnShopL:	
+			callshop "Cookie_CostumeL_" + .Num + "";
+			end;
+	}
+}
+
+malangdo,116,152,3	script	패션스톤 마네킹#모델즈1	HIDDEN_NPC,{
+	end;
+OnInit:
+	.@npc_id = getnpcid(0);
+	setunitdata .@npc_id, UNPC_CLASS, JOB_MINSTREL;
+	setunitdata .@npc_id, UNPC_SEX, 1;
+	setunitdata .@npc_id, UNPC_HAIRSTYLE, 30;
+	setunitdata .@npc_id, UNPC_HEADTOP, 1224;
+	end;
+}
+
+malangdo,118,152,3	script	패션스톤 마네킹#모델즈2	HIDDEN_NPC,{
+	end;
+OnInit:
+	.@npc_id = getnpcid(0);
+	setunitdata .@npc_id, UNPC_CLASS, JOB_CARDINAL;
+	setunitdata .@npc_id, UNPC_CLOTHCOLOR, 3;
+	setunitdata .@npc_id, UNPC_HAIRSTYLE, 27;
+	setunitdata .@npc_id, UNPC_HEADBOTTOM, 1262;
+	end;
+}
+
+malangdo,120,152,3	script	패션스톤 마네킹#모델즈3	HIDDEN_NPC,{
+	end;
+OnInit:
+	.@npc_id = getnpcid(0);
+	setunitdata .@npc_id, UNPC_CLASS, JOB_BIOLO;
+	setunitdata .@npc_id, UNPC_SEX, 1;
+	setunitdata .@npc_id, UNPC_HAIRSTYLE, 27;
+	setunitdata .@npc_id, UNPC_HEADMIDDLE, 2336;
+	end;
+}
+
+malangdo,122,152,7	script	패션스톤 마네킹#모델즈4	HIDDEN_NPC,{
+	end;
+OnInit:
+	.@npc_id = getnpcid(0);
+	setunitdata .@npc_id, UNPC_CLASS, JOB_MECHANIC;
+	setunitdata .@npc_id, UNPC_SEX, 1;
+	setunitdata .@npc_id, UNPC_HAIRSTYLE, 27;
+	setunitdata .@npc_id, UNPC_ROBE, 186;
+	end;
+}
+
+malangdo,115,154,5	script	패션스톤 마네킹#모델즈5	HIDDEN_NPC,{
+	end;
+OnInit:
+	.@npc_id = getnpcid(0);
+	setunitdata .@npc_id, UNPC_CLASS, JOB_ELEMENTAL_MASTER;
+	setunitdata .@npc_id, UNPC_SEX, 2;
+	setunitdata .@npc_id, UNPC_HAIRSTYLE, 27;
+	setunitdata .@npc_id, UNPC_HEADMIDDLE, 2298;
+	end;
+}
+
+malangdo,117,154,5	script	패션스톤 마네킹#모델즈6	HIDDEN_NPC,{
+	end;
+OnInit:
+	.@npc_id = getnpcid(0);
+	setunitdata .@npc_id, UNPC_CLASS, JOB_WINDHAWK;
+	setunitdata .@npc_id, UNPC_SEX, 1;
+	setunitdata .@npc_id, UNPC_HAIRSTYLE, 18;
+	setunitdata .@npc_id, UNPC_HAIRCOLOR, 7;
+	setunitdata .@npc_id, UNPC_HEADMIDDLE, 2363;
+	end;
+}
+
+malangdo,119,154,5	script	패션스톤 마네킹#모델즈7	HIDDEN_NPC,{
+	end;
+OnInit:
+	.@npc_id = getnpcid(0);
+	setunitdata .@npc_id, UNPC_CLASS, JOB_INQUISITOR;
+	setunitdata .@npc_id, UNPC_SEX, 2;
+	setunitdata .@npc_id, UNPC_HAIRSTYLE, 27;
+	setunitdata .@npc_id, UNPC_HEADBOTTOM, 2389;
+	end;
+}
+
+malangdo,121,154,5	script	패션스톤 마네킹#모델즈8	HIDDEN_NPC,{
+	end;
+OnInit:
+	.@npc_id = getnpcid(0);
+	setunitdata .@npc_id, UNPC_CLASS, JOB_SOUL_REAPER;
+	setunitdata .@npc_id, UNPC_SEX, 2;
+	setunitdata .@npc_id, UNPC_HAIRSTYLE, 27;
+	setunitdata .@npc_id, UNPC_HEADBOTTOM, 2270;
+	end;
+}
+
+malangdo,116,156,3	script	패션스톤 마네킹#모델즈9	HIDDEN_NPC,{
+	end;
+OnInit:
+	.@npc_id = getnpcid(0);
+	setunitdata .@npc_id, UNPC_CLASS, JOB_KAGEROU;
+	setunitdata .@npc_id, UNPC_SEX, 1;
+	setunitdata .@npc_id, UNPC_HAIRSTYLE, 2;
+	setunitdata .@npc_id, UNPC_HAIRCOLOR, 7;
+	setunitdata .@npc_id, UNPC_HEADTOP, 2390;
+	end;
+}
+
+malangdo,118,156,7	script	패션스톤 마네킹#모델즈10	HIDDEN_NPC,{
+	end;
+OnInit:
+	.@npc_id = getnpcid(0);
+	setunitdata .@npc_id, UNPC_CLASS, JOB_WANDERER;
+	setunitdata .@npc_id, UNPC_SEX, 2;
+	setunitdata .@npc_id, UNPC_HAIRSTYLE, 7;
+	setunitdata .@npc_id, UNPC_HAIRCOLOR, 1;
+	setunitdata .@npc_id, UNPC_ROBE, 176;
+	end;
+}
+
+malangdo,120,156,7	script	패션스톤 마네킹#모델즈11	HIDDEN_NPC,{
+	end;
+OnInit:
+	.@npc_id = getnpcid(0);
+	setunitdata .@npc_id, UNPC_CLASS, JOB_MEISTER;
+	setunitdata .@npc_id, UNPC_SEX, 1;
+	setunitdata .@npc_id, UNPC_HAIRSTYLE, 12;
+	setunitdata .@npc_id, UNPC_HAIRCOLOR, 3;
+	setunitdata .@npc_id, UNPC_ROBE, 131;
+	end;
+}

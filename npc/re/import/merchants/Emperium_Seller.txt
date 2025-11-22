@@ -1,0 +1,43 @@
+//===== rAthena Script ======================================= 
+//= Emperium Seller
+//===== By: ================================================== 
+//= Pokye
+//===== Current Version: ===================================== 
+//= 1.0
+//===== Compatible With: ===================================== 
+//= rAthena Project
+//===== Description: ========================================= 
+//= Sell Emperium
+//===== Additional Comments: ================================= 
+//= 1.0 Special thanks for Balfear and Everade
+//PC official translate
+//============================================================ 
+
+prt_in,212,169,3	script	길드 사무직원	4_M_04,{	// 1890
+	if (gettime(DT_DAYOFWEEK) != SUNDAY && gettime(DT_HOUR) >= 18 && gettime(DT_HOUR) <= 23) {
+		mes "[길드 사무직원]";
+		mes "길드 사무소에 오늘 하루 배포될 엠펠리움이 도착했습니다. 구매를 원하시면 원하는 만큼 담아주세요~";
+		next;
+		mes "[길드 사무직원]";
+		mes "오늘은 왠지 엠펠리움을 찾는분들이 많을 것 같군요. 그냥 개인적인 기분입니다.";
+		close2;                                                                                                         
+    		callshop "emp_seller#slo";
+		end;
+	}
+	mes "[길드 사무직원]";
+	mes "저희 길드 사무소에서는 모험가님들의 원활한 모임을 적극 지지합니다";
+	next;
+	mes "[길드 사무직원]";
+	mes "그 일환으로 ^0000ff월요일~토요일^000000";
+	mes "매일 100개 한정수량의 <ITEM>엠펠리움<INFO>714</INFO></ITEM>을";
+	mes "오후 ^0000ff18:00~23:59^000000 까지 판매하고 있습니다.";
+	next;
+	mes "[길드 사무직원]";
+	mes "이외의 시간에는 저희 길드사무소도 엠펠리움 수급을 위해서 뛰어다녀야 하기 때문에 판매를 하지 않으니 참고하십시오.";
+	close;
+	
+OnHour00:
+	npcshopupdate "emp_seller#slo",714,0,100;
+	end;
+}
+-	marketshop	emp_seller#slo	FAKE_NPC,714:1000000:100

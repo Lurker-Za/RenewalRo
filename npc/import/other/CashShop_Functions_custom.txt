@@ -1,0 +1,12 @@
+
+//============================================================ 
+// - Reset players skills. Weight must be 0, options must be off.
+// - No arguments.
+function	script	F_CashReset2	{
+	if (Class != Job_Novice && Weight == 0 && !checkriding() && !checkfalcon() && !checkcart() && !ismounting() && !checkdragon() && !checkwug() && !checkmadogear()) {
+		resetskill;
+		sc_end SC_ALL;
+		if (countitem(12213)) delitem 12213,1;
+	}
+	return;
+}

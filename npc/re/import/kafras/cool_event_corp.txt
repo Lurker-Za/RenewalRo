@@ -1,0 +1,14 @@
+//===== rAthena Script =======================================
+//= Cool Event Corp. Staff
+//===== Description: =========================================
+//= Cool Event Corp. Staff (Save, Storage & Pushcart Service)
+//===== Changelogs: ==========================================
+//= 1.0 Added Verus. [Capuche]
+//============================================================ 
+
+verus04,121,243,4	script	존다 기획사 직원::CoolEventCorpStaffVerus	4_M_ZONDAMAN,{
+	callfunc "F_CoolEventCorp",
+		"저장 서비스 이용:창고 서비스 이용::카트 서비스 이용::취소",
+		"베루스에서","verus04",121,246;
+	end;
+}

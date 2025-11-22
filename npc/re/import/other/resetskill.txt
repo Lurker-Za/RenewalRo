@@ -1,0 +1,95 @@
+//===== rAthena Script =======================================
+//= Hypnotist
+//===== By: ==================================================
+//= Euphy
+//===== Current Version: =====================================
+//= 1.1
+//===== Compatible With: =====================================
+//= rAthena Project
+//===== Description: =========================================
+//= [Official Conversion]
+//= Stat and skill resetter for expanded first class under
+//= base level 50 and normal first class.
+//===== Additional Comments: =================================
+//= 1.0 First version, Renewal script.
+//= 1.1 Added Izlude duplicates. [Euphy]
+//============================================================
+
+// Main NPC :: resetskill_novice
+//PC official 한글 번역
+//============================================================
+izlude,127,175,3	script	최면술사#novice	4_F_TELEPORTER,{//124
+	mes "[최면술사]";
+	mes "자신의 직업에 대해 이해가";
+	mes "부족하다 생각하시는 분들을 위해";
+	mes "스킬 혹은 스테이터스를 무료로 초기화 해 드리고 있습니다.";
+	next;
+	mes "[최면술사]";
+	mes "초기화는 특정 조건에 한해서만 서비스 되고 있으니 꼭 확인해주세요~♬";
+	next;
+	switch( select( "초기화 조건을 확인한다", "스테이터스를 초기화한다", "스킬을 초기화한다", "대화를 마친다" )) {
+	case 1:
+		mes "[최면술사]";
+		mes "초기화서비스는 ^ff0000 검사, 복사, 마법사, 도둑, 궁수, 상인에는 무한정 제공^000000되나,";
+		next;
+		mes "[최면술사]";
+		mes "^ff0000태권소년/소녀, 건슬링거, 닌자, 소환사^000000의 경우 ^ff000050레벨 미만 캐릭터에게만 한정적으로 제공^000000되고 있습니다.";
+		next;
+		mes "[최면술사]";
+		mes "^FF0000노비스, 전승 직업을 포함하여 2차 직업 이후의 캐릭터는 초기화가 불가능한 점^000000 꼬옥 기억해 주세요.";
+		close;
+	case 2:
+		set .@str$,"스테이터스";
+		mes "[최면술사]";
+		mes "스테이터스를 초기화하시겠습니까?";
+		next;
+		break;
+	case 3:
+		if (.@str$ == "")
+			set .@str$,"스킬";
+		mes "[최면술사]";
+		mes "스킬을 초기화하시겠습니까?";
+		next;
+		break;
+	case 4:
+		close;
+	}
+	if( select( "네", "아니오" ) == 2) {
+		mes "[최면술사]";
+		mes "^FF0000전승 직업을 포함하여 2차 직업 이후의 캐릭터는 초기화가 불가능한 점^000000 꼬옥 기억해 주세요.";
+		close;
+	}
+	if (BaseLevel >= 50 || !((Class >= Job_Swordman && Class <= Job_Thief) || Class == Job_Taekwon || Class == Job_Gunslinger || Class == Job_Ninja)) {
+		mes "[최면술사]";
+		mes "무료 초기화는 1차 직업인";
+		mes "^ff0000검사, 복사, 마법사, 도둑,";
+		mes "궁수, 상인, 태권소년/소녀";
+		mes "건슬링거, 닌자, 소환사^000000에 한정되어 서비스 되고 있습니다.";
+		close;
+	} else {
+		if (checkcart()) {
+			mes "[최면술사]";
+			mes "장비창의 OFF버튼으로 카트를 떼고 다시 말걸어 주세요.";
+			close;
+		}
+		if (Weight != 0) {
+			mes "[최면술사]";
+			mes "아이템 분실의 위험이 있으므로 무게를 반드시 ^FF00000^000000으로 만들어주시기 바랍니다.";
+			close;
+		}
+		mes "[최면술사]";
+		mes "성공적으로 "+.@str$+" 초기화가 완료되었습니다!";
+		if (.@str$ == "스테이터스")
+			resetstatus;
+		else
+			resetskill;
+		next;
+		mes "[최면술사]";
+		mes "^FF0000전승 직업을 포함하여 2차 직업 이후의 캐릭터는 초기화가 불가능^000000하므로 스킬에 대해 궁금증이 있다면 그 전에 충분히 숙지하시길 바래요.";
+		close;
+	}
+}
+izlude_a,127,175,3	duplicate(최면술사#novice)	최면술사#novice_a	124
+izlude_b,127,175,3	duplicate(최면술사#novice)	최면술사#novice_b	124
+izlude_c,127,175,3	duplicate(최면술사#novice)	최면술사#novice_c	124
+izlude_d,127,175,3	duplicate(최면술사#novice)	최면술사#novice_d	124

@@ -1,0 +1,29 @@
+//===== rAthena Script =======================================
+//= Mercenary related NPCs
+//===== By: ==================================================
+//= Daegaladh
+//===== Current Version: =====================================
+//= 1.2
+//===== Compatible With: =====================================
+//= rAthena Project
+//===== Description: =========================================
+//= Sells Lancer, Sword, and Archer mercenaries,
+//= along with related mercenary items.
+//===== Additional Comments: =================================
+//= 1.0 First version. [L0ne_W0lf]
+//= 1.1 Added Izlude duplicates. [Euphy]
+//= 1.2 Change the hidden name to fix a bug. [Capuche]
+//PC official 한글 번역
+//============================================================
+
+izlude,47,170,4	duplicate(Mercenary Manager#main)	용병길드 관계자#검	4_M_JOB_KNIGHT2
+izlude_a,47,170,4	duplicate(Mercenary Manager#main)	용병길드 관계자#검1	4_M_JOB_KNIGHT2
+izlude_b,47,170,4	duplicate(Mercenary Manager#main)	용병길드 관계자#검2	4_M_JOB_KNIGHT2
+izlude_c,47,170,4	duplicate(Mercenary Manager#main)	용병길드 관계자#검3	4_M_JOB_KNIGHT2
+izlude_d,47,170,4	duplicate(Mercenary Manager#main)	용병길드 관계자#검4	4_M_JOB_KNIGHT2
+
+izlude,55,170,4	duplicate(MercMerchant)	용병물품 판매상#검	4_F_HUWOMAN
+izlude_a,55,170,4	duplicate(MercMerchant)	용병물품 판매상#검_a	4_F_HUWOMAN
+izlude_b,55,170,4	duplicate(MercMerchant)	용병물품 판매상#검_b	4_F_HUWOMAN
+izlude_c,55,170,4	duplicate(MercMerchant)	용병물품 판매상#검_c	4_F_HUWOMAN
+izlude_d,55,170,4	duplicate(MercMerchant)	용병물품 판매상#검_d	4_F_HUWOMAN

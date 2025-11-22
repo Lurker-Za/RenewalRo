@@ -49,4 +49,6 @@ Header:
 Footer:
   Imports:
   - Path: npc/re/import/merchants/barters/cashmall.yml
+  - Path: npc/re/import/merchants/barters/eden_market.yml
+  - Path: npc/re/import/merchants/barters/malangdo.yml
   

@@ -1,0 +1,241 @@
+//===== rAthena Script ======================================= 
+//= Ticket Refiner
+//===== By: ==================================================
+//= Euphy
+//===== Current Version: =====================================
+//= 1.1
+//===== Compatible With: =====================================
+//= rAthena Project
+//===== Description: =========================================
+//= [Official Conversion]
+//= Refiner that uses +5~9/+11 refine tickets to refine
+//= equipment with no chance of failure.
+//= NOTE: This NPC is currently disabled on official servers.
+//===== Additional Comments: =================================
+//= 1.0 First version. [Euphy]
+//= 1.1 Do not refine above ticket level. [Euphy]
+//============================================================
+
+// Main NPC :: safety_Ref_NPC
+//============================================================
+prontera,184,177,6	script	Á¦·Ã ¿¬±¸°¡	851,{
+	disable_items;
+	setarray .@cert_weapon[0],
+		6864,	// Guarantee_Weapon_19Up
+		6875,	// Guarantee_Weapon_18Up
+		6874,	// Guarantee_Weapon_17Up
+		6873,	// Guarantee_Weapon_16Up
+		6872,	// Guarantee_Weapon_15Up
+		6871,	// Guarantee_Weapon_14Up
+		6870,	// Guarantee_Weapon_13Up
+		6584,	// Guarantee_Weapon_12Up
+		6238,	// Guarantee_Weapon_11Up
+		6993,	// Guarantee_Weapon_10Up
+		6228,	// Guarantee_Weapon_9Up
+		6229,	// Guarantee_Weapon_8Up
+		6230,	// Guarantee_Weapon_7Up
+		6231,	// Guarantee_Weapon_6Up
+		6456;	// Guarantee_Weapon_5Up
+	setarray .@cert_armor[0],
+		6865,	// Guarantee_Armor_19Up
+		6881,	// Guarantee_Armor_18Up
+		6880,	// Guarantee_Armor_17Up
+		6879,	// Guarantee_Armor_16Up
+		6878,	// Guarantee_Armor_15Up
+		6877,	// Guarantee_Armor_14Up
+		6876,	// Guarantee_Armor_13Up
+		6585,	// Guarantee_Armor_12Up
+		6239,	// Guarantee_Armor_11Up
+		6994,	// Guarantee_Armor_10Up
+		6232,	// Guarantee_Armor_9Up
+		6233,	// Guarantee_Armor_8Up
+		6234,	// Guarantee_Armor_7Up
+		6235,	// Guarantee_Armor_6Up
+		6457;	// Guarantee_Armor_5Up
+	setarray .@cert_level[0],19,18,17,16,15,14,13,12,11,10,9,8,7,6,5;
+	.@size_cert = getarraysize(.@cert_weapon);
+
+	for ( .@i = 0; .@i < .@size_cert; ++.@i ) {
+		if (countitem(.@cert_weapon[.@i]) > 0 || countitem(.@cert_armor[.@i]) > 0) {
+			.@check = 1;
+			break;
+		}
+	}
+
+	if (.@check == 0) {
+		mes "[Á¦·Ã ¿¬±¸°¡€]";
+		mes "¾È³çÇÏ¼¼¿ä.";
+		mes "¹«½¼ ÀÏÀÌ½ÃÁÒ?";
+		mes "Àú´Â Á¦·Ã ±â¼ú¸¸Å­Àº ÀÚ½ÅÀÖ´Â »ç¶÷ÀÔ´Ï´Ù¸¸, ¿äÁò¿¡´Â ±× ÀÏÀ» ÇÏÁö ¾Ê¾Æ¿ä.";
+		next;
+		switch(select("°¡´ø ±æÀ» °£´Ù.:´õ µé¾îº»´Ù.")) {
+		case 1:
+			mes "[Á¦·Ã ¿¬±¸°¡]";
+			mes "±×·³ ¾È³çÈ÷ °¡¼¼¿ä, ¸ðÇè°¡´Ô.";
+			close;
+		case 2:
+			mes "[Á¦·Ã ¿¬±¸°¡]";
+			mes "»ç½Ç, Á¦°¡ Á¦·ÃÀ» ÇØ µå¸®´Â °æ¿ì°¡ ÀÖ±â´Â ÇÕ´Ï´Ù¸¸ Á¦·Ã º¸Àå±ÇÆ¼ÄÏÀ» °¡Áø ºÐµéÀÌ ^006400ÀåÂøÇÒ ¼ö ÀÖ´Â Àåºñ^000000¸¸À» Á¦·ÃÇØµå¸®ÁÒ. ±×·³ ¾È³çÈ÷ ~!";
+			close;
+		}
+	}
+	emotion ET_SURPRISE;
+	mes "[Á¦·Ã ¿¬±¸°¡]";
+	mes "µåµð¾î ¿À¼Ì±º¿ä.";
+	mes "ÀåÂøÇÏ°í °è½Å ^006400Àåºñ¸¦ ";
+	mes "Á¦·Ã º¸Àå±Ç¿¡ ³ª¿Â ¸¸Å­ ";
+	mes "Á¦·ÃµÈ »óÅÂ^000000·Î ";
+	mes "¸¸µé¾î µå¸± ¼ö ÀÖ½À´Ï´Ù.";
+	next;
+	mes "[Á¦·Ã ¿¬±¸°¡]";
+	mes "´Ù¸¸ ^3131FF½¦µµ¿ì ¾ÆÀÌÅÛ^000000Àº Á¦·Ãº¸Àå ¸ñ·Ï¿¡ Æ÷ÇÔµÇÁö ¾ÊÀ¸´Ï À¯ÀÇÇÏ½Ã±â ¹Ù¶ø´Ï´Ù.";
+	next;
+	if(select("³ªÁß¿¡ ÇÑ´Ù.:Á¦·Ã º¸Àå±ÇÀ¸·Î Àåºñ¸¦ Á¦·ÃÇÑ´Ù.") == 1) {
+		mes "[Á¦·Ã ¿¬±¸°¡]";
+		mes "¾Ë°Ú½À´Ï´Ù.";
+		mes "´ÙÀ½¿¡ ´Ù½Ã ¿À¼Åµµ µË´Ï´Ù.";
+		close;
+	}
+	mes "[Á¦·Ã ¿¬±¸°¡]";
+	mes "¹«¾ùÀ» Á¦·ÃÇÏ½Ç °Ç°¡¿ä?";
+	next;
+	setarray .@position$[1],"^404040¸Ó¸® »ó´Ü^000000","^404040¸Ó¸® Áß´Ü^000000","^404040¸Ó¸® ÇÏ´Ü^000000","^404040¸ö^000000","^404040¿Þ¼Õ^000000","^404040¿À¸¥¼Õ^000000","^404040·Îºê^000000","^404040½Å¹ß^000000","^404040¾Ç¼¼¼­¸®1^000000","^404040¾Ç¼¼¼­¸®2^000000";
+	setarray .@indices[1], EQI_HEAD_TOP, EQI_HEAD_MID, EQI_HEAD_LOW, EQI_ARMOR, EQI_HAND_L, EQI_HAND_R, EQI_GARMENT, EQI_SHOES, EQI_ACC_L, EQI_ACC_R;
+	for ( .@i = 1; .@i <= 10; ++.@i )
+		.@menu$ += (getequipisequiped(.@indices[.@i]) ? getequipname(.@indices[.@i]) : .@position$[.@i] + "^404040- [Àåºñ ¾øÀ½]^000000") + ":";
+
+	.@part = .@indices[ select(.@menu$) ];
+	if (!getequipisequiped(.@part)) {
+		mes "[Á¦·Ã ¿¬±¸°¡]";
+		mes "Àåºñ°¡ ÀÖ¾î¾ß ";
+		mes "Á¦·ÃÀÌ °¡´ÉÇÕ´Ï´Ù.";
+		close;
+	}
+	if (!getequipisenableref(.@part)) {
+		emotion ET_OTL;
+		mes "[Á¦·Ã ¿¬±¸°¡]";
+		mes "ÁË¼ÛÇØ¿ä.";
+		mes "ÀÌ ¾ÆÀÌÅÛÀº °­È­ÇÒ ¼ö ¾ø½À´Ï´Ù.";
+		close;
+	}
+	.@refineitemid = getequipid(.@part); // save id of the item
+	.@refinerycnt = getequiprefinerycnt(.@part); //save refinery count
+	setarray .@card[0], getequipcardid(.@part,0), getequipcardid(.@part,1), getequipcardid(.@part,2), getequipcardid(.@part,3);
+	.@itemtype = getiteminfo( .@refineitemid, ITEMINFO_TYPE );
+	if( .@itemtype == IT_WEAPON ){
+		switch( getequipweaponlv( .@part ) ){
+			case 1:
+			case 2:
+			case 3:
+			case 4:
+				copyarray .@tickets[0], .@cert_weapon[0], .@size_cert;
+				.@type$ = "¹«±â";
+				break;
+			default:
+				// TODO:
+				close;
+		}
+	}else if( .@itemtype == IT_ARMOR ){
+		switch( getequiparmorlv( .@part ) ){
+			case 1:
+				copyarray .@tickets[0], .@cert_armor[0], .@size_cert;
+				.@type$ = "¹æ¾î±¸";
+				break;
+			default:
+				// TODO:
+				close;
+		}
+	}else{
+		// TODO:
+		close;
+	}
+	.@check = 0;
+	for ( .@i = 0; .@i < .@size_cert; ++.@i ) {
+		if (countitem(.@tickets[.@i]) > 0) {
+			.@check = 1;
+			break;
+		}
+	}
+	if (.@check == 0) {
+		emotion ET_THINK;
+		mes "[Á¦·Ã ¿¬±¸°¡]";
+		mes "^006400"+.@type$+"^000000°­È­¸¦ À§ÇØ ^006400"+.@type$+" Á¦·Ã º¸Àå±Ç^000000ÀÌ ÇÊ¿äÇØ¿ä.";
+		close;
+	}
+	mes "[Á¦·Ã ¿¬±¸°¡]";
+	mes "»ç¿ëÇÏ½Ç ^006400"+.@type$+" Á¦·Ã º¸Àå±Ç^000000À»";
+	mes "¼±ÅÃÇØ ÁÖ¼¼¿ä.";
+	next;
+	.@menu$ = "";
+	for ( .@i = 0; .@i < .@size_cert; ++.@i )
+		.@menu$ += getitemname(.@tickets[.@i]) + ":";
+	.@select = select(.@menu$)-1;
+	.@ticket_lv = .@cert_level[.@select];
+	.@ticket_id = .@tickets[.@select];
+
+	if (countitem(.@ticket_id) == 0) {
+		emotion ET_QUESTION;
+		mes "[Á¦·Ã ¿¬±¸°¡]";
+		mes getitemname(.@ticket_id)+"À» ";
+		mes "°¡Áö°í °è½ÃÁö ¾Ê±º¿ä.";
+		mes "Ã¢°í¿¡ ³Ö¾îµÎ½Å °Ç°¡¿ä?";
+		mes "È®ÀÎÇØ º¸½Å µÚ, ";
+		mes "´Ù½Ã ¿À½Ã±æ ¹Ù¶ø´Ï´Ù.";
+		close;
+	}
+	if (getequiprefinerycnt(.@part) >= .@ticket_lv) {
+		emotion ET_PROFUSELY_SWEAT;
+		mes "[Á¦·Ã ¿¬±¸°¡]";
+		mes "^8B4513ÀÌ ¾ÆÀÌÅÛÀº ÀÌ¹Ì ÇÊ¿äÇÑ ¸¸Å­ °­È­°¡ µÇ¾ú¾î¿ä.^000000";
+		mes "¼ÒÁöÇÑ º¸Àå±Çº¸´Ù °­È­ ´Ü°è°¡ ³·Àº ¾ÆÀÌÅÛÀ» °¡Á®¿À¼¼¿ä.";
+		close;
+	}
+	mes "[Á¦·Ã ¿¬±¸°¡]";
+	mes "^006400"+getitemname(.@ticket_id)+"^000000^8B4513À»^000000";
+	mes "^8B4513¼Ò¸ðÇÏ¿©^000000 ^006400"+getequipname(.@part)+"^000000";
+	mes "^8B4513Àåºñ¸¦ "+.@ticket_lv+" ´Ü°è ¸¸Å­ Á¦·ÃÇÕ´Ï´Ù.^000000";
+	mes "°è¼Ó ÁøÇà ÇÒ±î¿ä?";
+	next;
+	if(select("¾Æ´Ï¿À.:³×.") == 1) {
+		emotion ET_THINK;
+		mes "[Á¦·Ã ¿¬±¸°¡]";
+		mes "¸¶À½ÀÌ º¯ÇÏ¼Ì±º¿ä.";
+		mes "¾Ë°Ú½À´Ï´Ù.";
+		mes "³ªÁß¿¡ ´Ù½Ã ¿À¼Åµµ µË´Ï´Ù.";
+		close;
+	}
+	// anti-hack
+	if (callfunc("F_IsEquipIDHack", .@part, .@refineitemid) ||
+		callfunc("F_IsEquipRefineHack", .@part, .@refinerycnt) || callfunc("F_IsEquipCardHack", .@part, .@card[0], .@card[1], .@card[2], .@card[3])) {
+		mes "[Á¦·Ã ¿¬±¸°¡]";
+		emotion ET_FRET;
+		mes "Àá±ñ...";
+		mes "³ª¸¦ ¹Ùº¸·Î ¾Ð´Ï±î?!";
+		mes "¾Èº¸´Â »õ¿¡ ¾ÆÀÌÅÛÀ» ¹Ù²Ù¾ú±º! ´çÀå »ç¶óÁ®¿ä!";
+		close;
+	}
+	mes "[Á¦·Ã ¿¬±¸°¡]";
+	mes "ÁÁ½À´Ï´Ù.";
+	mes "Á¦·ÃÀ» ½ÃÀÛÇÏ°Ú½À´Ï´Ù.";
+	mes "Àü Á» Æ¯º°ÇÏ°Ô ÇÕ´Ï´Ù¸¸...";
+	mes ".......Äí¿Í¾Æ¾Æ¾Ó!";
+	specialeffect EF_SUI_EXPLOSION;
+	if (countitem(.@ticket_id) < 1) {
+		next;
+		mes "Error!";
+		mes "Please report this.";
+		close;
+	}
+	delitem .@ticket_id,1;
+
+	successrefitem .@part, .@ticket_lv - getequiprefinerycnt(.@part);
+	next;
+	emotion ET_DELIGHT;
+	mes "[Á¦·Ã ¿¬±¸°¡]";
+	mes "ÀÚ, ¿Ï¼º µÇ¾ú½À´Ï´Ù.";
+	mes "¹¹, ^0000FF"+strcharinfo(0)+"^000000´ÔÀÇ";
+	mes "³ë·Â¿¡ ºñÇÏ¸é ÀÌÁ¤µµ ÀÏÀº";
+	mes "¾Æ¹«°Íµµ ¾Æ´ÏÁÒ!";
+	mes "±×·³ ¾È³çÈ÷ °¡¼¼¿ä~!";
+	close;
+}

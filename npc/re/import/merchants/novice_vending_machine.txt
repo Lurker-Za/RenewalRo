@@ -1,0 +1,119 @@
+//===== rAthena Script =======================================
+//= Vending Machine NPCs for Novice.
+//===== Description: ========================================= 
+//= [Walkthrough Conversion]
+//= Exchangers NPCs for Novice.
+//===== Additional Comments: =================================
+//= 1.0 Firt version. [Aleos] [Secret]
+//= 1.1 Additionnal clean-up. [Capuche]
+//PC official 한글 번역
+//============================================================
+
+izlude_in,69,177,5	script	초보자용 자판기#iz	2_VENDING_MACHINE1,{
+
+	if (checkweight(1201,1) == 0 || (MaxWeight - Weight) < 2000) {
+		mes "- 소지하고 계신 아이템이 너무";
+		mes "많습니다.";
+		mes "인벤토리를 정리하고 다시 시도해";
+		mes "주시기 바랍니다. -";
+		close;
+	}
+	mes "초보자에게 유용한 자판기.";
+	mes "여러개의 버튼이 있다.";
+	next;
+	switch( select( "자판기 사용 설명서", "창고 무료 이용권 교환", "초보자용 장비 교환" )) {
+	case 1:
+		mes "[창고 무료 이용권 교환]";
+		mes "창고 무료 이용권 4장을 워프, 비공정, 카트, 페코 무료 이용권중 1장 또는 초보파리의날개15개, 초보나비의날개 5개, 초보자용포션30개로 교환 할 수 있습니다.";
+		next;
+		mes "[초보자용 장비 교환]";
+		mes "크리투라 학원에서 지급받은 초보자용갑옷, 초보자용후드, 초보자용샌들, 초보자용망고슈, 초보자용가드를 창고 무료 이용권 4장으로 교환할 수 있습니다.";
+		next;
+		mes "[초보자용 장비 교환]";
+		mes "초보자용알껍질은 특별히 헤어스타일을 변경 할 수 있는 크리투라 미용쿠폰으로 교환 할 수 있습니다.";
+		close;
+	case 2:
+		setarray .@exchange$[0],
+			7060,1,"워프 무료 이용권","워프 무료 이용권으로",		// Warp_Free_Ticket
+			7311,1,"비공정 무료 이용권","비공정 무료 이용권으로",// Free_Flying_Ship_Ticket
+			7061,1,"카트 무료 이용권","카트 무료 이용권으로",		// Cart_Free_Ticket
+			7310,1,"페코 무료 이용권","페코 무료 이용권으로",		// Free_Peco_Ticket
+			12323,15,"초보파리의 날개 15개","초보파리의 날개 15장으로",	// N_Fly_Wing
+			12324,5,"초보나비의 날개 5개","초보나비의 날개 5장으로",	// N_Butterfly_Wing
+			569,30,"초보자용 포션 30개","초보자용 포션 30개로";		// Novice_Potion
+		.@size = getarraysize(.@exchange$);
+
+		for ( .@i = 2; .@i < .@size; .@i += 4 ) {
+			.@menu$ += .@exchange$[.@i] + ":";
+		}
+		.@s = (select(.@menu$) - 1) * 4;
+		if (countitem(7059) < 4) {
+			mes "창고 무료 이용권의 수량이 부족하여 교환을 진행 할 수 없습니다.";
+			close;
+		}
+		mes "창고 무료 이용권 4장을 "+.@exchange$[.@s+3]+" 교환 완료.";
+		delitem 7059,4;
+		getitem atoi(.@exchange$[.@s]),atoi(.@exchange$[.@s+1]);
+		close;
+	case 3:
+		if(Joblevel < 10) {
+			mes "아직 1차 직업군으로 전직이 가능한 직업레벨에 도달하지 못 했습니다.";
+			mes "정말 교환하시겠습니까?";
+			next;
+			if (select( "계속", "그만둔다." ) == 2) {
+				mes "교환을 중지합니다.";
+				close;
+			}
+		}
+		mes "소지한 초보자용 장비를 모두 쿠폰으로 교환합니다.";
+		mes "계속 하시려면 계속을 눌러 주십시오.";
+		next;
+		if (select( "계속", "그만둔다." ) == 2) {
+			mes "교환을 중지합니다.";
+			close;
+		}
+		mes "장비를 쿠폰으로 교환합니다.";
+		setarray .@list[0],2352,2510,2414,1243,2112,5055;
+		.@size = getarraysize(.@list);
+		
+		for ( .@i = 0, .@i < EQI_MAX; .@i++ ) {
+			if(getequipisequiped(.@i))
+				unequip(.@i);
+		}
+		for ( .@i = 0, .@i < .@size; .@i++ ) {
+			.@count = countitem(.@list[.@i]);	// note: maybe check if equipped items are skipped
+			if (.@count < 1)
+				continue;
+			switch(.@list[.@i]) {
+			case 2352:	// Novice_Plate
+			case 2510:	// Novice_Hood
+			case 2414:	// Novice_Boots
+			case 1243:	// Novice_Knife
+			case 2112:	// Novice_Guard
+				delitem .@list[.@i], .@count;
+				getitem 7059,(4*.@count);	// Cargo_Free_Ticket
+				break;
+			case 5055:	// Novice_Egg_Cap
+				delitem .@list[.@i], .@count;
+				getitem 6593,.@count;	// Cryptura_Hair_Coupon
+				break;
+			}
+		}
+		close;
+	}
+
+OnInit:
+	questinfo( QTYPE_QUEST, QMARK_NONE );
+	end;
+}
+payon_in02,71,75,5	duplicate(초보자용 자판기#iz)	초보자용 자판기#pay	2_VENDING_MACHINE1
+prt_church,187,27,3	duplicate(초보자용 자판기#iz)	초보자용 자판기#prt	2_VENDING_MACHINE1
+
+// unknown facing
+alberta_in,60,52,3	duplicate(초보자용 자판기#iz)	초보자용 자판기#alb	2_VENDING_MACHINE1
+geffen_in,158,107,3	duplicate(초보자용 자판기#iz)	초보자용 자판기#gef	2_VENDING_MACHINE1
+moc_para01,17,37,5	duplicate(초보자용 자판기#iz)	초보자용 자판기#para	2_VENDING_MACHINE1
+moc_prydb1,38,124,3	duplicate(초보자용 자판기#iz)	초보자용 자판기#pryd	2_VENDING_MACHINE1
+payon_in01,59,20,3	duplicate(초보자용 자판기#iz)	초보자용 자판기#pay2	2_VENDING_MACHINE1
+que_ng,28,73,3	duplicate(초보자용 자판기#iz)	초보자용 자판기#que_ng1	2_VENDING_MACHINE1
+que_ng,168,39,5	duplicate(초보자용 자판기#iz)	초보자용 자판기#que_ng2	2_VENDING_MACHINE1

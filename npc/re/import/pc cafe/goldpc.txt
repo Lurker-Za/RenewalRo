@@ -1,0 +1,419 @@
+//결제 선물 도우미
+itemmall,26,50,4	script	링	GEFFEN_MAGE_10,{
+
+	query_logsql("SELECT sum(amount) FROM `cashlog` WHERE amount < 0 AND type = '$' AND `char_id` IN(SELECT `char_id` FROM `char` WHERE `account_id` = " + getcharid(3) + ")", .@amount);
+	query_sql("SELECT `key` FROM `acc_reg_num` WHERE `index` = '" + getcharid(3) + "' AND `account_id` = " + getcharid(3) + "", .@accname$);
+	.@point = (-.@amount) - #giftpoint;
+	
+	if(.@accname$ == "") {
+		mes "[링]";
+		mes "안녕! 나는 우리 캐시샵의 우등 고객을 관리하는 매니저! 에헴.";
+		next;
+		emotion ET_THROB;
+		mes "[링]";
+		mes "링링한 ^2200ffVIP^000000 고객들 덕분에 ^ff0000☆대흥행☆^000000 중인데 보답을 안할 수 없잖아?";
+		mes "그래서 캐시샵을 열심히 이용해주시는 고객에게 좋은걸 주고 있지!";
+		next;
+		mes "[링]";
+		mes "어라? 처음 보는 얼굴이네?";
+		mes "환영해!";
+		next;
+		mes "[링]";
+		mes "계정 멤버 등록을 할래?";
+		mes "등록하면 캐시샵에서 구매한 내역에 따라 적립된 포인트로 선물을 받을 수 있어!";
+		next;
+		if(select("그럴까?:관심 없어.") == 2) {
+			emotion ET_HUK;
+			mes "[링]";
+			mes "그..그래...";
+			mes "정말 이쁜 선물인데... 진짠데...!";
+			close;
+		}
+		mes "[링]";
+		mes "그럼 멤버 이름을 알려줘!";
+		next;
+		while(1) {
+			input .@input$;
+			mes "[링]";
+			mes ""+.@input$+"..";
+			mes "이쁜 이름이네. 이 이름으로 하는거야?";
+			next;
+			if(select("그래!:다시 할래.") == 2) {
+				mes "[링]";
+				mes "한번 정하면 수정할 수 없으니 신중히 적어줘.";
+				next;
+			} else {
+				break;
+			}
+		}
+		mes "[링]";
+		mes "좋아! "+.@input$+"님!";
+		mes "앞으로 많은 활동 기대할게!";
+		query_sql("INSERT INTO `acc_reg_num` (`account_id`,`key`,`index`,`value`) VALUES (" + getcharid(3) + ",'"+.@input$+"','" + getcharid(3) + "',1)");
+		close;
+	}
+	emotion ET_THROB;
+	mes "[링]";
+	mes "안녕! "+.@accname$+" 고객님.";
+	mes "도움이 필요해?";
+	next;
+	switch(select("선물 교환:포인트 조회")) {
+		case 2:
+			mes "[링]";
+			mes "좋아! 잠시...";
+			next;
+			progressbar_npc "00ff00",1;
+			emotion ET_BEST;
+			mes "[링]";
+			mes "짠! "+.@accname$+"님의 누적 구매 금액은 ^ff0000"+(-.@amount)+"^000000캐시,";
+			mes "사용 가능한 포인트는 ^0000ff"+.@point+"^000000점이야!";
+			close;
+		case 1:
+			emotion ET_OK;
+			mes "[링]";
+			mes "이것저것 준비했다구. 한번 볼테야?";
+			mes "적립 포인트로 목록의 아이템들을 교환할 수 있어.";
+			next;
+			switch(select("의상 장비:의상 선물 상자:그만둔다")) {
+				case 1:
+					setarray .@giftlist$[1],
+					"#gift_20062:20062:1:50000",
+					"#gift_20285:20285:1:50000",
+					"#gift_20302:20302:1:50000",
+					"#gift_18744:18744:1:50000",
+					"#gift_20154:20154:1:50000",
+					"#gift_5914:5914:1:50000",
+					"#gift_20407:20407:1:50000",
+					"#gift_20439:20439:1:50000",
+					"#gift_31407:31407:1:100000",
+					"#gift_20530:20530:1:100000";
+					break;
+				case 2:
+					setarray .@giftlist$[1],
+					"#gift_23444:23444:4:50000", //10만포인트시 2회지급
+					"#gift_23708:23708:4:50000",
+					"#gift_100911:100911:1:100000",
+					"#gift_101130:101130:1:100000",
+					"#gift_101269:101269:1:70000",
+					"#gift_102307:102307:1:150000",
+					"#gift_102468:102468:1:150000";
+					break;
+				case 3:
+					emotion ET_CHUP;
+					mes "[링]";
+					mes "또 와줘!";
+					close;
+			}
+			mes "[링]";
+			mes "종류별로 교환 가능한 횟수를 확인해줘.";
+			next;
+
+			for(.@i = 1; .@i < getarraysize(.@giftlist$); .@i++) {
+				explode(.@array$, .@giftlist$[.@i], ":");
+				.@count$ = .@array$[0];
+				.@name$ = getitemname(atoi(.@array$[1]));
+				.@clear = atoi(.@array$[2]);
+				query_sql("SELECT `key`,`value` FROM `acc_reg_num` WHERE `key` = '"+.@count$+"' AND `account_id` = " + getcharid(3) + "", .@key$, .@value);
+				.@menu$ += ":"+((.@key$==.@count$ && .@value>=.@clear)?"^8C8C8C"+.@name$+" (교환 완료)^000000":""+.@name$+" ("+((.@key$==.@count$ && .@value)?(.@clear-.@value):.@clear)+"회 교환 가능)");
+			}
+
+			while(1) {
+				.@s = select(.@menu$+":"+"그만둔다")-1;
+				explode(.@array$, .@giftlist$[.@s], ":");
+				.@count$ = .@array$[0];
+				.@itemid = atoi(.@array$[1]);
+				.@clear = atoi(.@array$[2]);
+				.@cost = atoi(.@array$[3]);
+				.@name$ = getitemname(atoi(.@array$[1]));
+				query_sql("SELECT `key`,`value` FROM `acc_reg_num` WHERE `key` = '"+.@count$+"' AND `account_id` = " + getcharid(3) + "", .@key$, .@value);
+				if(.@s+1 > getarraysize(.@giftlist$)) {
+					emotion ET_CHUP;
+					mes "[링]";
+					mes "또 와줘!";
+					close;
+				}
+				if(.@key$==.@count$ && .@value>=.@clear) {
+					mes "[링]";
+					mes "이미 수령한 물품이야. 다른걸 선택해줘!";
+					next;
+					continue;
+				}
+				mes "[링]";
+				mes "<ITEM>["+.@name$+"]<INFO>"+.@itemid+"</INFO></ITEM>";
+				mes "^ff0000"+.@cost+"^000000포인트를 차감하고 교환할 수 있어.";
+				mes "선물을 받을래?";
+				next;
+				if(select("응:좀더 구경할게") == 2) {
+					mes "[링]";
+					mes "천천히 골라봐!";
+					next;
+					continue;
+				}
+				if(.@point < .@cost) {
+					mes "[링]";
+					mes "포인트가 모자라는걸?";
+					mes "사용 가능한 포인트는 ^0000ff"+.@point+"^000000점이야. 좀더 분발하라구!";
+					close;
+				}
+				break;
+			}
+			getitem2 .@itemid,(.@itemid==23444 && .@value == 1)?2:1,0,0,0,0,0,0,0;
+			specialeffect 363;
+			if (.@key$==.@count$ && .@value) {
+				query_sql("UPDATE `acc_reg_num` SET `value` = `value` + 1 WHERE `key` = '"+.@count$+"'");
+			} else {
+				query_sql("INSERT INTO `acc_reg_num` (`account_id`,`key`,`index`,`value`) VALUES (" + getcharid(3) + ",'"+.@count$+"','0',1)");
+			}
+			#giftpoint = #giftpoint + .@cost;
+			mes "[링]";
+			if(.@itemid==23444 && .@value == 1) {
+				mes "이번엔 특별 보너스! 선물을 하나 더 넣었어.";
+			}
+			mes "어때? 만족스러운 선물이길 바라!";
+			mes ""+.@accname$+"님의 남은 포인트는 ^0000ff"+(.@point - .@cost)+"^000000점이야.";
+			close;
+	}
+OnInit:
+	setunittitle(getnpcid(0),"누적 결제 선물 도우미");
+	setunitdata getnpcid(0),UNPC_GROUP_ID,9;
+	end;
+}
+
+//PC방 충전 도우미
+itemmall,28,50,4	script	티링	VR_MD_TILBY,{
+	if (tring_start == 0) {
+		mes "[티링]";
+		mes ".....";
+		next;
+		mes "[티링]";
+		mes "..........";
+		emotion ET_SHY;
+		next;
+		mes "[티링]";
+		mes "...PC방.";
+		next;
+		select("...?");
+		mes "[티링]";
+		mes "...충전해줄게.";
+		next;
+		mes "[티링]";
+		mes "......캐시.";
+		next;
+		select("아...");
+		set tring_start, 1;
+		close;
+	} else {
+		mes "[티링]";
+		mes "....";
+		next;
+		select("저기...");
+		emotion ET_THINK, playerattached();
+		mes "[티링]";
+		mes "..........";
+		emotion ET_SHY;
+		next;
+		select("PC방...하고싶어");
+		mes "[티링]";
+		mes "....응.";
+		next;
+		switch(select("시간 충전:남은 시간:요금:안할래")) {
+			case 1:
+				if (#CASHPOINTS < 500) {
+					mes "[티링]";
+					mes "공짜는...";
+					next;
+					mes "[티링]";
+					mes "안돼.";
+					close;
+				} else {
+				OnInput:
+					mes "[티링]";
+					mes "시간... 몇개...?";
+					next;
+					input .@input$;
+					set .@qty, atoi(.@input$);
+					if (.@qty == 0) {
+						mes "[티링]";
+						mes "0개... 숫자. 아니야..";
+						next;
+						mes "[티링]";
+						mes "안하는거야..?";
+						emotion ET_CRY;
+						close;
+					} else if (#CASHPOINTS < .@qty * 500) {
+						mes "[티링]";
+						mes "캐시... 모자란걸... 나빠.";
+						next;
+						goto OnInput;
+					} else {
+						specialeffect EF_BASH;
+						progressbar_npc "00ff00",2;
+						mes "[티링]";
+						mes "빠른... 충전..!";
+						emotion ET_BEST;
+						next;
+						mes "[티링]";
+						mes "... 또 와.";
+						emotion ET_SHY;
+						vip_time .@qty * 60;
+						set #CASHPOINTS, #CASHPOINTS - .@qty * 500;
+						close;
+					}
+				}
+			case 2:
+				set .@expire, vip_status(VIP_STATUS_EXPIRE);
+				set .@year$, "^0000ff" + atoi(gettimestr("%Y", 21, .@expire)) + "^000000년 ";
+				set .@month$, "^0000ff" + atoi(gettimestr("%d", 21, .@expire)) + "^000000월 ";
+				set .@hour$, "^0000ff" + atoi(gettimestr("%H", 21, .@expire)) + "^000000시 ";
+				set .@min$, "^0000ff" + atoi(gettimestr("%M", 21, .@expire)) + "^000000분";
+				set .@expire$, .@year$ + .@month$ + .@hour$ + .@min$;
+				.@remsec = vip_status(VIP_STATUS_REMAINING);
+
+				if (.@remsec >= 60) {
+					set .@remmin, .@remsec / 60;
+					set .@remsecrem, .@remsec % 60;
+				} else
+					set .@remsecrem, .@remsec;
+
+				if (.@remmin >= 60) {
+					set .@remhr, .@remmin / 60;
+					set .@remminrem, .@remmin % 60;
+				} else
+					set .@remminrem, .@remmin;
+
+				if (.@remhr >= 24) {
+					set .@remday, .@remhr / 24;
+					set .@remhrrem, .@remhr % 24;
+				} else
+					set .@remhrrem, .@remhr;
+
+				.@secmsg$ = "";
+				.@minmsg$ = "";
+				.@hrmsg$ = "";
+				.@daymsg$ = "";
+				if (.@remsecrem > 0)
+					set .@secmsg$, "^0000ff" + .@remsecrem + "^000000초 ";
+				if (.@remminrem > 0)
+					set .@minmsg$, "^0000ff" + .@remminrem + "^000000분 ";
+				if (.@remhrrem > 0)
+					set .@hrmsg$, "^0000ff" + .@remhrrem + "^000000시간 ";
+				if (.@remday > 0)
+					set .@daymsg$, "^0000ff" + .@remday + "^000000일 ";
+				
+				if (.@expire == 0) {
+					mes "[티링]";
+					mes "PC방... 안하고있어..?";
+				} else {
+					mes "[티링]";
+					mes ""+ .@expire$ +" 까지.";
+					mes "" + .@daymsg$ + "" + .@hrmsg$ + "" + .@minmsg$ + "" + .@secmsg$ + "... 남았어.";
+				}
+				close;
+			case 3:
+				mes "[티링]";
+				mes "60분.";
+				next;
+				mes "[티링]";
+				mes "500캐시...";
+				emotion ET_OK;
+				close;
+			case 4:
+				set #CASHPOINTS, #CASHPOINTS + 9000;
+				mes "[티링]";
+				mes "....또 와...";
+				next;
+				emotion ET_SHY;
+				close;
+		}
+	}
+OnInit:
+	setunittitle(getnpcid(0),"PC방 충전 도우미");
+	setunitdata getnpcid(0),UNPC_GROUP_ID,11;
+	end;
+}
+-	script	achievemail	-1,{
+
+OnPCBaseLvUpEvent:
+	.@charid = getcharid(0);
+	if(BaseLevel == 185) {
+		.@Lv = 185;
+		.@sender$ = "누군가";
+		.@title$ = "레벨업 축하해요!";
+		.@body$ = "열심히 성장하는 당신을 위한 선물!";
+		.@itemid = 1010000;
+		.@itemamount = 1;
+		achieve_costumebox = 1;
+	} else if(BaseLevel == 200) {
+		.@Lv = 200;
+		.@sender$ = "누군가";
+		.@title$ = "벌써 200레벨?!";
+		.@body$ = "광렙하는 당신! 칭찬해요.";
+		setarray .@itemid[0], 1010001, 1010002;
+		setarray .@itemamount[0], 1, 1;
+		achieve_costumebox = 2;
+	} else if(BaseLevel == 230) {
+		.@Lv = 230;
+		.@sender$ = "누군가";
+		.@title$ = "이제 베테랑!";
+		.@body$ = "누가봐도 노련한 모험가가 되었군요!";
+		setarray .@itemid[0], 1010003, 1010004;
+		setarray .@itemamount[0], 1, 1;
+		achieve_costumebox = 3;
+	} else if(BaseLevel == 250) {
+		.@Lv = 250;
+		.@sender$ = "리브리";
+		.@title$ = "만렙이 코앞이에요!";
+		.@body$ = "힘내세요. 더 많은 멋진 의상을 구경하고 싶다면 말랑도로 저를 찾아오시면 된답니다.";
+		setarray .@itemid[0], 101476, 101460;
+		setarray .@itemamount[0], 1, 1;
+		achieve_costumebox = 4;
+	} else {
+		.@Lv = 0;
+	}
+	if(BaseLevel == .@Lv) {
+		mail .@charid, .@sender$, .@title$, .@body$, 0, .@itemid, .@itemamount;
+	}
+end;
+
+OnPCLoginEvent:
+	.@charid = getcharid(0);
+	if(BaseLevel >= 185 && achieve_costumebox < 1){
+		.@sender$ = "누군가";
+		.@title$ = "레벨업 축하해요!";
+		.@body$ = "성장하는 당신을 위한 선물!";
+		.@itemid = 1010000;
+		.@itemamount = 1;
+		achieve_costumebox = 1;
+		mail .@charid, .@sender$, .@title$, .@body$, 0, .@itemid, .@itemamount;
+	}
+	if(BaseLevel >= 200 && achieve_costumebox < 2){
+		.@sender$ = "누군가";
+		.@title$ = "벌써 200레벨?!";
+		.@body$ = "광렙하는 당신! 칭찬해요.";
+		setarray .@itemid[0], 1010001, 1010002;
+		setarray .@itemamount[0], 1, 1;
+		achieve_costumebox = 2;
+		mail .@charid, .@sender$, .@title$, .@body$, 0, .@itemid, .@itemamount;
+	}
+	if(BaseLevel >= 230 && achieve_costumebox < 3){
+		.@Lv = 230;
+		.@sender$ = "누군가";
+		.@title$ = "이제 베테랑!";
+		.@body$ = "누가봐도 노련한 모험가가 되었군요!";
+		setarray .@itemid[0], 1010003, 1010004;
+		setarray .@itemamount[0], 1, 1;
+		achieve_costumebox = 3;
+		mail .@charid, .@sender$, .@title$, .@body$, 0, .@itemid, .@itemamount;
+	}
+	if(BaseLevel >= 250 && achieve_costumebox < 4){
+		.@Lv = 250;
+		.@sender$ = "리브리";
+		.@title$ = "만렙이 코앞이에요!";
+		.@body$ = "힘내세요. 더 많은 멋진 의상을 구경하고 싶다면 말랑도로 저를 찾아오시면 된답니다.";
+		setarray .@itemid[0], 101476, 101460;
+		setarray .@itemamount[0], 1, 1;
+		achieve_costumebox = 4;
+		mail .@charid, .@sender$, .@title$, .@body$, 0, .@itemid, .@itemamount;
+	}
+end;
+}

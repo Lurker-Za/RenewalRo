@@ -1,0 +1,115 @@
+//===== rAthena Script ======================================= 
+//= Mr. Smile Quest
+//===== By: ================================================== 
+//= kobra_k88, Akaru
+//===== Current Version: ===================================== 
+//= 1.4a
+//===== Compatible With: ===================================== 
+//= rAthena Project
+//===== Description: ========================================= 
+//= [Official Conversion]
+//= Trade Clover, Fluff and Jellopy for a Mr. Smile mask.
+//===== Additional Comments: ================================= 
+//= 1.4 Rescripted to Aegis 10.3 standards. [L0ne_W0lf]
+//= 1.4a Fixed a little Typo error in duplicates. (bugreport:749) [Samuray22]
+//PC official 한글 번역
+//============================================================ 
+
+-	script	Smile Assistance::SmileHelper	92,{
+	mes "[스마일걸]";
+	mes "안녕하세요 ♬ 안녕하세요 ♪";
+	mes "스마일도우미 입니다";
+	mes "무엇을 도와드릴까요 ?";
+	next;
+	switch( select( "^3355FF스마일가면^000000 에 대하여", "^3355FF스마일가면^000000 을 제작한다", "대화를 종료한다" )) {
+	case 1:
+		mes "[스마일걸]";
+		mes "^5577FF트리스탄 3세^000000 국왕폐하께서";
+		mes "즐거운 라그나로크를 이룩하기 위해";
+		mes "실시하고 있는 이벤트 !";
+		mes "^3355FF전 국민의 얼굴에 웃음을 ♥^000000";
+		mes ".. 을 진행하고 있는";
+		mes "^3355FF' 스마일 도우미 '^000000 입니다";
+		next;
+		mes "[스마일걸]";
+		mes "간단한 재료로써";
+		mes "여러분에게 ^3355FF' 스마일 가면 '^000000 을";
+		mes "제조해 드리고 있습니다";
+		mes "필요한 재료로는 다음과 같습니다";
+		next;
+		mes "[스마일걸]";
+		mes "^3355FF젤로피 10 개^000000";
+		mes "^3355FF솜털 10 개^000000";
+		mes "^3355FF클로버 10 개^000000";
+		next;
+		mes "[스마일걸]";
+		mes "이번 이벤트를 계기로";
+		mes "내가 아닌 다른 사람들을 배려하고";
+		mes "웃으며 살아 갈 수 있는";
+		mes "세상이 되었으면 좋겠습니다";
+		close;
+	case 2:
+		if (countitem(909) > 9 && countitem(914) > 9 && countitem(705) > 9) {
+			mes "[스마일걸]";
+			mes "축하드립니다 !";
+			mes "여기 스마일 가면을 받으세요";
+			next;
+			delitem 909,10; //Jellopy
+			delitem 914,10; //Fluff
+			delitem 705,10; //Clover
+			getitem 2278,1; //Mr_Smile
+			mes "[스마일걸]";
+			mes "트리스탄 3세 폐하께서는";
+			mes "밝은 라그나로크를 이룩하기 위해";
+			mes "룬 미드가츠 왕국이 앞으로";
+			mes "최선의 노력을 다할 것임을";
+			mes "약속 하셨습니다";
+			next;
+			mes "이상";
+			mes "룬 미드가츠 공보처에서";
+			mes "알려드렸습니다";
+			close;
+		}
+		else {
+			mes "[스마일걸]";
+			mes "아 - 안타깝게도";
+			mes "귀하가 가지고 계신";
+			mes "아이템의 갯수가 부족합니다";
+			mes "^3355FF젤로피 10 개^000000";
+			mes "^3355FF솜털 10 개^000000";
+			mes "^3355FF클로버 10 개^000000 의";
+			mes "갯수를 확인하시기 바랍니다";
+			close;
+		}
+	case 3:
+		mes "[스마일걸]";
+		mes "이용해 주셔서 감사합니다";
+		mes "저희 ..";
+		mes "룬 미드가츠 왕국에서는";
+		mes "항상 밝은 라그나로크를";
+		mes "위해 노력하고 있습니다";
+		next;
+		mes "[스마일걸]";
+		mes "국민 여려분의";
+		mes "많은 협조 부탁드립니다";
+		mes "이상";
+		mes "룬 미드가츠 공보처 였습니다";
+		close;
+	}
+}
+
+// Additional Smile Assistance staff
+alberta,113,53,4	duplicate(SmileHelper)	스마일도우미#alb	92
+aldebaran,136,135,4	duplicate(SmileHelper)	스마일도우미#alde	92
+geffen,119,107,4	duplicate(SmileHelper)	스마일도우미#gef	92
+moc_ruins,59,154,3	duplicate(SmileHelper)	스마일도우미#moc	92
+payon,186,104,5	duplicate(SmileHelper)	스마일도우미#pay	92
+prontera,157,187,4	duplicate(SmileHelper)	스마일도우미#prt	92
+
+//============================================================ 
+// Old changelog
+//============================================================ 
+//= Fully working. 1.1 Optimized
+//= 1.2 updated Payon coords [Lupus]
+//= 1.3 fixed exploit [Lupus]
+//============================================================ 

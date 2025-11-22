@@ -1,0 +1,207 @@
+//===== rAthena Script =======================================
+//= Magazine Dealers
+//===== Description: =========================================
+//= Turns bullets into magazines/packs.
+//===== Changelogs: ==========================================
+//= 1.0 First version. [SinSloth]
+//= 1.1 Optimized version - Reduced to only one function [SinSloth]
+//= 1.2 Optimized^2, corrected npc's name [ultramage]
+//= 1.2a Optimized. Please, ommit extra NPC names [Lupus]
+//= 1.3 Updated to match AEGIS script. [Kisuka]
+//= 1.4 Updated to match AEGIS script again. [Masao]
+//= 1.5 Moved Izlude duplicate to pre-re/re paths. [Euphy]
+//= 2.0 Clean-up. [Capuche]
+//= 2.1 Fixes Issue #1482, where Rebellion jobs cannot use this npc. [Limestone]
+//= 2.2 Updated to new bullets. [Aleos]
+//============================================================
+
+que_ng,187,149,3	script	총알가방상인 케니#que_n	4_M_01,{
+	mes "[케니]";
+	mes "총알가방은 구형 총알들을 신형 총알들로 교환해준답니다.";
+	mes "자아~ 구경들 해보세요~";
+	next;
+	switch( select( "스피어 교환", "구형 스피어 교환", "슬러그탄 교환", "취소" )) {
+	case 1:
+		switch( select( "플레어 블릿", "라이트닝 블릿", "아이스 블릿", "포이즌 블릿", "블라인드 블릿", "취소" )) {
+		case 1: callsub S_Sphere_Exchange,13223,13228;
+		case 2: callsub S_Sphere_Exchange,13224,13229;
+		case 3: callsub S_Sphere_Exchange,13227,13230;
+		case 4: callsub S_Sphere_Exchange,13225,13231;
+		case 5: callsub S_Sphere_Exchange,13226,13232;
+		case 6: callsub S_Close;
+		}
+	case 2:
+		switch( select( "플레어 블릿", "라이트닝 블릿", "아이스 블릿", "포이즌 블릿", "블라인드 블릿", "취소" )) {
+		case 1: callsub S_Old_Sphere_Exchange,13203,13228;
+		case 2: callsub S_Old_Sphere_Exchange,13204,13229;
+		case 3: callsub S_Old_Sphere_Exchange,13207,13230;
+		case 4: callsub S_Old_Sphere_Exchange,13205,13231;
+		case 5: callsub S_Old_Sphere_Exchange,13206,13232;
+		case 6: callsub S_Close;
+		}
+	case 3:
+		switch( select( "슬러그탄 L", "슬러그탄 M", "슬러그탄 H", "슬러그탄 SH", "슬러그탄 XH", "취소" )) {
+		case 1: callsub S_Slug_Exchange,13210,24;
+		case 2: callsub S_Slug_Exchange,13211,12;
+		case 3: callsub S_Slug_Exchange,13212,8;
+		case 4: callsub S_Slug_Exchange,13213,6;
+		case 5: callsub S_Slug_Exchange,13214,5;
+		case 6: callsub S_Close;
+		}
+	case 5:
+		callsub S_Close;
+	}
+
+S_Sphere_Exchange:
+	.@old_id = getarg(0);
+	.@new_id = getarg(1);
+	.@old_str$ = getitemname(.@old_id);
+	.@new_str$ = getitemname(.@new_id);
+	.@old_count = countitem(.@old_id);
+	.@new_count = .@old_count / 10;
+
+	if (.@old_count < 10 || getequipid(EQI_AMMO) != -1 || BaseClass != Job_Gunslinger) {
+		mes "[케니]";
+		mes "이런이런~ 원하는 양 만큼의 아이템을 교환할 재료를 가지고 있지 않으시군요.";
+		mes "^FF0000" + .@old_str$ + "^000000 10개 이상, 아시겠죠? 혹시 ^FF0000장착중^000000이라면 장착을 해제해 주셔야 해요.";
+		close;
+	}
+
+	mes "[Kenny]";
+	mes "You've chosen ^FF0000" + .@old_str$ + "^000000.";
+	mes "You need 10 ^3131FF" + .@old_str$ + "^000000 to make 1 ^3131FF" + .@new_str$ + "^000000 item.";
+	mes "How many do you want to exchange?";
+	next;
+	switch(select("Exchange all:Make only 1:Cancel")) {
+		case 1:
+			mes "[Kenny]";
+			mes .@old_str$ + " count: ^3131FF" + .@old_count;
+			mes .@new_str$ + " count: ^3131FF" + .@new_count;
+			next;
+			mes "Do you want to exchange?";
+			next;
+			switch(select("Exchange:Cancel")) {
+				case 1:
+					mes "[Kenny]";
+					mes "All done.";
+					delitem .@old_id, .@new_count * 10;
+					getitem .@new_id, .@new_count;
+					close;
+				case 2:
+					close;
+			}
+		case 2:
+			mes "[Kenny]";
+			mes "All done.";
+			delitem .@old_id, 10;
+			getitem .@new_id, 1;
+			close;
+		case 3:
+			callsub S_Close;
+	}
+
+S_Old_Sphere_Exchange:
+	.@old_id = getarg(0);
+	.@new_id = getarg(1);
+	.@old_str$ = getitemname(.@old_id);
+	.@new_str$ = getitemname(.@new_id);
+	.@old_count = countitem(.@old_id);
+
+	if (.@old_count < 1 || getequipid(EQI_AMMO) != -1 || BaseClass != Job_Gunslinger) {
+		mes "[케니]";
+		mes "이런이런~ 원하는 양 만큼의 아이템을 교환할 재료를 가지고 있지 않으시군요.";
+		mes "^FF0000" + .@old_str$ + "^000000 1개 이상, 아시겠죠? 혹시 ^FF0000장착중^000000이라면 장착을 해제해 주셔야 해요.";
+		close;
+	}
+
+	mes "[Kenny]";
+	mes "You've chosen ^FF0000" + .@old_str$ + "^000000.";
+	mes "You need 1 ^3131FF" + .@old_str$ + "^000000 to make 1 ^3131FF" + .@new_str$ + "^000000 item.";
+	mes "How many do you want to exchange?";
+	next;
+	switch(select("Exchange all:Make only 1:Cancel")) {
+		case 1:
+			mes "[Kenny]";
+			mes .@old_str$ + " count: ^3131FF" + .@old_count;
+			mes .@new_str$ + " count: ^3131FF" + .@old_count;
+			next;
+			mes "Do you want to exchange?";
+			next;
+			switch(select("Exchange:Cancel")) {
+				case 1:
+					mes "[Kenny]";
+					mes "All done.";
+					delitem .@old_id, .@old_count;
+					getitem .@new_id, .@old_count;
+					close;
+				case 2:
+					close;
+			}
+		case 2:
+			mes "[Kenny]";
+			mes "All done.";
+			delitem .@old_id, 1;
+			getitem .@new_id, 1;
+			close;
+		case 3:
+			callsub S_Close;
+	}
+
+S_Slug_Exchange:
+	.@slug_id = getarg(0);
+	.@req_count = getarg(1);
+	.@slug_str$ = getitemname(.@slug_id);
+	.@new_slug_str$ = getitemname(25187);
+	.@count = countitem(.@slug_id);
+	.@new_count = .@count / .@req_count;
+
+	if (.@count < .@req_count || getequipid(EQI_AMMO) != -1 || BaseClass != Job_Gunslinger) {
+		mes "[케니]";
+		mes "이런이런~ 원하는 양 만큼의 아이템을 교환할 재료를 가지고 있지 않으시군요.";
+		mes "^FF0000" + .@slug_str$ + "^000000 " + .@req_count + "개 이상, 아시겠죠? 혹시 ^FF0000장착중^000000이라면 장착을 해제해 주셔야 해요.";
+		close;
+	}
+
+	mes "[Kenny]";
+	mes "You've chosen ^FF0000" + .@slug_str$ + "^000000.";
+	mes "You need " + .@req_count + " ^3131FF" + .@slug_str$ + "^000000 to make 1 ^3131FF" + .@new_slug_str$ + "^000000 item.";
+	mes "How many do you want to exchange?";
+	next;
+	switch(select("Exchange all:Make only 1:Cancel")) {
+		case 1:
+			mes "[Kenny]";
+			mes .@slug_str$ + " count: ^3131FF" + .@count;
+			mes .@new_slug_str$ + " count: ^3131FF" + .@new_count;
+			next;
+			mes "Do you want to exchange?";
+			next;
+			switch(select("Exchange:Cancel")) {
+				case 1:
+					mes "[Kenny]";
+					mes "All done.";
+					delitem .@slug_id, .@new_count * .@req_count;
+					getitem 25187, .@new_count;
+					close;
+				case 2:
+					close;
+			}
+		case 2:
+			mes "[Kenny]";
+			mes "All done.";
+			delitem .@slug_id, .@req_count;
+			getitem 25187, 1;
+			close;
+		case 3:
+			callsub S_Close;
+	}
+
+S_Close:
+	mes "[케니]";
+	mes "알겠습니다.";
+	mes "필요한 것이 있으시면";
+	mes "다시 찾아 주세요.";
+	close;
+}
+
+alberta,118,157,3	duplicate(총알가방상인 케니#que_n)	Magazine Dealer Kenny#al	4_M_01
+izlude_in,74,104,5	duplicate(총알가방상인 케니#que_n)	Magazine Dealer Kenny#iz	4_M_01

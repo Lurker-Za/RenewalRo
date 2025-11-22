@@ -1,0 +1,548 @@
+//===== rAthena Script ======================================= 
+//= Malangdo Town
+//===== By: ================================================== 
+//= Muad_Dib
+//===== Current Version: ===================================== 
+//= 1.5
+//===== Compatible With: ===================================== 
+//= rAthena Project
+//===== Description: ========================================= 
+//= [Official Conversion]
+//= Malangdo Town Script
+//===== Additional Comments: ================================= 
+//= 1.0 First version. [Euphy]
+//= 1.1 Added entrance scripts.
+//= 1.2 Moved "Odgnalam" coordinates.
+//= 1.3 Fixed dialogues.
+//= 1.4 Dialogue edits, source iRO.
+//= 1.5 Added Izlude duplicates.
+//PC official translate
+//============================================================
+
+// Malangdo Transportation :: malangdo_go
+//============================================================
+-	script	Dolangmal	-1,{
+	if (checkquest(5091) == -1) {
+		mes "[Dolangmal]";
+		mes "Hey~! Hi human~ This is Mr. Dolangmal. kakaka~";
+		next;
+		mes "[Dolangmal]";
+		mes "We are sent to here to take you to the heaven of cats, ^A2314BMalangdo^000000.";
+		next;
+		mes "[Dolangmal]";
+		set .@s$,"Why don't you go to ^A2314BMalangdo^000000?";
+		switch(atoi(strnpcinfo(2))) {
+			case 1: mes "How is that? The crowded city of Prontera is good, but why don't you go our heaven of the cats, ^A2314BMalangdo^000000?"; break;
+			case 2: mes "Why don't you go to ^A2314BMalangdo^000000? That place is better than Geffen, where there are only crowds of simple honest wizards."; break;
+			case 3: mes "The fresh air of Payon is not bad, but why don't you go better place like the heaven of the cats, ^A2314BMalangdo^000000?"; break;
+			case 4: mes .@s$+"The beautiful and quiet place is better than Aldebaran, where it's so noisy with the tick-tock sound of the clock."; break;
+			case 5: mes .@s$+"The beautiful and quiet place is better than Morocc, with its heat and sandstorms."; break;
+			case 6: mes .@s$+"The beautiful place is better than Juno, which is full of books and headaches."; break;
+			case 7: mes .@s$+"The complex place is better than Rachel, where it's too horribly quiet."; break;
+			case 8: mes .@s$+"The safe place is better than Lighthalzen, which is too dangerous."; break;
+			case 9: mes .@s$+"The smell of this sea place is better than Mora, which is full of a grassy smell."; break;
+		}
+		next;
+		if(select("No:^A2314BMalangdo^000000~ Go~ Go~") == 1) {
+			mes "[Dolangmal]";
+			mes "What!? You don't want to go ^A2314BMalangdo^000000? Chet!";
+			next;
+			mes "[Dolangmal]";
+			mes "You're such an annoying guy. If you don't go, why did you talk to me... but...";
+			next;
+			mes "[Dolangmal]";
+			mes "^9E1837Admiral Tomas^000000 said to kidnap humans... No... Bring them politely?";
+			next;
+			mes "[Dolangmal]";
+			mes "Anyway, I got you. Whenever you want to go, just tell me.";
+			close;
+		}
+		mes "[Dolangmal]";
+		mes "Ok! I like your attitude. Full of passion.";
+		next;
+		mes "[Dolangmal]";
+		mes "Now, before you go ^A2314BMalangdo^000000, let me give you some warnings.";
+		next;
+		mes "[Dolangmal]";
+		mes "First!! It is natural that when you arrive on ^A2314BMalangdo^000000, you should notify ^9E1837Admiral Tomas^000000 that you are here.";
+		next;
+		mes "[Dolangmal]";
+		mes "If you don't do that, you might be attacked by scary and wild cats when you walk through dark streets.";
+		next;
+		mes "[Dolangmal]";
+		mes "Secondly!! This ^A2314BMalangdo^000000 is absolutely our island of cats, even though we open to humans.";
+		next;
+		mes "[Dolangmal]";
+		mes "We have a personality... no... no... respect us like one catality because we are cats.";
+		next;
+		mes "[Dolangmal]";
+		mes "And the next one is...";
+		next;
+		mes "Dolangmal proceeds and gives hundreds of warnings.";
+		next;
+		mes "[Dolangmal]";
+		mes "Ok! Those are all the warnings!! They're easy and simple... right? Can you remember them?";
+		next;
+		switch(select("Remember his warnings:Can't remember")) {
+		case 1:
+			mes "[Dolangmal]";
+			mes "Ok! Do not bite two mice with one mouth. ^9E1837Admiral Tomas^000000 is located at the ^A2314Bcenter of the ship in Malangdo^000000.";
+			next;
+			mes "[Dolangmal]";
+			mes "Don't forget to give him notice of your arrival.";
+			next;
+			mes "[Dolangmal]";
+			mes "Alright. Let's go to the heaven of the cats, ^A2314BMalangdo^000000~";
+			setquest 5091;
+			completequest 5091;
+			warp "malangdo",217,85;
+			close;
+		case 2:
+			mes "[Dolangmal]";
+			mes "What!? Can't you keep these easy rules? Chet!";
+			next;
+			mes "[Dolangmal]";
+			mes "You're such an annoying guy. If you can't keep these, why didn't you tell me during our conversation? I told you everything... but..";
+			next;
+			mes "[Dolangmal]";
+			mes "^9E1837Admiral Tomas^000000 said to kidnap humans... No... Bring them politely?";
+			next;
+			mes "[Dolangmal]";
+			mes "Anyway, I got you. Just tell me whenever you want to go.";
+			close;
+		}
+	}
+	mes "[Dolangmal]";
+	mes "Uh? You must be the one from last time...? Alright. Did you visit ^A2314BMalangdo^000000?";
+	next;
+	switch(select("Take me to ^A2314BMalangdo^000000 again:I have visited")) {
+	case 1:
+		mes "[Dolangmal]";
+		mes "I really want to send you there, but I can't because of the policy. It is difficult to send people who have visited ^A2314BMalangdo^000000 already.";
+		next;
+		mes "[Dolangmal]";
+		mes "And that was roughly it... It's supposed to be rule 53...";
+		next;
+		mes "[Dolangmal]";
+		mes "Actually, let me tell you rule 53. I am an indulgent cat.";
+		next;
+		mes "[Dolangmal]";
+		mes "If you want to go back to ^A2314BMalangdo^000000, take the ship at Izlude or Alberta.";
+		next;
+		mes "[Dolangmal]";
+		mes "If you enjoy that pleasant sea trip, you will arrive at the heaven of cats, ^A2314BMalangdo^000000.";
+		next;
+		mes "[Dolangmal]";
+		mes "So easy! Isn't it? Well, good bye~";
+		close;
+	case 2:
+		mes "[Dolangmal]";
+		mes "How was it? You liked it? I knew it. Kakaka~";
+		next;
+		mes "[Dolangmal]";
+		mes "Ah! I just want to make sure...";
+		next;
+		mes "[Dolangmal]";
+		mes "Again, if you want to go back to ^A2314BMalangdo^000000, do you know where to take a ship at Izlude or Alberta?";
+		next;
+		mes "[Dolangmal]";
+		mes "Hm~ You might know because you're a smart person. Well, see you again~";
+		close;
+	}
+}
+prontera,114,77,6	duplicate(Dolangmal)	Dolangmal#1	553
+geffen,109,61,6	duplicate(Dolangmal)	Dolangmal#2	553
+payon,200,106,4	duplicate(Dolangmal)	Dolangmal#3	553
+aldebaran,170,104,4	duplicate(Dolangmal)	Dolangmal#4	553
+morocc,168,275,4	duplicate(Dolangmal)	Dolangmal#5	553
+yuno,165,122,4	duplicate(Dolangmal)	Dolangmal#6	553
+rachel,121,126,4	duplicate(Dolangmal)	Dolangmal#7	553
+lighthalzen,254,83,5	duplicate(Dolangmal)	Dolangmal#8	553
+mora,57,150,4	duplicate(Dolangmal)	Dolangmal#9	553
+
+-	script	::Odgnalam	-1,{
+	mes ""+((strnpcinfo(2) == "albe")?"알베르타":"이즈루드")+"의 따스한 햇볕을 받으며 고양이가 잠을 자고 있습니다.";
+	next;
+	if(select("그냥둔다:말을건다") == 1) close;
+	mes "[오그노렘]";
+	mes "냐.. 냥? 응?";
+	next;
+	if (ep13_yong1 == 0) {
+		set .@price,1000;
+		set .@s1$,"흥!! 귀찮고 번거롭기만 한 인간이군. ^0000FF1000Zeny^000000에 우리 고양이들의 낙원 ^A2314B말랑도^000000로 보내주지.";
+		set .@s2$,"돈은? 돈은 어디 있나? 돈도 없으면서 어디를 가려고 하나 인간. 염치가 없군.";
+	} else if (ep13_yong1 < 60) {
+		set .@price,999;
+		set .@s1$,"You have a little relationship with fleet of cat. I'll give you special discount price ^0000FF999 Zeny^000000 to ^A2314BMalangdo^000000, because you have relationship with fleet.";
+		set .@s2$,"Where is the money? You don't have a sense of honor.";
+	} else if (ep13_yong1 > 59 && ep13_yong1 < 80) {
+		set .@price,500;
+		set .@s1$,"You gave several help to our cat's fleet so let me give you special that with 50% discount price ^0000FF500 Zeny^000000. I'll send you to ^A2314BMalangdo^000000.";
+		set .@s2$,"You don't have any money for paying 50% discount price? I can't believe it.";
+	} else {
+		mes "[오그노렘]";
+		mes "You are a hero of cat's fleet. Your activity is the legend between us.";
+		next;
+		mes "[오그노렘]";
+		mes "As you are a hero of the cat fleet let me send you to ^A2314BMalangdo^000000 for free.";
+		next;
+		if(select("말랑도로 출발!!:그만둔다") == 1) {
+			mes "[오그노렘]";
+			mes "Have a comfortable trip... Alright let's go~";
+			warp "malangdo",217,85;
+		}
+		close;
+	}
+	mes "[오그노렘]";
+	mes .@s1$;
+	next;
+	if(select("말랑도로 출발!!:그만둔다") == 2) close;
+	if (Zeny < .@price) {
+		mes "[오그노렘]";
+		mes .@s2$;
+		close;
+	}
+	set Zeny, Zeny - .@price;
+	mes "[오그노렘]";
+	mes "당장 보내주겠다. 출발~";
+	close2;
+	warp "malangdo",217,85;
+	end;
+}
+alberta,200,151,4	duplicate(Odgnalam)	오그노렘#albe	554
+izlude,182,218,4	duplicate(Odgnalam)	오그노렘#iz	554	// Old coordinates: (182,192)
+izlude_a,182,218,4	duplicate(Odgnalam)	오그노렘#iz_a	554
+izlude_b,182,218,4	duplicate(Odgnalam)	오그노렘#iz_b	554
+izlude_c,182,218,4	duplicate(Odgnalam)	오그노렘#iz_c	554
+izlude_d,182,218,4	duplicate(Odgnalam)	오그노렘#iz_d	554
+
+malangdo,219,86,4	script	콩#말랑선원	4_CAT_SAILOR2,{
+	mes "[콩]";
+	mes "말랑도에서 즐거웠나요?";
+	mes "상단에선 이즈루드와 알베르타행 배편을 운행해요.";
+	next;
+	if (ep13_yong1 == 0) {
+		set .@price,1000;
+		set .@s1$, "1000zeny";
+		set .@s2$, "말랑도에서 즐거운 하루 되요.";
+		set .@no_money$, "공짜는 곤란해요.";
+		set .@yes_money$, "즐거운 여행 되요.";
+		mes "[콩]";
+		mes "배삯은 단 돈 1000zeny 어디로 갈래요?";
+		next;
+	} else if (ep13_yong1 < 60) {
+		set .@price,999;
+		set .@s1$,"999zeny";
+		set .@s2$, "Have a full of fortune day in Malangdo...";
+		set .@no_money$, "It is difficult even though you have a relationship with the fleet.";
+		set .@yes_money$, "Thanks, have a wonderful trip.";
+		mes "[Kong]";
+		mes "You have a connection with our fleet. Apply special price 999 zeny. Where do you want to go?";
+		next;
+	} else if (ep13_yong1 > 59 && ep13_yong1 < 80) {
+		set .@price,500;
+		set .@s1$,"500zeny";
+		set .@s2$, "There are full of fortune and jackpot in Malangdo.";
+		set .@no_money$, "Oh my god. You don't have 500 zeny? It is difficult for free.";
+		set .@yes_money$, "Have a nice trip and come again.";
+		mes "[Kong]";
+		mes "Wow~ You contributed to our fleet a lot. Alright!! Special discount price 500 zeny. Where do you want to go?";
+		next;
+	} else {
+		set .@price,0;
+		set .@s1$,"Free for the hero of our fleet!!";
+		set .@s2$, "No one objects to the hero of our fleet staying in Malangdo...";
+		mes "[Kong]";
+		mes "Ah... You are the legendary hero of our cat's fleet.";
+		next;
+		mes "[Kong]";
+		mes "We can't charge the hero of our fleet. What is your destination?";
+		next;
+	}
+	set .@i, select("- 이즈루드행 --- "+.@s1$+":- 알베르타행 --- "+.@s1$+":- 말랑도에 남는다");
+	mes "[콩]";
+	if (.@i == 3) {
+		mes .@s2$;
+		close;
+	}
+	if (ep13_yong1 > 80) {
+		mes "Have a comfortable trip.";
+		if (.@i == 1)
+			warp "izlude",195,212; // Old coordinates: (194,180)
+		else
+			warp "alberta",192,150;
+		close;
+	}
+	if (Zeny < .@price) {
+		mes .@no_money$;
+		close;
+	}
+	set Zeny, Zeny - .@price;
+	mes .@yes_money$;
+	close2;
+	if (.@i == 1)
+		warp "izlude",195,212;
+	else
+		warp "alberta",192,150;
+	end;
+}
+
+// Generic Malangdo NPCs :: malang_tre
+//============================================================
+malangdo,147,117,3	script	여관 주인#malang	4_CAT_REST,{
+	mes "의자 위에 한껏 늘어진 고양이가 보인다.";
+	mes "여관 주인이라지만 딱히 장사를 하는 듯한 분위기는 아니다.";
+	next;
+	switch( select( "해먹에서 쉬어도 될까요?", "여관에 저장하고 싶습니다.", "한가해 보이는군요." )) {
+	case 1:
+		mes "[늘어진 고양이]";
+		mes "해먹은 마음껏 써도 되지만 해먹이 자꾸 닳으니 ^FF0000통조림 5개^000000만 기부해달라옹. 그럼 대신 피로를 날려주겠다옹.";
+		next;
+		switch(select("통조림을 준다.:바닥도 편한 것 같군요.")) {
+		case 1:
+			if (countitem(12636) > 4) {
+				delitem 12636,5; //Malang_Sp_Can
+				percentheal 100,100;
+				specialeffect2 EF_HEALSP;
+				mes "[여관 주인]";
+				mes "노곤노곤하게 잘 쉬라옹.";
+				emotion ET_CHUP;
+				next;
+				warp "malangdo",140,121;
+				close;
+			}
+			mes "[여관 주인]";
+			mes "통조림 모자란 것 같다옹.";
+			close;
+		case 2:
+			mes "[여관 주인]";
+			mes "생긴 것 답지 않게 독한 모험가다옹.";
+			close;
+		}
+	case 2:
+		mes "[여관 주인]";
+		mes "저장했다옹. 이제 얼굴 자주 볼테니 친하게 지내자옹.";
+		savepoint "malangdo",142,118,1,1;
+		close;
+	case 3:
+		mes "[여관 주인]";
+		mes "바쁘면 바쁜대로, 한가하면 한가한 대로 잔뜩 늘어지면 된다옹.";
+		next;
+		mes "- 과연 일하는 시간이 있긴 한지 모르겠다. -";
+		close;
+	}
+	close;
+}
+
+malangdo,151,120,3	script	유랑하는 민스트럴#말랑	4_M_MINSTREL,{
+	mes "[유랑하는 민스트럴]";
+	mes "저 여관주인을 가만히 보고 있으면 왠지 졸음이 몰려오는 것 같아. 나른하달까...";
+	close;
+}
+
+malangdo,149,120,5	script	유랑하는 원더러#말랑	4_F_WANDERER,5,1,{
+	mes "[유랑하는 원더러]";
+	mes "이 곳에 사는 고양이들은 무척이나 활기차요.";
+	mes "덕분에 나도 모르게 덩실덩실 춤을 추고 만답니다.";
+	close;
+OnTouch:
+	emotion ET_DELIGHT;
+	emotion ET_DELIGHT, getnpcid(0, "유랑하는 민스트럴#말랑");
+	switch(rand(4)) {
+	case 0:
+		soundeffect "ring_of_nibelungen.wav",0;
+		break;
+	case 1:
+		soundeffect "dont_forget_me_not.wav",0;
+		break;
+	case 2:
+		soundeffect "humming.wav",0;
+		break;
+	case 3:
+		soundeffect "assassin_of_sunset.wav",0;
+		break;
+	}
+	end;
+}
+
+malangdo,216,168,3	script	고양이 조련사#malang	4_F_ALCHE_A,0,8,{
+	emotion ET_COOL;
+	mes "[고양이 조련사]";
+	mes "뽀송뽀송말랑말랑한 저 꼬리! 저 엉덩이!";
+	mes "참을 수 없어~~! 이 곳은 천국이야!";
+	next;
+	emotion ET_KIK;
+	mes "[고양이 조련사]";
+	mes "내 비장의 카드 ^FF0000<개다래 열매>^000000로 말랑도의 모든 고양이를 내 노예로 만들어 버리겠어!";
+	next;
+	select("^FF0000<개다래 열매>^000000란?");
+	mes "[고양이 조련사]";
+	mes "개다래 열매는 아주 아주 귀한 물건이야!";
+	mes "나도 아주 간신히 얻었다고.";
+	mes "하지만 그 만큼 고양이라면 어느 녀석이라도 빠짐 없이 모두 까무러치게 좋아하는 물건이기도 해.";
+	next;
+	select("^FF0000<개다래 열매>^000000는 어디서 살 수 있어?");
+	mes "[고양이 조련사]";
+	mes "나도 간신히 구한 걸 네가 감히 어떻게 얻겠다는거야?";
+	mes "무려 이건 ^3131FFZeny로는 구할 수 없는 이세계의 물건^000000이랬어!";
+	next;
+	emotion ET_KIK;
+	mes "[고양이 조련사]";
+	mes "말랑도 고양이는 다 내꺼야! 그렇게 되어야만 해. 유후~";
+	mes "^FF0000<개다래 열매>^000000! 이 것으로 내가 말랑도의 여왕이 되겠어! 오호호호!!";
+	close;
+OnTouch:
+	emotion ET_SPARK;
+	end;
+}
+
+malangdo,164,203,3	script	고양이 조련사#malang1	4_M_YURI,5,8,{
+	emotion ET_COOL;
+	mes "[고양이 조련사]";
+	mes "뭉텅뭉텅보들보들한 저 꼬리! 저 엉덩이!";
+	mes "참을 수 없군~!! 이 곳은 진정 극락이야!!";
+	next;
+	emotion ET_KIK;
+	mes "[고양이 조련사]";
+	mes "내 비장의 카드 ^FF0000<개다래 열매>^000000로 말랑도의 모든 고양이를 내 노예로 만들어 버리겠다!";
+	next;
+	select("^FF0000<개다래 열매>^000000란?");
+	mes "[고양이 조련사]";
+	mes "개다래 열매는 아주 아주 귀한 물건이야!";
+	mes "나도 아주 간신히 얻었지.";
+	mes "하지만 그 만큼 고양이라면 어느 녀석이라도 빠짐 없이 모두 까무러치게 좋아하는 물건이기도 해.";
+	next;
+	select("^FF0000<개다래 열매>^000000는 어디서 살 수 있어?");
+	mes "[고양이 조련사]";
+	mes "나도 간신히 구한 걸 네가 감히 어떻게 얻겠다는거야?";
+	mes "무려 이건 ^3131FFZeny로는 구할 수 없는 이세계의 물건^000000이랬어!";
+	next;
+	emotion ET_KIK;
+	mes "[고양이 조련사]";
+	mes "말랑도 고양이는 다 내꺼야! 그렇게 되어야만 해. 케케";
+	mes "^FF0000<개다래 열매>^000000! 난 이 것으로 말랑도의 왕이 되겠다! 와하하하!!";
+	close;
+OnTouch:
+	emotion ET_SPARK;
+	end;
+}
+
+malangdo,154,136,5	script	개업공고#cos_ect	4_BOARD3,{
+	mes "성원에 힘입어 매장을 오픈하게 되었습니다.";
+	mes "말랑도 서쪽의 ^ff0000패션스톤^000000을 꼭 방문해주세요!";
+	mes "    - 아베르 드 도쉬";
+	close;
+}
+
+malangdo,208,163,6	script	냥타임#mal	4_CAT_REST,{
+	mes "[냥타임]";
+	mes "아혹~ 또 깜박했다냥~";
+	mes "약 먹는시간 지키는 건 너무 어렵다냥.";
+	next;
+	mes "[냥타임]";
+	mes "맞다냥!";
+	mes "이걸 이렇게해서! 저렇게해서! 요렇게하면! ^ff0000약효를 더 오래 지속^000000할 수 있다냥!";
+	next;
+	mes "[냥타임]";
+	mes "먹을 약이 너무 많으면 그것도 하나로 뭉쳐서 먹으면 되겠지냥!";
+	next;
+	mes "[냥타임]";
+	mes "히익!!! 뭐냥! 너는! 고양이를 그렇게 뚫어져라 쳐다보다니 실례다냥!";
+	mes "냐...냐냥....뭐냥 너도 이 약에 관심이 있는거냥?";
+	next;
+	switch( select( "짧은 약을 진한 약으로 교환", "[비매품]전투교범&풍선껌을 하나로!", "전투 교범 교환", "무한 파리의 날개 교환", "올인원 제조", "그만 둔다." )) {
+		case 1:
+			mes "[냥타임]";
+			mes "원하는만큼 바꿔주겠다냥.";
+			next;
+			mes "     ^ff0000※주의 사항※^000000";
+			mes "여러묶음으로 나누어져 있는 아이템의 경우 한번에 수량확인이 어려우므로 개별로 교환하시거나 합친 후 교환해 주세요.";
+			close2;
+			callshop "Nyangtime_Potion",1;
+			end;
+		case 2:
+			mes "[냥타임]";
+			mes "^ff0000[비매품]전투교범과 [비매품]풍선껌을 주면 [비매품]전투교범&풍선껌으로 바꿔주겠다냥.^000000";
+			mes "물론 공짜는 아니다냥!";
+			mes "내가 좋아하는 그것을 줘야한다냥!";
+			close2;
+			callshop "Nyangtime_Combine",1;
+			end;
+		case 3:
+			mes "[냥타임]";
+			mes "<ITEM>[전투 교범]<INFO>12208</INFO></ITEM>^ff0000을 가지고 온다면 핵심 전투 교범으로 바꿔주겠다냥.^000000";
+			mes "^ff0000핵심 전투 교범은 실전 전투 교범으로 바꿀 수 있다냥.^000000";
+			close2;
+			callshop "Nyangtime_Manual",1;
+			end;
+		case 4:
+			mes "[냥타임]";
+			mes "^ff0000겹쳐지지 않는 무한 파리의 날개 상자를 가져오면 겹쳐지는 무한 파리의 날개 상자로 바꿔주겠다냥.^000000";
+			close2;
+			callshop "Nyangtime_Fly",1;
+			end;
+		case 5:
+			mes "[냥타임]";
+			mes "이런저런 버프용 아이템 한번에 여러개 챙기기 힘들잖냥?";
+			mes "이런저런 생명수도 여러종류를 한꺼번에 먹고 있잖냥?";
+			mes "그걸 이렇게 저렇게해서 ^4d4dff올인원^000000으로 바꿔줄 수 있다냥!";
+			close2;
+			callshop "Nyangtime_All",1;
+			end;
+		case 6:
+			mes "[냥타임]";
+			mes "알았다냥.";
+			close;
+	}
+}
+moc_para01,29,171,2	duplicate(냥타임#mal)	냥타임#1	554
+
+malangdo,182,140,3	script	고양이손 상단원#nyatore	4_CAT_DOWN,{
+	mes "[고양이손 상단원]";
+	mes "고양이손 상단 회심의 창고서비스를 이번에 새로 시작했소!";
+	mes "언제 어디서든 이 티켓 한 장이면 ^4d4dff고양이손 상단에서 제공하는 창고^000000를 하루종일! 이용 할 수 있소!";
+	next;
+	mes "^FF0000[경고]^000000";
+	mes "^FF0000냥다래 열매로 아이템을 교환하는 상점입니다.^000000";
+	mes "^FF0000교환된 아이템은 청약철회대상에 포함되지 않으며, 냥다래 열매로의 재교환 역시 불가능합니다.^000000";
+	next;
+	switch( select( "냥다래 열매 상점을 연다.", "고양이손 상단의 창고?", "거절" )) {
+		case 1:
+			mes "[고양이손 상단원]";
+			mes "후회하지 않을 것이오!";
+			mes "이 티켓 하나면 언제 어디서든 창고를 이용할 수 있거든!";
+			close2;
+			callshop "CatPaw_Box",1;
+			end;
+		case 2:
+			mes "[고양이손 상단원]";
+			mes "우리 고양이손 상단이 이 곳에 정착한지도 제법 시일이 지났소이다.";
+			mes "어떻게든 나름의 상권을 만들어보고자 백방으로 노력했지만";
+			mes "이미 이 곳은 카프라와 존다가 존재하고 있었지.";
+			next;
+			mes "[고양이손 상단원]";
+			mes "이미 기존의 사업체가 있는 곳에 진출하기란 참 요원한 일이라...";
+			mes "그간 많은 것을 개발하고 그들의 손이 닿지 않는 곳까지 개척을 하고 나섰소.";
+			next;
+			mes "[고양이손 상단원]";
+			mes "그러던 중 우리는 차원을 이용한 기술을 이용해 카프라 물류센터 뺨치는 개인 아공간을 만들 수 있게 되었지.";
+			next;
+			mes "[고양이손 상단원]";
+			mes "새로이 시행하게 된 고양이손 상단 창고가 바로 그것이오!";
+			mes "이 종이딱지 한장이면 언제 어디서든 전용 아공간을 생성해 창고로 사용가능!";
+			next;
+			mes "[고양이손 상단원]";
+			mes "물론 우리 고양이손 상단이 제공하는 공간이라 잃어버릴 염려도 없을  뿐더러...!";
+			mes "그간 부족했던 카프라 창고외에 하나 더 공간이 생기는 것이니 얼마나 좋소!";
+			next;
+			mes "[고양이손 상단원]";
+			mes "이 종이딱지.. 아니 고양이손티켓은 개다래열매로 교환 해주겠소.";
+			mes "개다래열매가 없다면 냥다래열매로 교환 가능하오!";
+			mes "써보시오. 꼭 써보시오!";
+			close;
+		case 3:
+			mes "[고양이손 상단원]";
+			mes "허허, 하나쯤 마련 해 두면 두고 두고 편히 쓸 수 있을것인데...";
+			close;
+	}
+}

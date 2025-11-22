@@ -1,0 +1,92 @@
+//===== rAthena Script =======================================
+//= Training Zone
+//===== Description: =========================================
+//= NPC warp related to the training zone.
+//===== Changelog: ===========================================
+//= 1.0 Initial Release [Capuche]
+//= 1.1 PC official Korean translate
+//============================================================
+
+prontera,246,62,3	script	훈련 교관#sol1	8W_SOLDIER,{
+	mes "[훈련 교관]";
+	mes "보다 넓은 곳에서 훈련을 원한다면 입장시켜주겠다.";
+	next;
+	mes "[훈련 교관]";
+	mes "훈련장은 크게 두 구역으로 나뉘어진다.";
+	next;
+	mes "[훈련 교관]";
+	mes "몬스터 크기에 따라 적용되는 힘을 체크할 수 있는 상단 구역.";
+	next;
+	mes "[훈련 교관]";
+	mes "몬스터 속성, 형태에 따라 적용되는 힘을 체크할 수 있는 하단 구역.";
+	next;
+	mes "[훈련 교관]";
+	mes "어디로 입장하겠는가?";
+	next;
+	switch( select( "상단 구역", "하단 구역", "입장하지 않는다." ) ) {
+	case 1:
+		mes "[훈련 교관]";
+		mes "그럼 안내해주도록 하겠다.";
+		close2;
+		warp "tra_fild",112,167;
+		end;
+	case 2:
+		mes "[훈련 교관]";
+		mes "그럼 안내해주도록 하겠다.";
+		close2;
+		warp "tra_fild",111,74;
+		end;
+	case 3:
+		mes "[훈련 교관]";
+		mes "안내가 필요하면 찾아오도록.";
+		close;
+	}
+}
+
+tra_fild,111,79,3	script	훈련 교관#sol3	8W_SOLDIER,{
+	mes "[훈련 교관]";
+	mes "상단 구역으로 이동하겠는가?";
+	next;
+	switch( select( "이동한다.", "이동하지 않는다.", "프론테라 내부로 이동." ) ) {
+	case 1:
+		mes "[훈련 교관]";
+		mes "상단 구역으로 이동!!!";
+		close2;
+		warp "tra_fild",112,167;
+		end;
+	case 2:
+		mes "[훈련 교관]";
+		mes "이동이 필요하면 말을 걸어주도록.";
+		close;
+	case 3:
+		mes "[훈련 교관]";
+		mes "이동시켜 주겠다.";
+		close2;
+		warp "prontera",246,60;
+		end;
+	}
+}
+
+tra_fild,112,171,3	script	훈련 교관#sol2	8W_SOLDIER,{
+	mes "[훈련 교관]";
+	mes "하단 구역으로 이동하겠는가?";
+	next;
+	switch( select( "이동한다.", "이동하지 않는다.", "프론테라 내부로 이동." ) ) {
+	case 1:
+		mes "[훈련 교관]";
+		mes "하단 구역으로 이동!!!";
+		close2;
+		warp "tra_fild",111,74;
+		end;
+	case 2:
+		mes "[훈련 교관]";
+		mes "이동이 필요하면 말을 걸어주도록.";
+		close;
+	case 3:
+		mes "[훈련 교관]";
+		mes "이동시켜 주겠다.";
+		close2;
+		warp "prontera",246,60;
+		end;
+	}
+}

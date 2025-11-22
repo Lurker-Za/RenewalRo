@@ -1,0 +1,184 @@
+//===== rAthena Script =======================================
+//= Catalog Magician
+//===== By: ==================================================
+//= skyiing, Scriptor
+//===== Current Version: =====================================
+//= 1.1
+//===== Compatible With: =====================================
+//= rAthena Project
+//===== Description: =========================================
+//= [Official Conversion]
+//= Catalogs allow players to easily search for items in-game,
+//= and to buy/sell directly from the catalog interface.
+//===== Additional Comments: =================================
+//= 1.0 Moved from root directory. [Euphy]
+//= 1.1 Updated dialogue. [Euphy]
+//PC official translate 한글번역 스카이러브
+//============================================================ 
+
+// Main NPC :: catalog_merchant
+//============================================================
+moc_para01,22,16,5	script	카탈로그 자판기#catal02	2_VENDING_MACHINE1,{
+    if (!checkweight(1301,3)) {
+        mes "- 항목이 너무 많습니다. 공간을 만들어주세요. -";
+        close;
+    }
+    set .@ticket_cost, 200;
+    mes "[카탈로그 자판기]";
+    mes "구형 만능 카탈로그 실버를 1회 1장 구매할실 수 있습니다. 대량구매나 신형 특수 카탈로그 실버를 구매하실 고객님께서는 알베르타  상인조합으로 찾아와 주시기 바랍니다.";
+    next;
+    switch(select("만능 카탈로그 실버를 산다:그만둔다")) {
+        case 1:
+            mes "[카탈로그 자판기]";
+            mes "200z 투입해 주십시오.";
+            next;
+            switch(select("투입:그만둔다")) {
+                case 1:
+                    if (Zeny < 200) {
+                        mes "돈이 부족합니다.";
+                        close;
+                    } else {
+                        mes "구매 감사드립니다.";
+                        set Zeny, Zeny - 200;
+                        getitem 12580,1;
+                        end;
+                    }
+                case 2:
+                    mes "[카탈로그 자판기]";
+                    mes "다음에 또 이용해 주십시오.";
+                    close;
+               
+                }
+        case 2:
+            mes "[카탈로그 자판기]";
+            mes "다음에 또 이용해 주십시오.";
+            close;
+        }
+}
+
+ 
+alberta_in,74,38,3	script	카탈로그 마도사#catal01	704,{
+    if (!checkweight(1301,3)) {
+        mes "- 항목이 너무 많습니다. 공간을 만들어주세요. -";
+        close;
+    }
+    setarray .@ticket_cost, 200;
+    setarray .@ticket_cost1, 3000;
+    mes "[카탈로그 마도사]";
+    mes "어...네! 네네!";
+    mes "저기...알베르타 상인조합이";
+    mes "직접 공습, 아니 공급하는!";
+    mes "신상품,^007777특수 카탈로그 실버^000000!";
+    next;
+    mes "[카탈로그 마도사]";
+    mes "만능 카탈로그 실버에 이어";
+    mes "새롭게 출시된 특수 카탈로그 실버!";
+    mes "써 보시면 그 효과를 바로 느낄수 있을 것입니다.";
+    next;
+    mes "[카탈로그 마도사]";
+    mes "^007777만능 카탈로그 실버^000000가";
+    mes "1매당 고작 200z!";
+    mes "^007777특수 카탈로그 실버^000000가";
+    mes "1매당 고작 3000z!";
+    mes "한 번에 최대 50 매가지 구매";
+    mes "가능합니다.";
+    next;
+    switch(select("^007777만능 카탈로그 실버^000000 구입:^007777특수 카탈로그 실버^000000 구입:카탈로그가 뭔데? 설명해 줘:필요 없다!:상인으로 안 보이는데?")) {
+    case 1:
+        mes "[카탈로그 마도사]";
+        mes "저기... 50장 전부 드릴까요?";
+        mes "얼나마... 필요하세요?";
+        next;
+        while (1) {
+            input .@input;
+            mes "[카탈로그 마도사]";
+            if (.@input == 0) {
+                mes "거래가 중지돼 버렸어요!";
+                mes "이 다음엔... 어...";
+                mes "다, 다시 거래 주세요!";
+                emotion ET_PROFUSELY_SWEAT, playerattached();
+                close;
+            } else if (.@input < 1 || .@input > 50) {
+                mes "50개 이하로 말씀해주세요.";
+                next;
+            } else
+                break;
+        }
+        set .@sell, .@ticket_cost * .@input;
+        mes "구입하시려는 카탈로그는 총 "+ .@input + "매로";
+        if (Zeny < .@sell) {
+            mes .@sell + " z를 주셔야 하는데,";
+            mes "돈이 아무래도 부족하시네요.";
+            mes "장비를 매각하시면";
+            mes "돈이 충분해질 텐데...";
+            close;
+        }
+        mes .@sell + " z를 주시면 됩니다.";
+        mes "여기 있습니다.";
+        set Zeny, Zeny - .@sell;
+        getitem 12580,.@input; //Vending_Search_Scroll
+        close;
+    case 2:
+        mes "[카탈로그 마도사]";
+        mes "저기... 50장 전부 드릴까요?";
+        mes "얼나마... 필요하세요?";
+        next;
+        while (1) {
+            input .@input;
+            mes "[카탈로그 마도사]";
+            if (.@input == 0) {
+                mes "거래가 중지돼 버렸어요!";
+                mes "이 다음엔... 어...";
+                mes "다, 다시 거래 주세요!";
+                emotion ET_PROFUSELY_SWEAT, playerattached();
+                close;
+            } else if (.@input < 1 || .@input > 50) {
+                mes "50개 이하로 말씀해주세요.";
+                next;
+            } else
+                break;
+        }
+        set .@sell, .@ticket_cost1 * .@input;
+        mes "구입하시려는 카탈로그는 총 "+ .@input + "매로";
+        if (Zeny < .@sell) {
+            mes .@sell + " z를 주셔야 하는데,";
+            mes "돈이 아무래도 부족하시네요.";
+            mes "장비를 매각하시면";
+            mes "돈이 충분해질 텐데...";
+            close;
+        }
+        mes .@sell + " z를 주시면 됩니다.";
+        mes "여기 있습니다.";
+        set Zeny, Zeny - .@sell;
+        getitem 23368,.@input;
+        close;
+    case 3:
+        mes "[카탈로그 마도사]";
+        mes "만능 카탈로그 실버는 전부터";
+        mes "팔던 카탈로그인데요.";
+        mes "검색에 특화된... 물건이고";
+        mes "특수 카탈로그 실버는";
+        mes "상인 길드 협찬으로...";
+        mes "구매, 판매 기능이 추가 됐어요.";
+        next;
+        mes "[카탈로그 마도사]";
+        mes "그런데 왜 내가 팔아야 하지...?";
+        mes "뭔가 속은 것 같은 기분이";
+        mes "들기도 하는데...";
+        mes "기분탓이겠죠?";
+        close;
+    case 4:
+        mes "[카탈로그 마도사]";
+        mes "필요 없으시면 안 되는데...";
+        mes "처음부터 다시 설명을 드릴까요?";
+        mes "이 다음엔 뭘 해야 할 지 모르는데...";
+        mes "이제 어쩌죠?";
+        emotion ET_PROFUSELY_SWEAT, playerattached();
+        close;
+    case 5:
+        mes "[카탈로그 마도사]";
+        mes "어, 저... 그게...";
+        mes "지금까지 카탈로그를 팔면 연구 성과를 확인하고 상인조합하고 공동연구로 신상품을 개발했는데....";
+        close;
+    }
+}

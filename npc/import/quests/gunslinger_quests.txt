@@ -1,0 +1,2166 @@
+//===== rAthena Script =======================================
+//= Gunslinger quests
+//===== By: ==================================================
+//= Playtester
+//===== Current Version: =====================================
+//= 1.7
+//===== Compatible With: =====================================
+//= rAthena Project
+//===== Description: =========================================
+//= Gunslinger guns and bullet quests
+//===== Additional Comments: =================================
+//= 1.0 Only Garrison Gun done yet [Playtester]
+//= 1.1 Added Garrison[2] [Playtester]
+//= 1.2 Added Drifter, Destroyer and Inferno [Playtester]
+//= 1.3 Added official Gatling quests [Playtester]
+//= 1.4 Updated Destroyer Quest - Credits to Sinoco for first
+//= official version. [SinSloth]
+//= 1.5 Updated Inferno Quest to official version [SinSloth]
+//= 1.6 Updated Garrison Quest - Credits to Lazarus^ for
+//= making the first official version. [SinSloth]
+//= 1.6a Removed .GATs [Lupus]
+//= 1.6b Changed item names to item IDs on some scripts. [Samuray22]
+//= 1.6c Corrected a bad delitem. (bugreport:763) [Samuray22]
+//= 1.7 Removed all 'menu' and 'goto'. [Euphy]
+//PC official translate 번역 및 최신화.
+//제작자: 옥음
+//============================================================
+
+que_ng,182,85,3	script	개리슨#gungun	4_M_MANAGER,{//109
+
+	if(BaseJob != Job_Gunslinger)
+	{
+		mes "[개리슨]";
+		mes "자네는 건슬링거가";
+		mes "아니군.";
+		mes "옆에서 신경쓰이니";
+		mes "날 더이상 귀찮게 하지말게.";
+		close;
+	}
+	else if(BaseLevel < 55)
+	{
+		mes "[개리슨]";
+		mes "난 총기제작의 달인인 개리슨";
+		mes "이라네.";
+		mes "내가 생각해도 내가만든 총은";
+		mes "나처럼 완벽하고 멋져서";
+		mes "총의 이름을 더개리슨 이라고";
+		mes "지었다네.";
+		next;
+		mes "[개리슨]";
+		mes "어떤가, 나에게";
+		mes "더개리슨의 제작 의뢰를";
+		mes "신청해 보는것이.";
+		next;
+		callsub SubGarrison;
+	}
+	switch(gun_gs)
+	{
+		case 0:
+			if(countitem(13104) < 1)
+			{
+				mes "[Garrison]";
+				mes "My name is Garrison. I'm a master in crafting guns.";
+				mes "The gun I make is also called the Garrison. I named it that because I think the Garrison is as cool and perfect as myself.";
+				next;
+				mes "[Garrison]";
+				mes "Are you here to commission a Garrison from me?";
+				next;
+				callsub SubGarrison;
+			}
+			mes "[Garrison]";
+			mes "Hmm~ What's going on?";
+			mes "Are you here because you need a weapon?";
+			next;
+			switch( select( "I need a Garrison.","Not really.","Cancel") )
+			{
+				case 1:
+					mes "[Garrison]";
+					mes "Oh~ Welcome";
+					mes "Everyone needs me~!";
+					mes "It just proves that my gun, the Garrison, is the best of the best.";
+					mes "So, are you going to ask me to make one now?";
+					next;
+					callsub SubGarrison;
+
+				case 2:
+					mes "[Garrison]";
+					mes "Hmm~ You look like you're wandering around without a mission.";
+					mes "If you've got the time, will you do me a favor?";
+					next;
+					mes "["+strcharinfo(0)+"]";
+					mes "What is it?";
+					next;
+					mes "[Garrison]";
+					mes "Mmm~ Well, I had actually received a letter recently stating that there are many defective makes of a gun I created called the Six Shooter.";
+					next;
+					mes "[Garrison]";
+					mes "I'm a perfectionist, but due to my old age, my eyes are growing dark, and I think I may have sold defective Six Shooters.";
+					next;
+					mes "[Garrison]";
+					mes "So what I'm trying to say is, I'm hoping someone will find me spare parts which I can use to replace defective parts in the detective Six Shooters.";
+					next;
+					mes "[Garrison]";
+					mes "If you help me, I'll put a slot in that Garrison you're holding right now.";
+					mes "What do you say?";
+					next;
+					mes "[Garrison]";
+					mes "Just so you know, if I slot your Garrison, any current refine points or slotted cards will disappear. Decide carefully.";
+					next;
+					switch( select( "I don't like the sound of this.","Ok, I'll try it out.") )
+					{
+						case 1:
+							mes "[Garrison]";
+							mes "Hmm, I see.";
+							mes "I understand.";
+							mes "I guess I'll look for a different man.";
+							close;
+
+						case 2:
+							mes "[Garrison]";
+							mes "Oh, would you?";
+							mes "I'm so thankful.";
+							mes "These are the materials I need to make spare parts...";
+							next;
+							mes "[Garrison]";
+							mes "10 Steel, 1 Elunium, 10 Emveretarcon, 30 Coal, and 10 Rusty Screws.";
+							mes "I need this exact amount. Don't forget.";
+							set gun_gs,1;
+							close;
+					}
+
+				case 3:
+					mes "[Garrison]";
+					mes "Hmm... Come and see me later.";
+					close;
+			}
+
+		case 1:
+			if((countitem(999) < 10) || (countitem(7317) < 10) || (countitem(1011) < 10) || (countitem(1003) < 30) || (countitem(985) < 1))
+			{
+				mes "[Garrison]";
+				mes "10 Steel, 1 Elunium, 10 Emveretarcon, 30 Coal, and 10 Rusty Screws.";
+				mes "Don't forget -- the amount has to be exact.";
+				close;
+			}
+			mes "[Garrison]";
+			mes "Oh~ You're back with what I need~";
+			mes "I'm so grateful.";
+			mes "Oh.. there's another favor I need to have done. Err...";
+			next;
+			mes "[Garrison]";
+			mes "I need to deliver the spare parts once I make them to another person, but I've got so much work to do around here.";
+			next;
+			mes "[Garrison]";
+			mes "Sorry to ask, but I was hoping you can deliver what I make out of these materials to the next person.";
+			next;
+			mes "[Garrison]";
+			mes "While you are on delivery, I will make preparations to slot your Garrison, as promised.";
+			next;
+			mes "["+strcharinfo(0)+"]";
+			mes "-Hmm, I don't want to do it, but I'll do it anyway.-";
+			next;
+			mes "["+strcharinfo(0)+"]";
+			mes "Ok.";
+			next;
+			mes "[Garrison]";
+			mes "Oh, thanks a lot.";
+			mes "Then deliver this to a person called Ravey. He lives in the slums of Lighthalzen.";
+			next;
+			mes "["+strcharinfo(0)+"]";
+			mes "You receive the delivery goods from Garrison.";
+			mes "Let's deliver them to a person named Ravey, who lives in the slums of Lighthalzen.";
+			delitem 999,10;
+			delitem 1011,10;
+			delitem 7317,10;
+			delitem 985,1;
+			delitem 1003,30;
+			set gun_gs,2;
+			close;
+
+		case 2:
+			mes "["+strcharinfo(0)+"]";
+			mes "You receive the delivery goods from Garrison.";
+			mes "Let's deliver them to a person named Ravey, who lives in the slums of Lighthalzen.";
+			close;
+
+		case 3:
+			mes "[Garrison]";
+			mes "Oh~ How was your trip?";
+			next;
+			mes "["+strcharinfo(0)+"]";
+			mes "Gyah~";
+			mes "I nearly died!!!";
+			mes "That man tried to attack me when he saw me. I barely escaped death!";
+			next;
+			mes "[Garrison]";
+			mes "Ahh~ Oh no.";
+			mes "I had no idea the person who sent the letter was actually plotting to assassinate me. He was probably sent by one of our enemy guilds...";
+			next;
+			mes "[Garrison]";
+			mes "It looks like I've sent you unintentionally on a very dangerous mission.";
+			next;
+			mes "[Garrison]";
+			mes "I'm so sorry.";
+			mes "You may also know, but there's bad guys plotting to attack the Professor and the Gunslinger Guild all over the place.";
+			next;
+			mes "[Garrison]";
+			mes "Consider this a part of your training as an Gunslinger.";
+			next;
+			mes "[Garrison]";
+			mes "I'm sorry about what happened.";
+			mes "But, as promised, I will slot your Garrison ...";
+			next;
+			if(countitem(13104) < 1)
+			{
+				mes "[Garrison]";
+				mes "Huh? Sigh.";
+				mes "Did you sell off your gun while you were gone?";
+				mes "I said I'd slot your gun, but I never said I'd slot a gun that isn't here.";
+				mes "Go and get your Garrison and then get back to me.";
+				set gun_gs,4;
+				close;
+			}
+			mes "[Garrison]";
+			mes "Let's see~";
+			mes "*tonk* *tonk* *thump* *whump*";
+			mes "Here is your modified";
+			mes "Garrison.";
+			mes "Please use it well.";
+			delitem 13104,1;
+			getitem 13105,1;
+			set gun_gs, 5;
+			close;
+		case 4:
+			if(countitem(13104) < 1)
+			{
+				mes "[Garrison]";
+				mes "Go and get your Garrison and then get back to me.";
+				close;
+			}
+			mes "[Garrison]";
+			mes "Ah, there it is.";
+			mes "Here is your modified";
+			mes "Garrison.";
+			mes "Do use it well.";
+			delitem 13104, 1;
+			getitem 13105, 1;
+			set gun_gs,5;
+			close;
+		case 5:
+			mes "[Garrison]";
+			mes "Hmm~ You're back again~";
+			mes "What's the matter?";
+			mes "Did you come back because you need a weapon?";
+			mes "What do you need?";
+			next;
+			switch( select( "Garrison","Slot a Garrison","Cancel"))
+			{
+				case 1:
+					callsub SubGarrison;
+				case 2:
+					callsub SubGarrison_;
+				case 3:
+					mes "[Garrison]";
+					mes "I'll see you when I see you~";
+					close;
+			}
+	}
+
+SubGarrison:
+	mes "[개리슨]";
+	mes "더개리슨을 제작하기 위해서는";
+	mes "강철 50개, 에르늄 3개";
+	mes "오리데오콘 1개,석탄 50개,";
+	mes "녹슬어버린 나사 20개,";
+	mes "그리고 수수료 3만 제니가";
+	mes "필요하다네.";
+	mes "자 그럼 결정해 주게.";
+	next;
+	switch( select( "나중에 만들겠습니다.", "네 지금 당장 만들어 주세요.", "취소" ))
+	{
+		case 1:
+			mes "[개리슨]";
+			mes "흐음~ 힘빠지는군~";
+			mes "그럼 잘 생각해보고";
+			mes "결정해주게.";
+			close;
+
+		case 2:
+			if((countitem(999) < 50) || (countitem(7317) < 20) || (countitem(984) < 1) || (countitem(1003) < 50) ||(countitem(985) < 3) )
+			{
+				mes "[개리슨]";
+				mes "재료가 부족하군";
+				mes "더개리슨을 제작하기 위해서는";
+				mes "강철 50개, 에르늄 3개";
+				mes "오리데오콘 1개,석탄 50개,";
+				mes "녹슬어버린 나사 20개,";
+				mes "그리고 수수료 3만 제니가";
+				mes "필요하다네.잊지말아주게.";
+				close;
+			}
+			else if(Zeny < 30000)
+			{
+				mes "[Garrison]";
+				mes "You need more Zeny~!";
+				mes "More Zeny!!";
+				close;
+			}
+			else if(checkweight(13104,1) == 0)
+			{
+				mes "[Garrison]";
+				mes "There's no room in your inventory";
+				mes "for my creation.";
+				mes "Make some room";
+				mes "in your inventory, and then";
+				mes "Come and see me.";
+				close;
+			}
+			mes "[Garrison]";
+			mes "Hmm, looks like the correct amount of materials and Zeny.";
+			mes "Here's a Garrison~";
+			mes "If you need one again, come and see me~";
+			delitem 984,1; //Oridecon
+			delitem 985,3; //Elunium
+			delitem 999,50; //Steel
+			delitem 1003,50; //Coal
+			delitem 7317,20; //Rusty Screw
+			set Zeny,Zeny-30000;
+			getitem 13104,1; //Garrison
+			close;
+
+		case 3:
+			mes "[개리슨]";
+			mes "그럼 다음에 보세~";
+			close;
+	}
+
+SubGarrison_:
+	mes "[Garrison]";
+	mes "In order to slot a Garrison, I need";
+	mes "10 Steel, 1 Elunium,";
+	mes "10 Emveretarcon, 30 Coal,";
+	mes "10 Rusty Screws, and";
+	mes "1 Garrison.";
+	mes "Well, do you want one?.";
+	next;
+	switch( select( "Maybe later.","Yes, make it for me immediately.","Cancel" ))
+	{
+		case 1:
+			mes "[Garrison]";
+			mes "You've got me worked up for nothing~";
+			mes "Get back to me when you've made up your mind.";
+			close;
+
+		case 2:
+			if((countitem(999) < 10) || (countitem(7317) < 10) || (countitem(1011) < 10) || (countitem(1003) < 30) || (countitem(985) < 1) || (countitem(13104) < 1))
+			{
+				mes "[Garrison]";
+				mes "You didn't bring enough materials";
+				mes "In order to slot a Garrison, I need";
+				mes "10 Steel, 1 Elunium,";
+				mes "10 Emveretarcon, 30 Coal,";
+				mes "10 Rusty Screws, and";
+				mes "1 Garrison.";
+				mes "Don't forget.";
+				close;
+			}
+			else if(checkweight(13105,1) != 1)
+			{
+				mes "[Garrison]";
+				mes "There's no room in your inventory";
+				mes "for my creation.";
+				mes "Make some room";
+				mes "in your inventory, and then";
+				mes "Come and see me.";
+				close;
+			}
+			mes "[Garrison]";
+			mes "Hmm, looks like the correct amount of materials and Zeny.";
+			mes "Here's a modified Garrison with a slot.";
+			mes "If you need one again, come and see me~";
+			delitem 999, 10;
+			delitem 1011, 10;
+			delitem 7317, 10;
+			delitem 985, 1;
+			delitem 1003, 30;
+			delitem 13104, 1;
+			getitem 13105, 1;
+			close;
+		
+		case 3:
+			mes "[Garrison]";
+			mes "I'll see you when I see you~";
+			close;
+	}
+}
+
+lighthalzen,322,247,6	script	Ravey	86,{
+
+	if(gun_gs == 2)
+	{
+		mes "["+strcharinfo(0)+"]";
+		mes "Excuse me. Hello.";
+		mes "I'm here to give you replacement parts for defective Gunslin...";
+		next;
+		mes "[Ravey]";
+		mes "You!!!";
+		mes "Huuut~!!";
+		mes "Die!!!";
+		set gun_gs,3;
+		percentheal 100,0;
+		percentheal -90,0;
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "- The man called Ravey suddenly attacks, as if he was waiting for the word Gunslinger...-";
+		mes "You nearly died.-";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "You run away without looking back.";
+		mes "Let's hurry back to Garrison.-";
+		close;
+	}
+	if(gun_gs == 3)
+	{
+		mes "["+strcharinfo(0)+"]";
+		mes "- The man called Ravey suddenly attacks, as if he was waiting for the word Gunslinger...-";
+		mes "You nearly died.-";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "Let's hurry back to Garrison.-";
+		close;
+	}
+	mes "[Ravey]";
+	mes "Ugh...";
+	mes "Err.. Err..";
+	mes "......";
+	close;
+}
+
+
+que_ng,187,163,3	script	잉그리드#gungun	4_F_ALCHE,{//744
+
+	if(BaseJob != Job_Gunslinger)
+	{
+		mes "[잉그리드]";
+		mes "안녕하십니까!";
+		mes "저는 이번에 새로 건슬링거";
+		mes "무기제작을 맡게 된 잉그리드";
+		mes "라고 합니다!";
+		next;
+		mes "[잉그리드]";
+		mes "하지만 안타깝게도";
+		mes "손님께선 저희 건슬링거";
+		mes "길드에 가입된 분이";
+		mes "아니라서 제가 도움을";
+		mes "드릴 수가 없겠네요.";
+		close;
+	}
+	switch(gun_inf)
+	{
+		case 0:
+			mes "[잉그리드]";
+			mes "안녕하십니까!";
+			mes "저는 이번에 새로 건슬링거";
+			mes "무기제작을 맡게 된 잉그리드";
+			mes "라고 합니다!";
+			mes "잘 부탁드려요!";
+			next;
+			mes "[잉그리드]";
+			mes "아직 일을 시작한지";
+			mes "얼마 되지 않아서 많이";
+			mes "부족하지만 성심성의껏";
+			mes "도와드리겠습니다.";
+			next;
+			mes "[잉그리드]";
+			mes "아아...두근두근 하군요.";
+			mes "일단 저는 고객님께";
+			mes "인페르노 라는 무기를";
+			mes "만들어 드리는 일을 하고있습니다.";
+			next;
+			mes "[잉그리드]";
+			mes "인페르노는 저희 건슬링거";
+			mes "길드 연구소에서 자체 제작한";
+			mes "무기 중 거의 최고의 성능을";
+			mes "자랑하는 무기로서";
+			next;
+			mes "[잉그리드]";
+			mes "막강한 파괴력과 사거리,";
+			mes "인체공학적 설계를 통해 손에";
+			mes "들었을 때 그립감과 사용할";
+			mes "경우의 반동을 최대한 줄인";
+			mes "건슬링거 무기의 결정체로";
+			mes "불리울만 한 무기입니다.";
+			mes "헉헉...";
+			next;
+			mes "["+strcharinfo(0)+"]";
+			mes "상당히 잘 알고 계시네요.";
+			mes ".....";
+			next;
+			mes "[잉그리드]";
+			mes "아. 당연하죠~";
+			mes "이 무기의 설계는";
+			mes "제가 했으니까요.";
+			next;
+			mes "["+strcharinfo(0)+"]";
+			mes "이야~ 대단한데요~";
+			next;
+			mes "[잉그리드]";
+			mes "아 이런...";
+			mes "제가 그만 건방지게";
+			mes "제 자랑을 하고 말았네요.";
+			mes "셀레나 박사님에 비하면 저는";
+			mes "아직 그분 발끝에도";
+			mes "미치지 못해요.";
+			next;
+			mes "[잉그리드]";
+			mes "사실 저도 건슬링거";
+			mes "지망생 이었지만 신체적";
+			mes "조건과 근성부족으로";
+			mes "그만 좌절했지요.";
+			next;
+			mes "[잉그리드]";
+			mes "다행히도 시험과정에서";
+			mes "셀레나 박사님이 저의";
+			mes "다른쪽 제능을 발견하게";
+			mes "도와주셔서 이렇게 연구진";
+			mes "과 동시에 제작판매 쪽으로";
+			mes "일을 할수 있게 도와주셨어요.";
+			next;
+			mes "[잉그리드]";
+			mes "건슬링거가 되지 못해서 아쉽기는";
+			mes "하지만 저와 같이 시험을 봤던";
+			mes "저의 오빠는 지금 건슬링거가";
+			mes "되었어요.";
+			next;
+			mes "[잉그리드]";
+			mes "오빠만이라도 꿈을 이루게 되서";
+			mes "참 기뻐요.";
+			next;
+			mes "[잉그리드]";
+			mes "하하~ 쓸때없는 소리를";
+			mes "너무 많이 혼자 했군요.";
+			mes "죄송합니다.";
+			next;
+			mes "["+strcharinfo(0)+"]";
+			mes "아녜요~";
+			mes "잉글리드씨도 제가 보기엔";
+			mes "건슬링거가 되진 못했지만";
+			mes "지금 모습도 충분히 빛나는";
+			mes "모습인 걸요.";
+			next;
+			mes "[잉그리드]";
+			mes "흐아~ 감사합니다~";
+			mes "정말 열심히 하겠습니다.";
+			next;
+			mes "[잉그리드]";
+			mes "인페르노의 제작에는";
+			mes "낡은철판 100개 오리데오콘";
+			mes "10개, 녹슬어버린 나사 50개";
+			mes "불타는 심장 100개 수수료";
+			mes "20만 제니가 필요 합니다.";
+			mes "제작을 의뢰하시겠습니까?";
+			next;
+			switch( select( "생각 좀 해보구요.", "네 부탁드립니다." ))
+			{
+				case 1:
+					mes "[잉그리드]";
+					mes "아~ 그러시군요.";
+					mes "알겠습니다.";
+					mes "그래 그럼 천천히";
+					mes "생각해보고 결정해 주세요.";
+					close;
+
+				case 2:
+					mes "[잉그리드]";
+					mes "알겠습니다.";
+					mes "그럼 다시 재료를";
+					mes "알려드리겠습니다.";
+					next;
+					mes "[잉그리드]";
+					mes "인페르노의 제작에는";
+					mes "낡은철판 100개 오리데오콘";
+					mes "10개, 녹슬어버린 나사 50개";
+					mes "불타는 심장 100개 수수료";
+					mes "20만 제니가 필요 합니다.";
+					mes "재료의 개수는 정확해야 하니";
+					mes "반드시 지켜주세요.";
+					set gun_inf,1;
+					close;
+			}
+
+		case 1:
+			callsub SubInferno;
+
+		case 2:
+			mes "[Ingrid]";
+			mes "Hello~ You're back~";
+			mes "Are you back because you need an Inferno?";
+			next;
+			switch( select( "Nah, I'm back just because..","Yes, make me an Inferno." ) )
+			{
+				case 1:
+					mes "[Ingrid]";
+					mes "Ah~ I see.";
+					mes "I understand.";
+					mes "Ok, well, think about it.";
+					mes "Come back when you've made up your mind.";
+					close;
+
+				case 2:
+					callsub SubInferno;
+			}
+	}
+
+SubInferno:
+	if ((countitem(7319) < 100) || (countitem(7317) < 50) || (countitem(984) < 10) || countitem(7097) < 100)
+	{
+		mes "[잉그리드]";
+		mes "음. 재료는 낡은철판 100개";
+		mes "오리데오콘 10개, 나사50개";
+		mes "불타는 심장 100개 그리고";
+		mes "수수료 20만 제니가 필요합니다.";
+		mes "잊지말아주세요.";
+		close;
+	}
+	else if(Zeny < 200000)
+	{
+		mes "[Ingrid]";
+		mes "You've brought plenty of material,";
+		mes "but did you bring enough Zeny?";
+		mes "The price of creating an Inferno is 200,000 Zeny.";
+		mes "Please don't forget that.";
+		close;
+	}
+	else if(checkweight(13162,1) != 1)
+	{
+		mes "[Ingrid]";
+		mes "It looks like you have too many items to carry my creation, so I can't give it to you.";
+		mes "Why don't you come and see me again when you're ready to receive it?";
+		close;
+	}
+	else
+	{
+		mes "[Ingrid]";
+		mes "I see you have the proper amount of materials and Zeny.";
+		mes "Here is the Inferno I've created for you.";
+		mes "Use it well.";
+		set Zeny,Zeny-200000;
+		delitem 7319,100;
+		delitem 984,10;
+		delitem 7317,50;
+		delitem 7097,100;
+		getitem 13162,1;
+		if(gun_inf == 1) set gun_inf,2;
+		close;
+	}
+}
+
+que_ng,185,180,3	script	베넷사#gungun	4_F_JOB_BLACKSMITH,{//726
+
+	if(BaseJob != Job_Gunslinger)
+	{
+		mes "[베넷사]";
+		mes "핫!핫!!";
+		mes "발리투도!코만도삼보!";
+		mes "레슬링!,무예타이!";
+		mes "판크라치온!,루챠리브레!";
+		mes "이 세상의 모든 맨손격투기";
+		mes "를 마스터 할테다!!";
+		next;
+		mes "[베넷사]";
+		mes "음?!";
+		mes "뭐야! 연습에 방해되니";
+		mes "저리 비켜!";
+		close;
+	}
+	switch(gunst)
+	{
+		case 0:
+			mes "[베넷사]";
+			mes "핫!핫!!";
+			mes "발리투도!코만도삼보!";
+			mes "레슬링!,무예타이!";
+			mes "판크라치온!,루챠리브레!";
+			mes "이 세상의 모든 맨손격투기";
+			mes "를 마스터 할테다!!";
+			next;
+			mes "[베넷사]";
+			mes "음?";
+			mes "너 건슬링거군?";
+			mes "연습하는데 방해되는데";
+			mes "내 옆에서 왜 그렇게";
+			mes "서 있는거야?";
+			next;
+			mes "["+strcharinfo(0)+"]";
+			mes "아뇨, 연습하는걸 보니";
+			mes "멋져서요...";
+			mes ".............";
+			next;
+			mes "[베넷사]";
+			mes "오! 너 맨손격투기를 좋아하나?";
+			mes "이리로 와봐~ 내가 암바를";
+			mes "걸어주지~";
+			next;
+			mes "["+strcharinfo(0)+"]";
+			mes "아~ 아니예요~";
+			mes "괜찮아요~";
+			next;
+			mes "[베넷사]";
+			mes "괜찮긴 뭐가 괜찮아~";
+			mes "일루와~!";
+			mes "-팟!팟!-";
+			next;
+			mes "["+strcharinfo(0)+"]";
+			mes "아아~으악~ 이러지 마세요~";
+			mes "으..으아악~~!!";
+			mes "흐갸갹~";
+			mes "-뚜두둑!-";
+			mes "까울~~";
+			mes "엉엉~~";
+			next;
+			mes "[베넷사]";
+			mes "이런...너무 세게했나.";
+			mes "음~";
+			next;
+			mes "["+strcharinfo(0)+"]";
+			mes "당연하잖아!";
+			mes "바보!멍청이!!";
+			mes "엉엉~";
+			next;
+			mes "[베넷사]";
+			mes "아이고~이런~";
+			mes "미안하구만~";
+			mes "알았어,알았어,";
+			mes "울지 말라고.";
+			next;
+			mes "["+strcharinfo(0)+"]";
+			mes "엉엉~";
+			next;
+			mes "[베넷사]";
+			mes "그래~그래..";
+			next;
+			mes "["+strcharinfo(0)+"]";
+			mes "엉엉~";
+			next;
+			mes "[베넷사]";
+			mes "그만햇! 칵!";
+			next;
+			mes "["+strcharinfo(0)+"]";
+			mes "........";
+			next;
+			mes "[베넷사]";
+			mes "그래 좋아.";
+			mes "이렇게 된거 나도 좀 미안하니";
+			mes "내가 특별히 너를 위해";
+			mes "제료를 구해오면 무기를 하나";
+			mes "만들어주지...";
+			next;
+			mes "[베넷사]";
+			mes "난 베넷사 루이스.";
+			mes "원래 맨손격투 지망생";
+			mes "이었는데 길을 잘못들어서";
+			mes "여기서 무기를 만들고 있지.";
+			mes "아이고~데이고~ 내팔자야~";
+			next;
+			mes "[베넷사]";
+			mes "일단 긴 말 필요없이";
+			mes "내가 만들수 있는 무기는";
+			mes "디스트로이어 라는 무기지.";
+			next;
+			mes "[베넷사]";
+			mes "특별히 내가 맨손격투기 경기에서";
+			mes "사용하는 이름을 달아서 만든";
+			mes "무기지. 흐흐~";
+			mes "받아랏~!디스트로이어~";
+			next;
+			mes "["+strcharinfo(0)+"]";
+			mes "엉엉~ 제발~그만두세요~";
+			next;
+			mes "[베넷사]";
+			mes "아 이런..미안...";
+			mes "일단 디스트로이어는";
+			mes "제작에 앞서 재료가 필요해.";
+			next;
+			mes "[베넷사]";
+			mes "적지않은 아이템이 들어가니";
+			mes "신중하게 생각하고 정하길 바래.";
+			next;
+			mes "[베넷사]";
+			mes "어때? 이런 기회는 흔하지";
+			mes "않다고.";
+			mes "한번 의뢰해 볼래?";
+			next;
+			switch( select( "다음에 할게요.", "좋아요." ))
+			{
+				case 1:
+					mes "[베넷사]";
+					mes "음~ 그렇군~";
+					mes "너한테는 좋은 기회일텐데.";
+					mes "후회할거야~";
+					mes "그럼 나중에 보자구~";
+					mes "바이~바이~";
+					close;
+           
+				case 2:
+					mes "[베넷사]";
+					mes "음,좋아.";
+					mes "일단 디스트로이어는";
+					mes "만드려면 낡은철판 50개";
+					mes "오리데오콘 5개, 녹슬어버린 나사";
+					mes "70개 수수료 10만제니가 필요해.";
+					mes "재료의 갯수는 정확해야 하니";
+					mes "명심하라고.";
+					set gunst,1;
+					close;
+			}
+
+		case 1:
+			callsub SubDestroyer;
+			
+		case 2:
+			mes "[Vanessa]";
+			mes "Oh~ You're back.?";
+			mes "How are you nowadays?";
+			mes "There's a new item in the store.";
+			mes "Go ahead and choose.";
+			next;
+			switch(select( "Destroyer","Slotted Destroyer","Cancel") )
+			{
+				case 1:
+					mes "[Vanessa]";
+					mes "Yeah, that's nice";
+					mes "That's a normal Destroyer.";
+					mes "It takes 50 Used Iron Plates,";
+					mes "5 Oridecons, 70 Rusty Old Screws,";
+					mes "and 100,000 Zeny to make it.";
+					mes "You have to bring me the correct amount of materials.";
+					mes "Do you want it?";
+					next;
+					switch( select( "Maybe next time.","Okay.") )
+					{
+               					case 1:
+							mes "[Vanessa]";
+							mes "What~ C'mon";
+							mes "What's there to think about?";
+							mes "Ok, well, think about it";
+							mes "and come back...";
+							close;
+							case 2:
+							callsub SubDestroyer;
+					}
+							
+				case 2:
+					mes "[Vanessa]";
+					mes "Oh~ The Slotted Destroyer~";
+					mes "Unlike the normal Destroyer,";
+					mes "I want you to find me one of the rare items I'm collecting.";
+					mes "Then I'll give it to you.";
+					next;
+					mes "[Vanessa]";
+					mes "I'm looking for a Finger[2].";
+					mes "I want 5 Oridecons too.";
+					mes "You have to bring me the correct amount of materials.";
+					mes "Do you still want a Slotted Destroyer?";
+					next;
+					switch( select( "I'll think about it.","OK! I do!") )
+					{
+               					case 1:
+							mes "[Vanessa]";
+							mes "What~ C'mon";
+							mes "What's there to think about?";
+							mes "Ok, well, think about it";
+							mes "and come back...";
+							close;
+			
+						case 2:
+							callsub SubDestroyer_;
+			
+					}
+           
+				case 3:
+					mes "[Vanessa]";
+					mes "Hmm~ Yeah~";
+					mes "Take your time.";
+					mes "Maybe you'd like to spar with me?";
+					close;
+			}
+	}
+
+SubDestroyer:
+
+	if ((countitem(7319) < 50) || (countitem(7317) < 70) || (countitem(984) < 5))
+	{
+		mes "[베넷사]";
+		mes "음. 재료는 낡은철판 50개";
+		mes "오리데오콘 5개, 녹슬어버린";
+		mes "나사 70개 수수료 10만제니가";
+		mes "필요해.정확해야 하니까";
+		mes "명심해 줘.";
+		close;
+	}
+	else if(Zeny < 100000)
+	{
+		mes "[Vanessa]";
+		mes "You've brought plenty of material,";
+		mes "But the fee is 100,000.";
+		mes "Keep that in mind.";
+		close;
+	}
+	else if(checkweight(13160,1) != 1)
+	{
+		mes "[Vanessa]";
+		mes "It looks like you wouldn't be able to carry my creation with you even if I made it.";
+		mes "Go and empty your inventory a bit.";
+		close;
+	}
+	else
+	{
+		mes "[Vanessa]";
+		mes "Okay~ Very well~";
+		mes "All Checked~";
+		mes "You've got the perfect materials and Zeny~";
+		mes "Here's the Destroyer I made ahead of time for you.";
+		mes "Use it well.";
+		set Zeny,Zeny-100000;
+		delitem 7319,50;
+		delitem 984,5;
+		delitem 7317,70;
+		getitem 13160,1;
+		if(gunst == 1) set gunst,2;
+		next;
+		mes "[Vanessa]";
+		mes "If you ever need one again later,";
+		mes "Come and fine me anytime~";
+		mes "Next time I'll cast a different kind of bare hand technique.";
+		close;
+	}
+
+SubDestroyer_:
+
+	if ((countitem(1812) < 1) || (countitem(984) < 5))
+	{
+		mes "[Vanessa]";
+		mes "Yeah, the required materials are 1 Finger[2]";
+		mes "and 5 Oridecons.";
+		mes "Keep in mind that the materials need to be exact.";
+		close;
+	}
+	else if(checkweight(13161,1) != 1)
+	{
+		mes "[Vanessa]";
+		mes "There's no space in your inventory.";
+		mes "Even if I made you one,";
+		mes "You wouldn't be able to carry it";
+		mes "Come back after you've cleared out your inventory.";
+		close;
+	}
+	else
+	{
+		mes "[Vanessa]";
+		mes "Okay~ Very well~";
+		mes "All Checked~";
+		mes "You've got the perfect materials and Zeny~";
+		mes "Here's the Slotted Destroyer I made ahead of time for you.";
+		mes "Use it well.";
+		delitem 1812,1;
+		delitem 984,5;
+		getitem 13161,1;
+		next;
+		mes "[Vanessa]";
+		mes "If you ever need one again later,";
+		mes "Come and fine me anytime~";
+		mes "Next time I'll cast a different kind of bare hand technique.";
+		close;
+	}
+}
+
+que_ng,149,178,4	script	연구소 기획자#gun	4_F_ALCHE,{
+
+	if(gun_na == 1){
+		if(countitem(1043) > 999 && countitem(932) > 999){
+			delitem 1043,1000;
+			delitem 932,1000;
+			set gun_na,2;
+			mes "[N. A]";
+			mes "Ahh, it's all here! Ahh, and I";
+			mes "was worried about that no one";
+			mes "would be able to handle my ^ff0000Butcher^000000";
+			mes "when I've finished creating it!";
+			next;
+			mes "[N. A]";
+			mes "Alright, I'll give the ^ff0000Butcher^000000 to you.";
+			mes "However, we don't do work for";
+			mes "free, so we need to charge you";
+			mes "for it. Also, you need to obtain";
+			mes "permission to use the Butcher from";
+			mes "Lady Celena.";
+			next;
+			mes "[N. A]";
+			mes "Once you get the permission, I will";
+			mes "give the Butcher to you, after paying";
+			mes "the fee of 100000 zeny.";
+			close;
+		}else{
+			mes "[N. A]";
+			mes "Have you found ^ff00001000 Orc Claw^000000 and ^ff00001000 Skel Bone^000000 yet?";
+			mes "If you think it's too difficult,";
+			mes "you can choose to give up.";
+			next;
+			if(select("I'm not giving up!:I give up...") == 1){
+				mes "[N. A]";
+				mes "Alright, I trust you.";
+				mes "Good luck.";
+				close;
+			}else{
+				mes "[N. A]";
+				mes "You're giving up huh?";
+				mes "Well, I'll admit that the";
+				mes "test is quite difficult, but";
+				mes "you can't handle this weapon";
+				mes "if you can't handle the test.";
+				mes "You may come back later to";
+				mes "take the challenge again.";
+				set gun_na,0;
+				close;
+			}
+		}
+	}
+	else if(gun_na == 2){
+		mes "[N. A]";
+		mes "I already got Lady Celena's";
+		mes "permission to let you use the";
+		mes "Butcher. You can use it once";
+		mes "you've paid me 100000 zeny.";
+		mes "Do you want to pay now?";
+		next;
+		if(select("Nope.:Yeah.") == 1){
+			mes "[N. A]";
+			mes "Alright. I await you to return";
+			mes "with the money.";
+			close;
+		}else{
+			if(Zeny < 100000){
+				mes "[N. A]";
+				mes "Huh, I don't think you have";
+				mes "enough money on you.";
+				mes "Come back with the money,";
+				mes "alright?";
+				close;
+			}
+			if(checkweight(13158,1) == 0){
+				mes "[N. A]";
+				mes "You are overweight.";
+				mes "Even if I give you the";
+				mes "weapon, you cannot carry it.";
+				mes "Please clear your inventory.";
+				close;
+			}
+			set Zeny,Zeny-100000;
+			set gun_na,0;
+			getitem 13158,1;
+			mes "[N. A]";
+			mes "One, two, three, four, five,";
+			mes "six... 99997, 99998, 99999...";
+			mes "100000. *ding~!* Very well!";
+			mes "The fee is clear now. You may";
+			mes "take the ^ff0000Butcher^000000 now!";
+			next;
+			mes "[N. A]";
+			mes "Mr. F. Harrison from Lighthalzen";
+			mes "is quite interested in your new";
+			mes "toy there. Show it to him some";
+			mes "time. He'll be glad.";
+			next;
+			mes "[N. A]";
+			mes "Make good use of it!";
+			mes "See ya!";
+			close;
+		}
+	}
+	else if(gun_na == 10){
+		if (countitem(999) > 69 && countitem(985) > 4 && countitem(984) > 2 && countitem(1003) > 69 && countitem(7317) > 49 && Zeny > 50000){
+			delitem 999,70;
+			delitem 985,5;
+			delitem 984,3;
+			delitem 1003,70;
+			delitem 7317,50;
+			set Zeny,Zeny-50000;
+			set gun_na,11;
+			mes "[N. A]";
+			mes "Aha, you got me all the";
+			mes "materials. Here, let me get down";
+			mes "to it right away! It'll take";
+			mes "some time, so wait up...";
+			close;
+		}else{
+			mes "[N. A]";
+			mes "Eh? You don't have the materials";
+			mes "with you yet?";
+			next;
+			mes "[N. A]";
+			mes "To make Drifter, I will need";
+			mes "70 Steel, 5 Elunium,";
+			mes "3 Oridecon, 70 Coal, 50 Rusty";
+			mes "Screws, and also a fee of";
+			mes "50000 zeny.";
+			mes "Come back to me once you have";
+			mes "everything ready.";
+			next;
+			mes "[N. A]";
+			mes "If you don't want it anymore,";
+			mes "you can cancel the request.";
+			next;
+			if(select("Don't cancel.:Cancel it.") == 1){
+				mes "[N. A]";
+				mes "Well, please come back with the";
+				mes "materials. I'll be waiting.";
+				close;
+			}else{
+				mes "[N. A]";
+				mes "Alright, request to make";
+				mes "a Drifter for you is cancelled.";
+				mes "I wish you good luck";
+				mes "in your future.";
+				set gun_na,0;
+				close;
+			}
+		}
+	}
+	else if(gun_na == 11){
+		if(checkweight(13157,1) == 0){
+			mes "[N. A]";
+			mes "You are overweight.";
+			mes "Even if I made you the";
+			mes "weapon, you cannot carry it.";
+			mes "Please clear your inventory.";
+			close;
+		}
+		set gun_na,0;
+		getitem 13157,1;
+		mes "[N. A]";
+		mes "Ahh, here's the completed";
+		mes "Drifter for you.";
+		next;
+		mes "[N. A]";
+		mes "Please learn to use the";
+		mes "Gatlings well. The crazy";
+		mes "destruction will definitely";
+		mes "be mentally helpful to you.";
+		close;
+	}
+	else if(gun_na == 101){
+		mes "[N. A]";
+		mes "Ah, hello?";
+		mes "I'm the Coordinator of";
+		mes "Einbroch Weapon Development.";
+		mes "My name is 'Lab Director'.";
+		mes "Do you need something?";
+		next;
+		select("I need a Special Metal Rod.");
+		mes "[N. A]";
+		mes "Huh...? Hey, weren't you that guy";
+		mes "who walked out of here with a";
+		mes "Butcher a while ago? How was the";
+		mes "Butcher?";
+		next;
+		mes "[N. A]";
+		mes "...... WHAT!? YOU BROKE IT!?";
+		mes "I thought you would be able to";
+		mes "use it well... You disappoint me!!!";
+		next;
+		mes "[N. A]";
+		mes "You betrayed my faith in you!";
+		mes "You traitor! Traitor!! TRAITOR!!!!";
+		next;
+		select("Explain everything.");
+		mes "[N. A]";
+		mes "...... Whew.";
+		mes "So it was Mr. F. Harrison who";
+		mes "broke it, huh? I'm sorry, I should";
+		mes "not have suspected you.";
+		next;
+		mes "[N. A]";
+		mes "Lady Celena has the special metal";
+		mes "rod that you want, but the doc is";
+		mes "not in right now, and no one else";
+		mes "knows where it is...";
+		next;
+		mes "[N. A]";
+		mes "I have other research right now";
+		mes "so I can't waste my time looking";
+		mes "for that... Grr... I need the";
+		mes "Elemental Spheres to keep going";
+		mes "with my research...";
+		next;
+		select("Make him an offer.");
+		mes "[N. A]";
+		mes "An offer? Like what?";
+		next;
+		select("We find things for each other.");
+		mes "[N. A]";
+		mes "Hmm... That sounds good.";
+		mes "Well, according to the offer,";
+		mes "I'll look for the rod for you,";
+		mes "while you find me those";
+		mes "Elemental Spheres.";
+		next;
+		mes "[N. A]";
+		mes "30 Poison Sphere, 30 Flare Sphere,";
+		mes "30 Lightning Sphere, 30 Blind";
+		mes "Sphere, or 30 Freezing Sphere.";
+		mes "Find me 30 of each Element.";
+		set gun_na,102;
+		close;
+	}
+	else if(gun_na == 102){
+		mes "[N. A]";
+		mes "30 Poison Sphere, 30 Flare Sphere,";
+		mes "30 Lightning Sphere, 30 Blind";
+		mes "Sphere, or 30 Freezing Sphere.";
+		mes "Find me 30 of each Element.";
+		mes "Did you find them?";
+		next;
+		switch(select("Nope.:I found 30 Poison Spheres.:I found 30 Flare Spheres.:I found 30 Lightning Spheres.:I found 30 Blind Spheres.:I found 30 Freezing Spheres.")){
+		case 1:
+			mes "[N. A]";
+			mes "Just bring me whatever type";
+			mes "you could find.";
+			close;
+		case 2:
+			if(countitem(13205) >= 30){
+				delitem 13205,30;
+				set gun_na,103;
+			}
+			break;
+		case 3:
+			if(countitem(13203) >= 30){
+				delitem 13203,30;
+				set gun_na,103;
+			}
+			break;
+		case 4:
+			if(countitem(13204) >= 30){
+				delitem 13204,30;
+				set gun_na,103;
+			}
+			break;
+		case 5:
+			if(countitem(13206) >= 30){
+				delitem 13206,30;
+				set gun_na,103;
+			}
+			break;
+		case 6:
+			if(countitem(13207) >= 30){
+				delitem 13207,30;
+				set gun_na,103;
+			}
+			break;
+		}
+		if (gun_na != 103) {
+			mes "[N. A]";
+			mes "Eh? What? Am I the only";
+			mes "person who can't see them?";
+			mes "Bring me more!";
+			close;
+		}
+		mes "[N. A]";
+		mes "Wow, you found them all for me!";
+		mes "I had to turn Lady Celena's lab";
+		mes "over to find this rod too.";
+		mes "Let's trade then!";
+		next;
+		mes "-You gave the Elemental";
+		mes "Spheres to Research Coordinator and got";
+		mes "the Metal Rod in return.-";
+		next;
+		mes "[N. A]";
+		mes "Mr. F. Harrison is very good.";
+		mes "I'm sure he can fix your";
+		mes "Butcher for you.";
+		mes "Well, see you later!";
+		close;
+	}
+	else if(gun_na == 103 || gun_na == 104){
+		mes "[N. A]";
+		mes "Mr. F. Harrison is very good.";
+		mes "I'm sure he can fix your";
+		mes "Butcher for you.";
+		mes "Well, see you later!";
+		close;
+	}
+	mes "[엔. 에이]";
+	mes "어머. 안녕하세요?";
+	mes "아인브로크 건 연구소의 기획자";
+	mes "엔. 에이라고 합니다. 무슨 일로 오셨나요?";
+	next;
+	if (BaseJob != Job_Gunslinger){
+		select("대화를 한다");
+		mes "[엔. 에이]";
+		mes "혹시, 주변에 직업이 건슬링거인 분이 계시면, 신무기에 대한 정보가 있으니 절 찾아달라고 전해주세요. 후훗.";
+		close;
+	}
+	if (BaseLevel < 55) {
+		select("대화를 한다");
+		mes "[엔. 에이]";
+		mes "...피버... 캔슬러... 음... 속도 180 이상...";
+		next;
+		mes "[엔. 에이]";
+		mes "아.. 죄송해요. 지금 신무기 개발로 좀 바빠서요.";
+		close;
+	}
+	switch(select(((BaseLevel > 67)?"Ask about 'Butcher'.":"")+":Ask about the 'Drifter'.:Cancel")) {
+	case 1:
+		mes "[N. A]";
+		mes "Ah, you heard the news";
+		mes "shortly after the end";
+		mes "of the development eh?";
+		next;
+		mes "[N. A]";
+		mes "^ff0000Butcher^000000 is the newest development";
+		mes "by us, the Einbroch Firearm Lab.";
+		mes "It is the newest type of Gatling";
+		mes "we have developed. While";
+		mes "^ff0000Drifter^000000 is a good weapon";
+		mes "as well, the ^ff0000Butcher^000000 definitely has";
+		mes "a much stronger firepower!";
+		next;
+		mes "[N. A]";
+		mes "Due to its strong firepower,";
+		mes "the Butcher was also dubbed";
+		mes "as the 'Murderer'.";
+		next;
+		mes "[N. A]";
+		mes "However, even Gunslingers could";
+		mes "have troubles controlling such";
+		mes "a powerful weapon.";
+		next;
+		mes "[N. A]";
+		mes "Do you think you can handle it?";
+		next;
+		if(select("I'm not sure...:Of course I can!!") == 1){
+			mes "[N. A]";
+			mes "The ^ff0000Butcher^000000 is a weapon that you";
+			mes "can't handle without a strong";
+			mes "will. I'll see you again when";
+			mes "you have enough confidence to";
+			mes "handle this monster.";
+			close;
+		}else{
+			mes "[N. A]";
+			mes "Aha, how self-confident you";
+			mes "are! However, I see people with";
+			mes "such self-confidence everywhere.";
+			mes "You'll need to prove it...";
+			mes "But how... Hmm...";
+			next;
+			mes "[N. A]";
+			mes "Hmmm......";
+			next;
+			mes "[N. A]";
+			mes "Aha! I got it!";
+			next;
+			mes "[N. A]";
+			mes "Here, bring me ^ff00001000 Orc Claws^000000 and ^ff00001000 Skel Bone^000000.";
+			mes "If you can bring me these items,";
+			mes "I'll let you use the Butcher.";
+			next;
+			mes "[N. A]";
+			mes "Easy, ain't it? Go and prove";
+			mes "your ability then! Heheheh...";
+			set gun_na,1;
+			close;
+		}
+	case 2:
+		mes "[N. A]";
+		mes "Ah, you're here to learn about";
+		mes "the ^ff0000Drifter^000000 eh?";
+		next;
+		mes "[N. A]";
+		mes "The ^ff0000Drifter^000000 is one of the many";
+		mes "highest-classed weapons developed";
+		mes "by Lady Celena. It's an automatic";
+		mes "Gatling which boasts very high";
+		mes "rate of fire, which is the highest";
+		mes "among all Gunslinger weapons.";
+		next;
+		mes "[N. A]";
+		mes "Of course, you will need the Skill";
+		mes "to allow you to control Gatlings,";
+		mes "but he who contorls Gatlings well";
+		mes "will receive full aid from the";
+		mes "^ff0000Drifter^000000.";
+		next;
+		mes "[N. A]";
+		mes "Do you want to try using the ^ff0000Drifter^000000?";
+		next;
+		if(select("Um, no.:Yeah!") == 1){
+			mes "[N. A]";
+			mes "If you want to try it out";
+			mes "some time, come back here.";
+			close;
+		}else{
+			set gun_na,10;
+			mes "[N. A]";
+			mes "Since it's really hard to find";
+			mes "the materials for constructing";
+			mes "the ^ff0000Drifter^000000, we only make them";
+			mes "on requests, and we require those";
+			mes "who want to use the ^ff0000Drifter^000000 to bring";
+			mes "us the materials.";
+			next;
+			mes "[N. A]";
+			mes "I'll tell you the materials";
+			mes "needed, just bring them and";
+			mes "we'll construct it for you.";
+			next;
+			mes "[N. A]";
+			mes "To make a Drifter, we need";
+			mes "70 Steel, 5 Eluniums, 3";
+			mes "Oridecons, 70 Coal, 50 Rusty";
+			mes "Screws, and a fee of";
+			mes "50,000 zeny.";
+			mes "Come back after you found";
+			mes "them all.";
+			close;
+		}
+	case 3:
+		mes "[N. A]";
+		mes "I have news on the latest";
+		mes "weapons but... I guess you're";
+		mes "too busy to hear them.";
+		mes "Maybe next time I guess.";
+		close;
+	}
+}
+
+lighthalzen,205,284,6	script	F. Harrison	85,{
+
+	if (gun_na == 100){
+		if(checkweight(13102,1) == 0){
+			mes "[F. Harrison]";
+			mes "You are overweight.";
+			mes "Even if I gave you the";
+			mes "weapon, you cannot carry it.";
+			mes "Please clear your inventory.";
+			close;
+		}
+		mes "[F. Harrison]";
+		mes "Hmm... Oh?";
+		mes "Ahh...... Eh?";
+		next;
+		mes "[F. Harrison]";
+		mes "Heheh... Hmm... Huh...?";
+		next;
+		select("May I have my Butcher back now?");
+		mes "[F. Harrison]";
+		mes "Uh? Oh, umm... Heheh...";
+		next;
+		mes "[F. Harrison]";
+		mes "Th-that, huh? Eh... Heheh...";
+		next;
+		mes "[F. Harrison]";
+		mes "Ahahahah! I uh...";
+		next;
+		mes "[F. Harrison]";
+		mes "That thing! BOOM!";
+		next;
+		mes "[F. Harrison]";
+		mes "Bam bam! I was gonna fire it!";
+		mes "Yeah!";
+		next;
+		mes "[F. Harrison]";
+		mes "But it resisted! So I went 'BAM!' with";
+		mes "my hand! MUAHAHAHAH!!";
+		next;
+		mes "[F. Harrison]";
+		mes "And it broke...... *sob sob*";
+		next;
+		mes "[F. Harrison]";
+		mes "I call myself 'Dr. Everything' and";
+		mes "I wanted to fix it myself, but I";
+		mes "don't seem to have the materials";
+		mes "to fix it... And the materials are";
+		mes "so rare too... *sob sob*";
+		next;
+		mes "[F. Harrison]";
+		mes "Umm... I'm sorry for breaking";
+		mes "it but... Could you get me the";
+		mes "materials I need for fixing it?";
+		mes "Bring me those items, and I can";
+		mes "fix it, plus I'll modify it for";
+		mes "you! I promise!!";
+		next;
+		mes "So please bring me the materials...";
+		mes "*sob sob sob*";
+		next;
+		mes "[F. Harrison]";
+		mes "The materials I need are";
+		mes "10 Steel, 2 Eluniums,";
+		mes "1 Oridecon, 20 Coal...";
+		mes "And a Special Metal Rod";
+		mes "used in the Butcher...";
+		mes "I think only Lady Celena can";
+		mes "make those rods......";
+		next;
+		mes "[F. Harrison]";
+		mes "But first, you'll need to talk";
+		mes "to Lady Celena's assistant, the 'Lab Director',";
+		mes "and ask for his help.";
+		mes "That kid's a bit hysterical, but";
+		mes "she'll be nice help if you talk";
+		mes "to her nicely...";
+		next;
+		mes "[F. Harrison]";
+		mes "I'm really sorry... Here, I'll";
+		mes "lend you my prized weapon,";
+		mes "'Crimson Bolt'. But make sure";
+		mes "you bring all those materials";
+		mes "to me once you find them all!";
+		mes "Promise me!!!";
+		set gun_na,101;
+		getitem 13102,1;
+		close;
+	}
+	else if(gun_na == 101 || gun_na == 102){
+		mes "[F. Harrison]";
+		mes "The materials I need are";
+		mes "10 Steel, 2 Eluniums,";
+		mes "1 Oridecon, 20 Coal...";
+		mes "And a Special Metal Rod";
+		mes "used in the Butcher...";
+		mes "Talk to the 'Lab Director' for his";
+		mes "assistance on the Rod.";
+		close;
+	}
+	else if(gun_na == 103){
+		if(countitem(999) >= 10 && countitem(985) >= 2 && countitem(984) >= 1 && countitem(1003) >= 20){
+			if(countitem(13102) > 0){
+				delitem 999,10;
+				delitem 985,2;
+				delitem 984,1;
+				delitem 1003,20;
+				delitem 13102,1;
+				set gun_na,104;
+				mes "[F. Harrison]";
+				mes "Aha! You got all the materials";
+				mes "for me! I'll get to the repair";
+				mes "right away, please hold on...";
+				close;
+			}
+			else{
+				mes "[F. Harrison]";
+				mes "Aha! You got all the materials";
+				mes "for me!";
+				mes "... But where's my treasured";
+				mes "'Crimson Bolt'!? I will not fix";
+				mes "your Butcher for you if you don't";
+				mes "bring it back to me!!";
+				close;
+			}
+		}
+		else{
+			mes "[F. Harrison]";
+			mes "The materials I need are";
+			mes "10 Steel, 2 Eluniums,";
+			mes "1 Oridecon, 20 Coal...";
+			mes "And a Special Metal Rod";
+			mes "used in the Butcher...";
+			mes "Good thing you found the";
+			mes "Special Metal Rod already.";
+			close;
+		}
+	}
+	else if(gun_na == 104){
+		if(checkweight(13159,1) == 0){
+			mes "-You're overweight already.-";
+			mes "-Come back after dropping some";
+			mes "stuff first.-";
+			close;
+		}
+		set gun_na,0;
+		getitem 13159,1;
+		mes "[F. Harrison]";
+		mes "Whew... Finally it's fixed, thanks";
+		mes "to your effort. I'm very sorry";
+		mes "for breaking it, and thank you";
+		mes "for your effort. I feel guilty";
+		mes "for just fixing it, so I added";
+		mes "some extra power on it. I hope";
+		mes "it'll work nicely for you.";
+		mes "Well, enjoy it.";
+		close;
+	}
+	else if(gun_na == 0){
+		if(BaseJob != Job_Gunslinger) {
+			mes "[F. Harrison]";
+			mes "Man, I'm so bored...";
+			mes "I wonder if there's anything";
+			mes "interesting...";
+			next;
+			mes "[F. Harrison]";
+			mes "Oh well... I'll just play with my";
+			mes "beautiful 'Crimson Bolt'.";
+			close;
+		}
+		if(BaseLevel > 67 && countitem(13158) > 0){
+			mes "[F. Harrison]";
+			mes "Man, I'm so bored...";
+			mes "I wonder if there's anything";
+			mes "interesting...";
+			next;
+			mes "[F. Harrison]";
+			mes "Eh? Are you a Gunslinger?";
+			mes "I haven't seen that weapon";
+			mes "in your hand before...";
+			next;
+			mes "[F. Harrison]";
+			mes "May I take a look? Please?";
+			mes "C'mon, let me take a look!";
+			mes "I'm bored out of my mind here!";
+			mes "Pleeeeeeeeeeeease~?";
+			next;
+			if(select("No way.:Here...") == 1){
+				mes "[F. Harrison]";
+				mes "Hah! You think you're the only";
+				mes "one with a cool weapon!? Well";
+				mes "I got my beautiful Crimson Bolt!";
+				mes "Hmph!!";
+				close;
+			}
+			mes "[F. Harrison]";
+			mes "Heheh... This is the newest";
+			mes "development by Einbroch Firearms";
+			mes "Lab, the so-called uncontrollable";
+			mes "'Destroyer Butcher', eh?";
+			mes "Interesting... VERY interesting...";
+			next;
+			mes "[F. Harrison]";
+			mes "Hey, let me try it out for a";
+			mes "bit, alright? Don't worry, I";
+			mes "know how to handle weapons,";
+			mes "I won't break it!";
+			mes "That's that! Let's go~";
+			delitem 13158,1;
+			set gun_na,100;
+			close;
+		}
+	}
+}
+
+que_ng,182,30,2	script	바텐더#gun	4_M_GUNSLINGER,{
+	cutin "aca_gunb_01.bmp", 2;
+	if(Class == Job_Novice) {
+		mes "[바텐더]";
+		mes "뭐야? 노비스잖아? 애들은 이런데 오면 안돼. 대체 누가 애들을 이런 곳에 들여 보낸 거람?";
+		close3;
+	} else if(BaseJob == Job_Gunslinger) {
+		if(BaseLevel < 21) {
+			if(!nov_3_guns) {
+				mes "[바텐더]";
+				mes "안 사요. 으잉? 어?! 뭐야!";
+				next;
+				mes "[바텐더]";
+				mes "병아리 건슬링거잖아?";
+				next;
+				mes "[손님A]";
+				mes "^777777- 수 근 수 근 -^000000";
+				mes "병아리래..";
+				next;
+				mes "[손님B]";
+				mes "^777777- 웅 성 웅 성 -^000000";
+				mes "병아리? 어디? 병아리가 어딨어?";
+				next;
+				select( "여기 사람들 어딘가 이상하다." );
+				cutin "aca_gunb_02.bmp", 2;
+				mes "[바텐더]";
+				mes "병아리가 여기서 빈둥대고 있는걸 보니, 분명!!";
+				next;
+				mes "[바텐더]";
+				mes "위층의 밀러영감이 아래층에 빈둥대는 녀석들이 있다며, 가서 기초훈련을 부탁하라고 보냈을 거야. 그렇지? 아니야?";
+				next;
+				select( "사실대로 말해준다." );
+				mes "[바텐더]";
+				mes "크으.. 귀찮은 일이 생길 것 같다는 느낌이 계속 들었는데. 역시 그렇군..";
+				next;
+				select( "바빠 보이는데 그냥 갈까요?" );
+				mes "[바텐더]";
+				mes "으아악! 날 찾아온 꼬꼬마 병아리를 그냥 돌려보내면 밀러영감이 분명 잔소리를 해대겠지?";
+				next;
+				mes "[바텐더]";
+				mes "그럼 난 괴로울 거고? 괴로우니까 스트레스를 풀려고 폭식을 하겠지?";
+				next;
+				mes "[바텐더]";
+				mes "그럼 또 살이 찔 거고 그럼 또 동생이 오빠 또 살쪘다고 잔소리를 하겠지?";
+				next;
+				mes "[바텐더]";
+				mes "그럼 또 스트레스가 쌓일 거고? 악순환이 계속 반복될 거야 그렇지?";
+				next;
+				select( "아니 그렇게 까지는.." );
+				mes "[바텐더]";
+				mes "후.. 내가 살을 어떻게 뺏는데 다시 찔 수는 없지. 세상에 공짜는 없다고 그러더니.. 까짓 꺼 해준다 해줘!";
+				next;
+				setquest 5147;
+				nov_3_guns = 1;
+				mes "[바텐더]";
+				mes "10초만 있다가 말 걸어봐.";
+				close3;
+			} else if(nov_3_guns == 1) {
+				mes "[바텐더]";
+				mes "뭐야 벌써 10초가 지난 거야? 이거 어쩔 수 없네.";
+				next;
+				mes "[바텐더]";
+				mes "우선 자기소개부터 해야겠지?";
+				next;
+				mes "[루이]";
+				mes "병아리 난 '총명한 원숭이의 두뇌'라 불리는 루이라고 한다. 넌?";
+				next;
+				select( "이름을 말한다." );
+				mes "[루이]";
+				mes ""+strcharinfo(0)+"이라고? 병아리다운 이름이군. 그럼 지금부터 건슬링거 기초훈련을 시작하겠다.";
+				next;
+				mes "[루이]";
+				mes "우선 스테이터스부터 설명을 슬슬 시작해볼까?";
+				nov_3_guns = 2;
+				close3;
+			} else if(nov_3_guns == 2) {
+				mes "[루이]";
+				mes "역시 모든 설명의 시작은 스테이터스지!!";
+				next;
+				mes "[루이]";
+				mes "건슬링거에게 중요한 스테이터스는 별 5개, 취향을 타는 스테이터스는 별 3개, 안 올려도 전혀 문제될게 없는 스테이터스는 별 0개로 표시했다.";
+				next;
+				mes "[루이]";
+				mes "2번 설명은 없으니 궁금한 것부터 차례대로 물어봐.";
+				while(1) {
+					next;
+					switch( select( "힘(STR)☆☆☆☆☆", "민첩성(AGI)★★★☆☆", "체력(VIT)★★★☆☆", "지력(INT)★★★☆☆", "손재주(DEX)★★★★★", "운(LUK)★★★☆☆", "질문종료!!" )) {
+						case 1:
+							emotion ET_QUESTION;
+							mes "[루이]";
+							mes "힘? 왜? 이거 올리려고?";
+							next;
+							mes "[루이]";
+							mes "총알 엄청 많이 들고 다닐 건가 봐? 우리 건슬링거에겐 소지할 수 있는 ^A2563E무게상한수치^000000를 올려주는 것 말고는 아무것도 없어.";
+							continue;
+						case 2:
+							emotion ET_QUESTION;
+							mes "[루이]";
+							mes "민첩성이라.. 빠른 공격속도를 원해?";
+							next;
+							mes "[루이]";
+							mes "빠른 총질에 목숨 거는 녀석들은 민첩성을 꼭 찍어줘야지. 참고로 나도 민첩성을 중요하게 생각해.";
+							next;
+							mes "[루이]";
+							mes "단! 빠른 공격속도를 가지게 되는 만큼 총알소비도 엄청나니까 염두 해두고.";
+							continue;
+						case 3:
+							emotion ET_QUESTION;
+							mes "[루이]";
+							mes "몬스터와 싸우는데 왠지 HP가 부족한 것 같아?";
+							next;
+							mes "[루이]";
+							mes "그렇다면 체력을 올려야지, 하지만 명심해! 체력을 올리는 만큼 다른 스테이터스를 포기해야 되니까. 뭐 다른 것도 다 그렇지만.";
+							continue;
+						case 4:
+							mes "[루이]";
+							mes "항상 공격속도를 올려주는 민첩성을 포기하고 스킬로만 사냥하려는 녀석들이 꼭 있지.";
+							next;
+							mes "[루이]";
+							mes "스킬로만 사냥하려면 많은 SP가 필요한데 그런 녀석들이 지력을 올리는 편이지.";
+							next;
+							mes "[루이]";
+							mes "단! 사냥을 쉽게 하려고 지력을 올리는 만큼 다른 스테이터스를 포기해야 한다는 걸 명심해.";
+							continue;
+						case 5:
+							emotion ET_BEST;
+							mes "[루이]";
+							mes "총을 가지고 원거리공격을 하는 우리 건슬링거들이 버릴 수 없는 스테이터스지.";
+							next;
+							mes "[루이]";
+							mes "공격력뿐만 아니라 명중률까지 책임지는 스테이터스 이기 때문에 많이 올리면 올릴수록 더 효과가 좋은 스테이터스라고 말할 수 있다.";
+							next;
+							mes "[루이]";
+							mes "뭐 필요에 의해 어느 정도 타협할 순 있겠지만.";
+							continue;
+						case 6:
+							mes "[루이]";
+							mes "운은 크리티컬, 완전회피, 공격력, 명중, 회피 등 모든 것을 조금씩 올려주는 일종의 만능 스테이터스라고 할 수 있다.";
+							next;
+							mes "[루이]";
+							mes "극에 가까운 공격력을 가지려는 녀석들이 종종 올리는 스테이터스 더군.";
+							next;
+							mes "[루이]";
+							mes "참고로 난 공격속도를 더 선호해서 운은 올리지 않아.";
+							continue;
+						case 7:
+							emotion ET_QUESTION;
+							mes "[루이]";
+							mes "스테이터스에 대한 궁금점은 다 해결된 거야? 아까도 말했지만, 난 두 번은 설명 안 해.";
+							next;
+							if( select( "아! 하나만 더!!", "끝났습니다." ) == 2) {
+								mes "[루이]";
+								mes "이제 궁금한 건 없는 건가?";
+								next;
+								mes "[루이]";
+								mes "마지막으로 이건 중요하다면 중요하고 아니라면 아니기도 한 건데.";
+								next;
+								mes "[루이]";
+								mes "이즈루드가 어딘지는 알고 있겠지? 이즈루드 중앙에 가보면 ^A2563E최면술사^000000라는 녀석이 있다.";
+								next;
+								mes "[루이]";
+								mes "그 녀석이 ^A2563E50레벨까지 무료^000000로, 잘못 올린 스테이터스를 초기화 해준다고 하더군.";
+								next;
+								mes "[루이]";
+								mes "혹시 실수로 찍은 스테이터스가 있다면, 가서 초기화 하도록. 그럼 스테이터스 설명 끝!!";
+								next;
+								mes "스테이터스에 대한 공부로 소량의 경험치를 획득하였다.";
+								getexp 1100,750;
+								nov_3_guns = 3;
+								close3;
+							}
+							mes "[루이]";
+							mes "좋아. 어떤 스테이터스가 궁금해?";
+					}
+				}
+			} else if(nov_3_guns == 3) {
+				mes "[루이]";
+				mes "기초라 할 수 있는 스테이터스에 대한 설명은 마쳤고, 다음은..?";
+				next;
+				mes "[루이]";
+				mes "그래 그게 좋겠군.";
+				mes "뭐 기대도 안 하지만, 총의 종류나 각 총의 특징 같은 건 잘 모르지?";
+				next;
+				select( "고개를 끄덕인다." );
+				mes "[루이]";
+				mes "하긴 이게 좀 골치 아프고 어렵긴 해. 나도 내가 사용하는 총이 아니면 잘 모르는데..";
+				next;
+				mes "[루이]";
+				mes "그래!! 이건 나보단 무기를 사랑하는 ^A2563E어금니형^000000이 설명하는 게 좋겠네.";
+				next;
+				emotion ET_BLABLA;
+				mes "[루이]";
+				mes "어금니형!! 여기 병아리한테 총에 대해 설명 좀 해줘. 한잔 살게.";
+				next;
+				mes "구석에 있던 흑발의 남자는 고개를 저으려다. 한잔 산다는 말에 멈칫하고는 고개를 끄덕였다.";
+				next;
+				mes "[루이]";
+				mes "좋아! 저기 구석에 어둡고 칙칙하게 앉아있는 오빠 있지?";
+				next;
+				mes "[루이]";
+				mes "가서 총에 대해 이것저것 배워와.";
+				nov_3_guns = 4;
+				close3;
+			} else if(nov_3_guns == 4) {
+				mes "[루이]";
+				mes "뭐야? 아직 안 갔어?";
+				next;
+				mes "[루이]";
+				mes "저기 구석에 어둡고 칙칙하게 앉아있는 오빠 있지?";
+				next;
+				mes "[루이]";
+				mes "가서 총에 대해 이것저것 배워와.";
+				close3;
+			} else if(nov_3_guns == 5) {
+				mes "[루이]";
+				mes "총에 대한 건 확실하게 배워 왔어? 뭘 배웠는데?";
+				next;
+				select( "총의 종류와 스킬에 대해 조금" );
+				mes "[루이]";
+				mes "어금니형은 말수가 적은 편인데, 용케도 그만큼이나 배워왔군. 덕분에 다음에 설명할 스킬은 이야기 하기 쉽겠어.";
+				next;
+				mes "[루이]";
+				mes "어금니형 덕분에 시간도 많이 단축되었으니 간단한 질문한 할까?";
+				next;
+				mes "[루이]";
+				mes "4개의 보기 중에 ^A2563E스킬목록창^000000을 열 수 있는 단축키가 뭔지 선택해볼래?";
+				next;
+				while(1) {
+					switch( select( "[1] Alt + E", "[2] Alt + Q", "[3] Alt + Z", "[4] Alt + S" )) {
+						case 1:
+							cutin "aca_gunb_02.bmp", 2;
+							mes "[루이]";
+							mes "그건 ^A2563E소지아이템창^000000을 여는 단축키야. 잘 생각해봐.";
+							continue;
+						case 2:
+							cutin "aca_gunb_02.bmp", 2;
+							mes "[루이]";
+							mes "아니지 그건 ^A2563E장착아이템^000000과 ^A2563E스테이터스창^000000을 여는 단축키야. 잘 생각해봐.";
+							continue;
+						case 3:
+							cutin "aca_gunb_02.bmp", 2;
+							mes "[루이]";
+							mes "아니지 그건 ^A2563E파티창^000000을 여는 단축키야. 잘 생각해봐.";
+							continue;
+						case 4:
+							mes "[루이]";
+							mes "정답! ^A2563E스킬목록창^000000을 여는 방법은 잘 알고 있네.";
+							next;
+							mes "[루이]";
+							mes "그럼 이제 스킬을 배우고 사용할 때 주의사항에 대해 알려줘 볼까?";
+							next;
+							select( "주의사항을 듣는다." );
+							mes "[루이]";
+							mes "주의사항1 건슬링거의 스킬은 오로지 특정 총을 장비해야만 사용할 수 있는 스킬들이 있다.";
+							next;
+							mes "[루이]";
+							mes "리볼버라면 ^FF0000레피드 샤워^000000나 ^FF0000데스페라도^000000같은 스킬들 이겠지.";
+							next;
+							mes "[루이]";
+							mes "주의사항2 그레네이드런쳐는 무기를 교체할 때 총알을 꼭 빼고 교체해야 한다.";
+							next;
+							mes "[루이]";
+							mes "총알의 크기가 다르기 때문에 다른 총알을 끼고 있다면 꼭 빼지 않으면 교체가 되지 않는다.";
+							next;
+							mes "[루이]";
+							mes "주의사항3 ^A2563E플립 더 코인^000000은 사용할 때 1제니가 필요하다.";
+							next;
+							cutin "aca_gunb_02.bmp", 2;
+							mes "[루이]";
+							mes "가끔 돈도 없이 스킬이 사용되지 않는다는 녀석들이 있어서 추가했지.";
+							next;
+							mes "[루이]";
+							mes "주의사항은 이 정도뿐이다. 나머지는 스킬설명을 읽어보고 스스로 판단하도록 해.";
+							next;
+							mes "[루이]";
+							mes "50레벨까지는 이즈루드 마을 중앙의 ^A2563E최면술사^000000라는 녀석이 무료로 초기화 해주니까.";
+							next;
+							mes "[루이]";
+							mes "이것저것 찍어보면서 연습해 보도록 해. 그럼 설명 끝!!";
+							next;
+							mes "스킬에 대한 공부로 소량의 경험치를 획득하였다.";
+							getexp 1100,750;
+							nov_3_guns = 6;
+							close3;
+					}
+					next;
+					cutin "aca_gunb_01.bmp", 2;
+				}
+			} else if(nov_3_guns == 6) {
+				emotion ET_QUESTION;
+				mes "[루이]";
+				mes "여기서 할 수 있는 기초훈련은 다 끝난 것 같은데, 네 생각은 어때?";
+				next;
+				select( "에엑? 벌써?" );
+				emotion ET_SCRATCH;
+				mes "[루이]";
+				mes "반응이 신선한데? 그래도 여기서 알려줄 만한 건 이제 없어.";
+				next;
+				cutin "aca_gunb_02.bmp", 2;
+				mes "[루이]";
+				mes "아아.. 이래서 병아리들이란.. 알려줘도 소용이 없다니까.";
+				next;
+				emotion ET_BLABLA;
+				mes "[루이]";
+				mes "어금니형~ 이 녀석이 여기서 할만한 훈련 더 있어?";
+				next;
+				mes "-흑발의 남자가 말없이 고개를 저었다.-";
+				next;
+				mes "[루이]";
+				mes "봐! 여금니형도 없다고 하잖아.";
+				next;
+				mes "[루이]";
+				mes "남은 훈련이라고 해봐야 전투훈련 정도인데..";
+				next;
+				mes "[루이]";
+				mes "이 삭막한 동네에서 전투훈련을 받았다간.. 어휴.. 상상하기도 싫다.";
+				next;
+				cutin "aca_gunb_01.bmp", 2;
+				mes "[루이]";
+				mes "다~ 이 루이님께서 생각이 있고 애정이 있어서 그러는 거야? 내 맘 알지?";
+				next;
+				select( "알아! 징그러우니까 그만해." );
+				mes "[루이]";
+				mes "그럼 정말 기초훈련 수료 및 전투훈련장소로 이동하는 의미로 간단한 임무 하나 시켜볼까?";
+				next;
+				mes "[루이]";
+				mes "이즈루드는 알지? 알 거야? 안다고 해줘!!";
+				next;
+				select( "그래 알아." );
+				mes "[루이]";
+				mes "휴~ 다행이네. ^A2563E비공정 무료 승차권^000000을 1장 끊어줄 테니까.";
+				next;
+				mes "[루이]";
+				mes "타고 이즈루드로 날아가서 크리투라학원 2층에 파견 나간 루사에게";
+				next;
+				completequest 5147;
+				getexp 1100,750;
+				setquest 5148;
+				getitem 7311,1;
+				emotion ET_GO;
+				nov_3_guns = 7;
+				mes "[루이]";
+				mes "여기서 받을 수 없는 전투훈련을 받도록 해. 그럼 출발!!";
+				close3;
+			} else if(nov_3_guns == 7) {
+				cutin "aca_gunb_02.bmp", 2;
+				mes "[루이]";
+				mes "뭐야 아직 안 갔어?";
+				mes "내가 ^0000FF그럼 출발!!^000000 이라고 했잖아?";
+				next;
+				mes "[루이]";
+				mes "말을 들었으면 눈썹이 보이지 않게 달려나가야지.";
+				next;
+				mes "[루이]";
+				mes "이거 아직 제대로 된 건슬링거 대접받으려면 멀었네. 멀었어!! 어서 가!! 어서!!";
+				close3;
+			}
+		}
+	}
+}
+
+que_ng,184,18,2	script	흑발의 남자#gun	4W_M_02,{
+	if(nov_3_guns == 5) {
+		mes "[어금니]";
+		mes "무기 설명은 끝났다. 이제 총명한 원숭이의 두뇌에게 돌아가도록.";
+		close;
+	} else if(nov_3_guns > 5 && nov_3_guns < 8) {
+		mes "[어금니]";
+		mes "열심히 노력하다 보면 성과를 이룰 날이 오겠지.";
+		close;
+	} else if(nov_3_guns > 8) {
+		mes "[어금니]";
+		mes "지금 가진 초보자용 총을 다른 무기로 바꿔 써보고 싶다면,";
+		next;
+		mes "[어금니]";
+		mes "이즈루드 크리투라학원에 파견 나가있는 내 동생 송곳니에게 말하면 바꿔줄 것이다.";
+		close;
+	}
+	mes "한쪽 눈을 가린 흑발의 남자가 칙칙함을 한껏 뽐내며 앉아있다.";
+	next;
+	if(nov_3_guns == 4) {
+		select( "저.. 저기.." );
+		mes "풍기는 분위기와는 다른 인자한 말투의 목소리가 들려왔다.";
+		next;
+		emotion ET_QUESTION;
+		mes "[날카로운 뱀의 어금니]";
+		mes "황소 뿔님의 인정을 받고 밀러씨가 보낸 병아리가 너인가?";
+		next;
+		mes "[날카로운 뱀의 어금니]";
+		mes "밀러씨도 나이를 많이 먹긴 먹었군. 나이를 먹으면 걱정이 많아 진다더니..";
+		next;
+		mes "[날카로운 뱀의 어금니]";
+		mes "내가 설명할 것은 건슬링거의 무기에 대한 설명이다.";
+		next;
+		mes "[날카로운 뱀의 어금니]";
+		mes "우리 건슬링거는 노비스도 사용하는 단검조차 사용할 수 없다. 이유는 묻지 말도록 나도 모른다.";
+		next;
+		emotion ET_BEST;
+		mes "[날카로운 뱀의 어금니]";
+		mes "다섯 종류의 총이 있다. 하나씩 설명할 테니 질문하도록.";
+		while(1) {
+			next;
+			switch( select( "리볼버", "라이플", "샷건", "개틀링건", "그레네이드런쳐", "그만 묻는다." )) {
+				case 1:
+					mes "[날카로운 뱀의 어금니]";
+					mes "리볼버는 ^A2563E권총^000000이라 부르는 경우도 있는 총이다.";
+					next;
+					mes "[날카로운 뱀의 어금니]";
+					mes "명중률은 좀 떨어지는 편이지만, 공격속도도 나쁘지 않고";
+					next;
+					mes "[날카로운 뱀의 어금니]";
+					mes "도둑의 ^A2563E더블어택^000000과 비슷한 스킬인 ^A2563E체인액션^000000을 배우면, 총알 하나에 2번의 공격효과를 가질 수도 있는 총이다.";
+					next;
+					emotion ET_FRET;
+					mes "[날카로운 뱀의 어금니]";
+					mes "모든 이에게 반만을 쓰는 총명한 원숭이의 두뇌가 리볼버를 즐겨 쓰는 편이지.";
+					continue;
+				case 2:
+					mes "[날카로운 뱀의 어금니]";
+					mes "라이플은 어느 쪽으로도 치우치지 않는 밸런스를 가진 총이다.";
+					next;
+					mes "[날카로운 뱀의 어금니]";
+					mes "그래서 전용무기를 아직 선택하지 못한 병아리들이 많이 사용하는 총이지.";
+					next;
+					mes "[날카로운 뱀의 어금니]";
+					mes "밀러씨도 갓 전직한 건슬링거들에게 라이플을 준다고 들었다. 다 그런 이유에서이지.";
+					next;
+					emotion ET_SHY;
+					mes "[날카로운 뱀의 어금니]";
+					mes "만나봤을지 모르겠지만, 이즈루드에 파견 나가있는 루사가 라이플을 즐겨 쓰는 편이다.";
+					continue;
+				case 3:
+					mes "[날카로운 뱀의 어금니]";
+					mes "샷건은 연사속도를 포기하고 극한의 공격력을 추구하는 총이다.";
+					next;
+					mes "[날카로운 뱀의 어금니]";
+					mes "극한의 공격력을 추구하는 샷건의 스킬은 ^A2563E강력한 스플래쉬 공격^000000이 많은 편이지.";
+					next;
+					mes "[날카로운 뱀의 어금니]";
+					mes "하지만, SP와 총알의 소모가 극심해서, 총알 한발에 벌벌 떠는 가난뱅이들은 사용하기 힘든 총이기도 하다.";
+					next;
+					emotion ET_CRY;
+					mes "[날카로운 뱀의 어금니]";
+					mes "예전엔 샷건을 쓰는 녀석들이 많았는데, 요즘은 도통 볼 수가 없군.";
+					continue;
+				case 4:
+					mes "[날카로운 뱀의 어금니]";
+					mes "개틀링건은 총 중에 가장 연사속도가 빠르다. 아니 총알을 퍼 붇는다는 소리가 맞겠군.";
+					next;
+					mes "[날카로운 뱀의 어금니]";
+					mes "연사속도를 올려주는 스킬까지 습득한다면, 누구나 부러워하는 꿈의 연사속도를 넘볼 수 있겠지.";
+					next;
+					mes "[날카로운 뱀의 어금니]";
+					mes "총알을 퍼 붇는 만큼 소모가 많고 공격력이 떨어지는 건 단점이다.";
+					next;
+					emotion ET_CRY;
+					mes "[날카로운 뱀의 어금니]";
+					mes "이즈루드에 파견 나간 내 동생 송곳니가 개틀링건을 즐겨 쓰는 편이지.";
+					continue;
+				case 5:
+					emotion ET_COOL;
+					mes "[날카로운 뱀의 어금니]";
+					mes "그레네이드런처는 내가 주력으로 사용하는 무기이다.";
+					next;
+					mes "[날카로운 뱀의 어금니]";
+					mes "전용탄환만 사용할 수 있는데, 총알이 굉장히 비싼 편이다.";
+					next;
+					mes "[날카로운 뱀의 어금니]";
+					mes "일반공격을 하기에는 연사속도가 떨어지기도 하고, 비싼 총알을 낭비한다는 생각도 들어서 스킬을 사용한 공격을 주로 한다.";
+					next;
+					mes "[날카로운 뱀의 어금니]";
+					mes "마침 전용 스킬도 바닥에 설치하는 타입이기 때문에 효율이 좋은 편이지.";
+					continue;
+				case 6:
+					mes "[날카로운 뱀의 어금니]";
+					mes "질문은 다 했는가?";
+					next;
+					mes "[날카로운 뱀의 어금니]";
+					mes "기초훈련을 마친 이후에 이즈루드에 파견 나간 내 동생을 만난다면, 지금 사용중인.";
+					next;
+					mes "[날카로운 뱀의 어금니]";
+					mes "^A2563E초보자용 라이플^000000을 다른 종류의 초보자용 무기로 바꿔 쓸 수 있도록 말해두겠다.";
+					next;
+					mes "총기에 대한 공부로 소량의 경험치를 획득하였다.";
+					getexp 1100,750;
+					nov_3_guns = 5;
+					close;
+			}
+		}
+	}
+	mes "말을 걸어 보았지만, 관심을 주지 않는다.";
+	close;
+}
+
+que_ng,171,28,6	script	손님#gun2	4_M_ALCHE_A,{
+	if(Class == Job_Novice) {
+		mes "[손님]";
+		mes "딸꾹! 애들은 이런 곳에 오는 게 아냐.";
+	} else {
+		mes "[손님]";
+		mes "이상하게 이 주점은 건슬링거들이 많이 보이는 것 같아. 뭔가 비밀이라도 있나? 딸꾹!";
+	}
+	close;
+}
+
+que_ng,170,22,2	script	손님#gun1	4_M_01,{
+	if(Class == Job_Novice) {
+		mes "[손님]";
+		mes "애들은 이런 곳에 오는 게 아냐.";
+	} else {
+		mes "[손님]";
+		mes "요즘 이상하게 바쁘네. 별로 하는 건 없는 거 같은데 말이야.";
+	}
+	close;
+}

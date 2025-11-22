@@ -1,0 +1,36 @@
+//===== rAthena Script ======================================= 
+//= HD Refiners
+//===== Description: =========================================
+//= [Official Conversion]
+//= Refiners that use HD ores to refine equipment. Upon
+//= failure, the equipment is not destroyed; rather, its
+//= refine level decreases by 1. The success rate is identical
+//= to that for Enriched ores.
+//= - "Blacksmith Mighty Hammer" only refines from +7~9.
+//= - "Basta" only refines from +10 and up.
+//===== Changelog: ===========================================
+//= 1.0 First version. [Euphy]
+//= 1.1 Removed re-roll behavior. [Secret]
+//============================================================
+
+// Blacksmith Mighty Hammer (+7~9) :: cash_smelting79
+//============================================================
+itemmall,27,77,4	script	대장장이 마이트해머	4_M_DWARF,{
+	mes "[대장장이 마이트해머]";
+	mes "제련이라면 이제 바스타에게 의뢰하게. 난 은퇴했으니까...";
+	close;
+}
+
+// Basta
+//============================================================
+itemmall,24,77,4	script	대장장이 바스타	4_M_DWARF,{
+	if( !getbattleflag( "feature.refineui" ) ){
+		end;
+	}
+
+	mes "[대장장이 바스타]";
+	mes "마이트해머, 브로크, 그리고 쉐도우 대장장이의 일까지 내가 다 떠맡게 되었네. 앞으로 바빠지겠구먼";
+	close2;
+	refineui;
+	end;
+}
