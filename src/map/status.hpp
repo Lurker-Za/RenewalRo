@@ -1455,6 +1455,10 @@ enum sc_type : int16 {
 	SC_PREMIUM_EXPBOOST,
 	
 	SC_SPEEDUP2,
+	SC_JUMPPENALTY,
+	SC_DELSEFFECT,
+	SC_DELSEFFECT2,
+	SC_DELSEFFECT3,
 
 	SC_MAX, //Automatically updated max, used in for's to check we are within bounds.
 };
@@ -3366,6 +3370,7 @@ struct weapon_atk {
 	uint16 atk, atk2;
 	uint16 range;
 	unsigned char ele;
+	int32 original_range;
 #ifdef RENEWAL
 	uint16 matk;
 	unsigned char wlv;

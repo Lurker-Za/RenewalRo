@@ -3019,6 +3019,13 @@ static bool is_attack_critical(struct Damage* wd, block_list *src, block_list *t
 
 	status_data* sstatus = status_get_status_data(*src);
 
+	mob_data* md = BL_CAST(BL_MOB, src);
+	if (md && md->master_id) {
+		block_list* mbl = map_id2bl(md->master_id);
+		if(mbl&& md->special_state.clone >= 2)
+			sstatus = status_get_status_data(*mbl);
+	}
+
 	if( sstatus->cri )
 	{
 		map_session_data *sd = BL_CAST(BL_PC, src);
@@ -10838,6 +10845,14 @@ enum damage_lv battle_weapon_attack(block_list* src, block_list* target, t_tick 
 
 	wd = battle_calc_attack(BF_WEAPON, src, target, 0, 0, flag);
 
+	mob_data* md = BL_CAST(BL_MOB, src);
+	if (md && md->master_id) {
+		block_list* mbl = map_id2bl(md->master_id);
+		if (mbl && md->special_state.clone >= 2) {
+			wd = battle_calc_attack(BF_WEAPON, mbl, target, 0, 0, flag);
+		}
+	}
+
 	if (sd && wd.damage + wd.damage2 > 0 && battle_vellum_damage(sd, target, &wd))
 		vellum_damage = true;
 
@@ -11263,6 +11278,17 @@ enum damage_lv battle_weapon_attack(block_list* src, block_list* target, t_tick 
 
 	if (sd && tsc && wd.flag&BF_LONG && tsc->getSCE(SC_WINDSIGN) && rand()%100 < tsc->getSCE(SC_WINDSIGN)->val2)
 		status_heal(src, 0, 0, 1, 0);
+
+	if (md && md->master_id) {
+		block_list* mbl = map_id2bl(md->master_id);
+		if (mbl && md->special_state.clone >= 2) {
+			struct Damage swd = wd;
+			swd.damage = i64max(swd.damage * (100 - md->damagereduce) / 100, 1);
+			swd.damage2 = i64max(swd.damage2 * (100 - md->damagereduce) / 100, 1);
+
+			clif_damage(*src, *target, tick, swd.amotion, swd.dmotion, swd.damage, swd.div_ , swd.type, swd.damage2, swd.isspdamage);
+		}
+	}
 
 	return wd.dmg_lv;
 }

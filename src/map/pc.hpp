@@ -307,6 +307,8 @@ struct s_autospell {
 	t_itemid card_id;
 	uint8 flag;
 	bool lock;  // bAutoSpellOnSkill: blocks autospell from triggering again, while being executed
+	uint32 damage, duration;
+	enum e_mode mode;
 };
 
 /// AddEff and AddEff2 bonus struct
@@ -354,6 +356,16 @@ struct s_autobonus {
 	~s_autobonus();
 };
 
+struct s_exbonus {
+	int16 rate;
+	uint16 duration;
+	char *bonus_script;
+	int32 active;
+	uint32 pos;
+
+	~s_exbonus();
+};
+
 /// Timed bonus 'bonus_script' struct [Cydh]
 struct s_bonus_script_entry {
 	struct script_code *script;
@@ -377,6 +389,7 @@ struct s_combos {
 	script_code *bonus;
 	uint32 id;
 	uint32 pos;
+	uint32 count;
 };
 
 struct s_qi_display {
@@ -467,6 +480,7 @@ public:
 		bool roulette_open;
 		t_itemid item_reform;
 		uint64 item_enchant_index;
+		uint32 jumpattack : 1;
 	} state;
 	struct {
 		unsigned char no_weapon_damage, no_magic_damage, no_misc_damage;
@@ -616,16 +630,16 @@ public:
 	} indexed_bonus;
 	// zeroed arrays end here.
 
-	std::vector<s_autospell> autospell, autospell2, autospell3;
+	std::vector<s_autospell> autospell, autospell2, autospell3, summonslave;
 	std::vector<s_addeffect> addeff, addeff_atked;
 	std::vector<s_addeffectonskill> addeff_onskill;
 	std::vector<s_item_bonus> skillatk, skillusesprate, skillusesp, skillheal, skillheal2, skillblown, skillcastrate, skillfixcastrate, subskill, skillcooldown, skillfixcast,
 		skillvarcast, skilldelay, itemhealrate, add_def, add_mdef, add_mdmg, reseff, itemgrouphealrate, itemsphealrate, itemgroupsphealrate;
-	std::vector<s_add_drop> add_drop;
 	std::vector<s_addele2> subele2;
 	std::vector<s_vanish_bonus> sp_vanish, hp_vanish;
 	std::vector<s_addrace2> subrace3;
 	std::vector<std::shared_ptr<s_autobonus>> autobonus, autobonus2, autobonus3; //Auto script on attack, when attacked, on skill usage
+	std::vector<std::shared_ptr<s_exbonus>> exbonus;
 
 	// zeroed structures start here
 	struct s_regen {
@@ -642,6 +656,11 @@ public:
 			per;	///< % HP/SP vanished/gained
 	} hp_vanish_race[RC_MAX], sp_vanish_race[RC_MAX];
 	// zeroed structures end here
+	
+	struct s_jumpattack {
+		int16 range, splash;
+		int32 rate, penalty, mobid;
+	} jumpattack;
 
 	// zeroed vars start here.
 	struct s_bonus {
@@ -868,6 +887,7 @@ public:
 #endif
 
 	std::vector<std::shared_ptr<s_combos>> combos;
+	int32 current_combo_count;
 
 	/**
 	 * Guarantees your friend request is legit (for bugreport:4629)
@@ -1491,12 +1511,17 @@ bool pc_addautobonus(std::vector<std::shared_ptr<s_autobonus>> &bonus, const cha
 void pc_exeautobonus(map_session_data &sd, std::vector<std::shared_ptr<s_autobonus>> *bonus, std::shared_ptr<s_autobonus> autobonus);
 TIMER_FUNC(pc_endautobonus);
 void pc_delautobonus(map_session_data &sd, std::vector<std::shared_ptr<s_autobonus>> &bonus, bool restore);
+bool pc_addexbonus(std::vector<std::shared_ptr<s_exbonus>> &bonus, const char *script, int16 rate, uint32 dur, uint32 pos);
+void pc_exeexbonus(map_session_data &sd, std::vector<std::shared_ptr<s_exbonus>> *bonus, std::shared_ptr<s_exbonus> exbonus);
+TIMER_FUNC(pc_endexbonus);
+void pc_delexbonus(map_session_data &sd, std::vector<std::shared_ptr<s_exbonus>> &bonus, bool restore);
 
 void pc_bonus(map_session_data *sd, int32 type, int32 val);
 void pc_bonus2(map_session_data *sd, int32 type, int32 type2, int32 val);
 void pc_bonus3(map_session_data *sd, int32 type, int32 type2, int32 type3, int32 val);
 void pc_bonus4(map_session_data *sd, int32 type, int32 type2, int32 type3, int32 type4, int32 val);
 void pc_bonus5(map_session_data *sd, int32 type, int32 type2, int32 type3, int32 type4, int32 type5, int32 val);
+void pc_bonus7(map_session_data* sd, int32 type, int32 type2, int32 type3, int32 type4, int32 type5, int32 type6, int32 type7, int32 val);
 
 enum e_addskill_type {
 	ADDSKILL_PERMANENT			= 0,	///< Permanent skill. Remove the skill if level is 0

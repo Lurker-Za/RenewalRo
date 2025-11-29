@@ -254,6 +254,7 @@ static int32 buildin_getelementofarray_ref = 0;
 // Caches compiled autoscript item code.
 // Note: This is not cleared when reloading itemdb.
 static DBMap* autobonus_db = nullptr; // char* script -> char* bytecode
+static DBMap* exbonus_db = nullptr;
 
 struct Script_Config script_config = {
 	1, // warn_func_mismatch_argtypes
@@ -4639,6 +4640,38 @@ void script_add_petautobonus(const std::string &autobonus) {
 	}
 }
 
+void script_run_exbonus(const char *exbonus, map_session_data *sd, uint32 pos)
+{
+	struct script_code *script = (struct script_code *)strdb_get(exbonus_db, exbonus);
+
+	if( script )
+	{
+		int32 j;
+		ARR_FIND( 0, EQI_MAX, j, sd->equip_index[j] >= 0 && sd->inventory.u.items_inventory[sd->equip_index[j]].equip == pos );
+		if( j < EQI_MAX ) {
+			//Single item autobonus
+			current_equip_item_index = sd->equip_index[j];
+			current_equip_combo_pos = 0;
+		} else {
+			//Combo autobonus
+			current_equip_item_index = -1;
+			current_equip_combo_pos = pos;
+		}
+		run_script(script,0,sd->id,0);
+	}
+}
+
+void script_add_exbonus(const char *exbonus)
+{
+	if( strdb_get(exbonus_db, exbonus) == nullptr )
+	{
+		struct script_code *script = parse_script(exbonus, "exbonus", 0, 0);
+
+		if( script )
+			strdb_put(exbonus_db, exbonus, script);
+	}
+}
+
 /// resets a temporary character array variable to given value
 void script_cleararray_pc( map_session_data* sd, const char* varname ){
 	struct script_array *sa = nullptr;
@@ -4811,6 +4844,7 @@ void do_final_script() {
 	db_destroy(scriptlabel_db);
 	userfunc_db->destroy(userfunc_db, db_script_free_code_sub);
 	autobonus_db->destroy(autobonus_db, db_script_free_code_sub);
+	exbonus_db->destroy(exbonus_db, db_script_free_code_sub);
 
 	ers_destroy(array_ers);
 	if (generic_ui_array)
@@ -4851,6 +4885,7 @@ void do_init_script(void) {
 	userfunc_db = strdb_alloc(DB_OPT_DUP_KEY,0);
 	scriptlabel_db = strdb_alloc(DB_OPT_DUP_KEY,50);
 	autobonus_db = strdb_alloc(DB_OPT_DUP_KEY,0);
+	exbonus_db = strdb_alloc(DB_OPT_DUP_KEY, 0);
 
 	st_ers = ers_new(sizeof(struct script_state), "script.cpp::st_ers", ERS_CACHE_OPTIONS);
 	stack_ers = ers_new(sizeof(struct script_stack), "script.cpp::script_stack", ERS_OPT_FLEX_CHUNK);
@@ -10107,6 +10142,23 @@ BUILDIN_FUNC(bonus)
 			val4 = script_getnum(st,6);
 			val5 = script_getnum(st,7);
 			pc_bonus5(sd, type, val1, val2, val3, val4, val5);
+			break;
+		case 7:
+		{
+			int32 val6 = 0;
+			int32 val7 = 0;
+			if (type == SP_AUTOSPELL_ONSKILL && script_isstring(st, 4))
+				val2 = skill_name2id(script_getstr(st, 4)); // 2nd value can be skill name
+			else
+				val2 = script_getnum(st, 4);
+
+			val3 = script_getnum(st, 5);
+			val4 = script_getnum(st, 6);
+			val5 = script_getnum(st, 7);
+			val6 = script_getnum(st, 8);
+			val7 = script_getnum(st, 9);
+			pc_bonus7(sd, type, val1, val2, val3, val4, val5, val6, val7);
+		}
 			break;
 		default:
 			ShowDebug("buildin_bonus: unexpected number of arguments (%d)\n", (script_lastdata(st) - 1));

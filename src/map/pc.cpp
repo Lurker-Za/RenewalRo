@@ -3247,6 +3247,41 @@ static void pc_bonus_autospell_onskill(std::vector<s_autospell> &spell, uint16 s
 	spell.push_back(entry);
 }
 
+static void pc_bonus_summonslave(std::vector<s_autospell> &spell, uint16 id, int16 rate, int16 battle_flag, uint16 duration, uint8 damage, uint8 number, enum e_mode mode)
+{
+	if (spell.size() == MAX_PC_BONUS) {
+		ShowWarning("pc_bonus_summonslave: Reached max (%d) number of summonslaves per character!\n", MAX_PC_BONUS);
+		return;
+	}
+
+	if (!rate)
+		return;
+
+	if (!(battle_flag&BF_RANGEMASK))
+		battle_flag |= BF_SHORT | BF_LONG; //No range defined? Use both.
+	if (!(battle_flag&BF_WEAPONMASK))
+		battle_flag |= BF_WEAPON; //No attack type defined? Use weapon.
+	battle_flag |= BF_SKILL; //These two would never trigger without BF_SKILL
+
+	struct s_autospell entry = {};
+
+	if (rate < -1000 || rate > 1000)
+		ShowWarning("pc_bonus_summonslave: Item bonus rate %d exceeds -1000~1000 range, capping.\n", rate);
+
+	if (number < 1)
+		number = 1;
+
+	entry.id = id;
+	entry.rate = cap_value(rate, -1000, 1000);
+	entry.battle_flag = battle_flag;
+	entry.duration = duration;
+	entry.damage = damage;
+	entry.flag = number;
+	entry.mode = mode;
+
+	spell.push_back(entry);
+}
+
 /**
  * Add inflict effect bonus for player while attacking/attacked
  * @param effect: Effect array
@@ -3392,6 +3427,113 @@ static void pc_bonus_item_drop(std::vector<s_add_drop> &drop, t_itemid nameid, u
 	entry.rate = cap_value(rate, -10000, 10000);
 
 	drop.push_back(entry);
+}
+
+s_exbonus::~s_exbonus(){
+	if( this->active != INVALID_TIMER ){
+		delete_timer( this->active, pc_endexbonus);
+		this->active = INVALID_TIMER;
+	}
+
+	if( this->bonus_script != nullptr ){
+		aFree( this->bonus_script );
+		this->bonus_script = nullptr;
+	}
+}
+
+bool pc_addexbonus(std::vector<std::shared_ptr<s_exbonus>> &bonus, const char *script, int16 rate, uint32 dur, uint32 pos){
+	// Check if the same bonus already exists
+	for( std::shared_ptr<s_exbonus> exbonus : bonus ){
+		if (strcmp(script, exbonus->bonus_script) == 0) {
+			if (exbonus->pos == pos)
+				return false;
+			else
+				rate += exbonus->rate;
+		}
+	}
+
+	if (bonus.size() == MAX_PC_BONUS) {
+		ShowWarning("pc_addexbonus: Reached max (%d) number of exbonus per character!\n", MAX_PC_BONUS);
+		return false;
+	}
+
+	std::shared_ptr<s_exbonus> entry = std::make_shared<s_exbonus>();
+
+	if (rate < -10000 || rate > 10000)
+		ShowWarning("pc_addexbonus: Item bonus rate %d exceeds -10000~10000 range, capping.\n", rate);
+
+	entry->rate = cap_value(rate, -10000, 10000);
+	entry->duration = dur;
+	entry->active = INVALID_TIMER;
+	entry->pos = pos;
+	entry->bonus_script = aStrdup(script);
+
+	bonus.push_back(entry);
+
+	return true;
+}
+void pc_delexbonus(map_session_data &sd, std::vector<std::shared_ptr<s_exbonus>> &bonus, bool restore){
+	std::vector<std::shared_ptr<s_exbonus>>::iterator it = bonus.begin();
+
+	while( it != bonus.end() ){
+		std::shared_ptr<s_exbonus> b = *it;
+
+		if( b->active != INVALID_TIMER && restore && b->bonus_script != nullptr ){
+			unsigned int equip_pos_idx = 0;
+
+			// Create a list of all equipped positions to see if all items needed for the exbonus are still present [Playtester]
+			for (uint8 j = 0; j < EQI_MAX; j++) {
+				if (sd.equip_index[j] >= 0)
+					equip_pos_idx |= sd.inventory.u.items_inventory[sd.equip_index[j]].equip;
+			}
+
+			if( ( equip_pos_idx&b->pos ) == b->pos ){
+				script_run_exbonus(b->bonus_script, &sd, b->pos);
+			}else{
+				// Not all required items equipped anymore
+				restore = false;
+			}
+		}
+
+		if( restore ){
+			it++;
+			continue;
+		}
+
+		it = bonus.erase(it);
+	}
+}
+
+/**
+ * Execute autobonus on player
+ * @param sd: Player data
+ * @param autobonus: Autobonus to run
+ */
+void pc_exeexbonus(map_session_data &sd, std::vector<std::shared_ptr<s_exbonus>> *bonus, std::shared_ptr<s_exbonus> exbonus)
+{
+	if (exbonus->active != INVALID_TIMER)
+		delete_timer(exbonus->active, pc_endexbonus);
+
+	exbonus->active = add_timer(gettick()+ exbonus->duration, pc_endexbonus, sd.id, (intptr_t)bonus);
+	status_calc_pc(&sd,SCO_FORCE);
+}
+
+TIMER_FUNC(pc_endexbonus){
+	map_session_data *sd = map_id2sd(id);
+	std::vector<std::shared_ptr<s_exbonus>> *bonus = (std::vector<std::shared_ptr<s_exbonus>> *)data;
+
+	nullpo_ret(sd);
+	nullpo_ret(bonus);
+
+	for( std::shared_ptr<s_exbonus> exbonus : *bonus ){
+		if(exbonus->active == tid ){
+			exbonus->active = INVALID_TIMER;
+			break;
+		}
+	}
+	
+	status_calc_pc(sd,SCO_FORCE);
+	return 0;
 }
 
 s_autobonus::~s_autobonus(){
@@ -5421,6 +5563,16 @@ void pc_bonus5(map_session_data *sd,int32 type,int32 type2,int32 type3,int32 typ
 			pc_bonus_addeff_onskill(sd->addeff_onskill, (sc_type)type3, type4, type2, type5, val);
 		break;
 
+	case SP_JUMPRANGE: //bonus5 bJumprange,range,splash,atkrate,penalty,mobid;
+		if (sd->state.lr_flag == 2)
+			break;
+		sd->jumpattack.range += type2;
+		sd->jumpattack.splash += type3;
+		sd->jumpattack.rate += type4;
+		sd->jumpattack.penalty += type5;
+		sd->jumpattack.mobid = val;
+		break;
+
 	default:
 		if (current_equip_combo_pos > 0) {
 			ShowWarning("pc_bonus5: unknown bonus type %d %d %d %d %d %d in a combo with item #%u\n", type, type2, type3, type4, type5, val, sd->inventory_data[pc_checkequip( sd, current_equip_combo_pos )]->nameid);
@@ -5430,6 +5582,40 @@ void pc_bonus5(map_session_data *sd,int32 type,int32 type2,int32 type3,int32 typ
 		}
 		else {
 			ShowWarning("pc_bonus5: unknown bonus type %d %d %d %d %d %d in unknown usage. Report this!\n", type, type2, type3, type4, type5, val);
+		}
+		break;
+	}
+}
+
+/**
+* Gives item bonus to player for format: bonus5 bBonusName,type2,type3,type4,val;
+* @param sd
+* @param type Bonus type used by bBonusName
+* @param type2
+* @param type3
+* @param type4
+* @param val Value that usually for rate or fixed value
+*/
+void pc_bonus7(map_session_data *sd,int32 type, int32 type2, int32 type3, int32 type4, int32 type5, int32 type6, int32 type7, int32 val)
+{
+	nullpo_retv(sd);
+
+	switch(type){
+	case SP_SUMMON_SLAVE: // bonus7 bSummonSlave,id,rate,flag,duration,damage,number,mode;
+		if (sd->state.lr_flag == 2)
+			break;
+		pc_bonus_summonslave(sd->summonslave, type2, type3, type4, type5, type6, type7, static_cast<e_mode>(val));
+		break;
+
+	default:
+		if (current_equip_combo_pos > 0) {
+			ShowWarning("pc_bonus7: unknown bonus type %d %d %d %d %d %d %d %d in a combo with item #%u\n", type, type2, type3, type4, type5, type6, type7, val, sd->inventory_data[pc_checkequip( sd, current_equip_combo_pos )]->nameid);
+		}
+		else if (current_equip_card_id > 0 || current_equip_item_index > 0) {
+			ShowWarning("pc_bonus7: unknown bonus type %d %d %d %d %d %d %d %d in item #%u\n", type, type2, type3, type4, type5, type6, type7, val, current_equip_card_id ? current_equip_card_id : sd->inventory_data[current_equip_item_index]->nameid);
+		}
+		else {
+			ShowWarning("pc_bonus7: unknown bonus type %d %d %d %d %d %d %d %d in unknown usage. Report this!\n", type, type2, type3, type4, type5, type6, type7, val);
 		}
 		break;
 	}
@@ -11894,11 +12080,16 @@ static int32 pc_checkcombo(map_session_data *sd, item_data *data) {
 
 	for (const auto &item_combo : data->combos) {
 		bool do_continue = false;
+        bool is_required_all = item_combo->required_all;
+		std::shared_ptr<s_combos> existing_combo = nullptr;
 
 		// Ensure this isn't a duplicate combo
 		for (const auto player_combo : sd->combos) {
 			if (player_combo->id == item_combo->id) {
-				do_continue = true;
+				if (!is_required_all)
+					existing_combo = player_combo;
+				else
+					do_continue = true;
 				break;
 			}
 		}
@@ -11921,6 +12112,7 @@ static int32 pc_checkcombo(map_session_data *sd, item_data *data) {
 		std::vector<s_itemchk> combo_idx(nb_itemCombo);
 		size_t j;
 		uint32 pos = 0;
+		uint32 equipped = 0;
 
 		for (j = 0; j < nb_itemCombo; j++) {
 			t_itemid id = item_combo->nameid[j];
@@ -11958,6 +12150,8 @@ static int32 pc_checkcombo(map_session_data *sd, item_data *data) {
 					combo_idx[j].idx = index;
 					pos |= sd->inventory.u.items_inventory[index].equip;
 					found = true;
+					if (!is_required_all)
+						equipped++;
 					break;
 				} else { // Cards and enchants
 					if (itemdb_isspecial(sd->inventory.u.items_inventory[index].card[0]))
@@ -11989,28 +12183,38 @@ static int32 pc_checkcombo(map_session_data *sd, item_data *data) {
 						combo_idx[j].card[z] = id;
 						pos |= sd->inventory.u.items_inventory[index].equip;
 						found = true;
+						if (!is_required_all)
+							equipped++;
 						break;
 					}
 				}
 			}
 
-			if (!found)
+			if (is_required_all && !found)
 				break; // Unable to found all the IDs for this combo, return
 		}
 
-		// Broke out of the count loop without finding all IDs, move to the next combo
-		if (j < nb_itemCombo)
+		if (!is_required_all && equipped < 2) // Broke out of the count loop without finding more than two IDs, move to the next combo
+			continue;
+		else if (j < nb_itemCombo) // Broke out of the count loop without finding all IDs, move to the next combo
 			continue;
 
-		// All items in the combo are matching
-		auto entry = std::make_shared<s_combos>();
+		if (existing_combo != nullptr) {
+			// Update existing combo count
+			existing_combo->count = equipped;
+			existing_combo->pos = pos;
+		} else {
+			// All items in the combo are matching
+			auto entry = std::make_shared<s_combos>();
 
-		entry->bonus = item_combo->script;
-		entry->id = item_combo->id;
-		entry->pos = pos;
-		sd->combos.push_back(entry);
-		combo_idx.clear();
-		success++;
+			entry->bonus = item_combo->script;
+			entry->id = item_combo->id;
+			entry->pos = pos;
+			entry->count = equipped;
+			sd->combos.push_back(entry);
+			combo_idx.clear();
+			success++;
+		}
 	}
 
 	return success;
@@ -12380,6 +12584,21 @@ static void pc_deleteautobonus( std::vector<std::shared_ptr<s_autobonus>>& bonus
 
 	while( it != bonus.end() ){
 		std::shared_ptr<s_autobonus> b = *it;
+
+		if( ( b->pos & position ) != b->pos ){
+			it++;
+			continue;
+		}
+
+		it = bonus.erase( it );
+	}
+}
+
+static void pc_deleteexbonus( std::vector<std::shared_ptr<s_exbonus>>& bonus, int position ){
+	std::vector<std::shared_ptr<s_exbonus>>::iterator it = bonus.begin();
+
+	while( it != bonus.end() ){
+		std::shared_ptr<s_exbonus> b = *it;
 
 		if( ( b->pos & position ) != b->pos ){
 			it++;
@@ -16234,7 +16453,8 @@ void do_init_pc(void) {
 	add_timer_func_list(pc_autotrade_timer, "pc_autotrade_timer");
 	add_timer_func_list(pc_on_expire_active, "pc_on_expire_active");
 	add_timer_func_list(pc_macro_detector_timeout, "pc_macro_detector_timeout");
-	add_timer_func_list( pc_goldpc_update, "pc_goldpc_update" );
+	add_timer_func_list(pc_goldpc_update, "pc_goldpc_update" );
+	add_timer_func_list(pc_endexbonus, "pc_endexbonus");
 
 	add_timer(gettick() + autosave_interval, pc_autosave, 0, 0);
 

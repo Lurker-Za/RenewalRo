@@ -858,6 +858,8 @@
 	export_constant2("bAddItemSPHealRate", SP_ADD_ITEM_SPHEAL_RATE);
 	export_constant2("bAddItemGroupSPHealRate", SP_ADD_ITEMGROUP_SPHEAL_RATE);
 	export_constant2("bWeaponSubSize", SP_WEAPON_SUBSIZE);
+	export_constant2("bJumprange", SP_JUMPRANGE);
+	export_constant2("bSummonSlave", SP_SUMMON_SLAVE);
 
 	/* equip indices */
 	export_constant(EQI_COMPOUND_ON);
@@ -2012,6 +2014,10 @@
 	export_constant(SC_PREMIUM_ITEMBOOST);
 	export_constant(SC_PREMIUM_EXPBOOST);
 	export_constant(SC_SPEEDUP2);
+	export_constant(SC_JUMPPENALTY);
+	export_constant(SC_DELSEFFECT);
+	export_constant(SC_DELSEFFECT2);
+	export_constant(SC_DELSEFFECT3);
 
 /// Do not modify code below this, until the end of the API hook, since it will be automatically generated again
 /// @APIHOOK_START(EFST_CONST)

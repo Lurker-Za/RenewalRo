@@ -1708,6 +1708,8 @@ int32 clif_spawn( block_list *bl, bool walking ){
 	case BL_MOB:
 		{
 			TBL_MOB *md = ((TBL_MOB*)bl);
+			if (md->special_state.clone == 3) //If it is a clone
+				clif_specialeffect(md, EF_GRAYBODY, AREA);
 			if(md->special_state.size==SZ_BIG) // tiny/big mobs [Valaris]
 				clif_specialeffect(md,EF_GIANTBODY2,AREA);
 			else if(md->special_state.size==SZ_MEDIUM)
@@ -2079,6 +2081,8 @@ void clif_move( struct unit_data& ud )
 	case BL_MOB:
 		{
 			mob_data* md = reinterpret_cast<mob_data*>( bl );
+			if (md->special_state.clone == 3) //If it is a clone
+				clif_specialeffect(md, EF_GRAYBODY, AREA);
 			if (md->special_state.size == SZ_BIG) // tiny/big mobs [Valaris]
 				clif_specialeffect(md, EF_GIANTBODY2, AREA);
 			else if (md->special_state.size == SZ_MEDIUM)
@@ -5080,6 +5084,8 @@ void clif_getareachar_unit( map_session_data* sd,block_list *bl ){
 	case BL_MOB:
 		{
 			TBL_MOB* md = (TBL_MOB*)bl;
+			if (md->special_state.clone == 3) //If it is a clone
+				clif_specialeffect(md, EF_GRAYBODY, AREA);
 			if(md->special_state.size==SZ_BIG) // tiny/big mobs [Valaris]
 				clif_specialeffect_single(bl,EF_GIANTBODY2,sd->fd);
 			else if(md->special_state.size==SZ_MEDIUM)

@@ -2861,6 +2861,7 @@ void skill_combo(block_list* src,block_list *dsrc, block_list *bl, uint16 skill_
 enum sc_type skill_get_sc(int16 skill_id);
 void skill_reveal_trap_inarea(block_list *src, int32 range, int32 x, int32 y);
 int32 skill_get_time3(struct map_data *mapdata, uint16 skill_id, uint16 skill_lv);
+bool skill_check_unit_movepos2(uint8 check_flag, block_list* bl, int16 dst_x, int16 dst_y, int32 easy, bool checkpath);
 
 /// Variable name of copied skill by Plagiarism
 #define SKILL_VAR_PLAGIARISM "CLONE_SKILL"

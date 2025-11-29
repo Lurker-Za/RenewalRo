@@ -2237,6 +2237,35 @@ int32 skill_additional_effect( block_list* src, block_list *bl, uint16 skill_id,
 		src = sd?sd:src;
 	}
 
+	if (sd) {
+		if (!sd->summonslave.empty()) { //PC custom summonslave
+			for (const auto &it : sd->summonslave) {
+				if (!(((it.battle_flag)&attack_type)&BF_WEAPONMASK &&
+					  ((it.battle_flag)&attack_type)&BF_RANGEMASK &&
+					  ((it.battle_flag)&attack_type)&BF_SKILLMASK))
+					continue; // one or more trigger conditions were not fulfilled
+	
+				int rate = it.rate;
+				int damage = it.damage;
+				uint32 duration = it.duration;
+				enum e_mode mode = static_cast<e_mode>(it.mode);
+	
+				if (rnd()%1000 >= rate)
+					continue;
+
+				if (mob_countslave(sd) >= it.flag)
+					continue;
+
+				pc_summon_slave(sd, src->m, src->x + (rnd() % 10 - 5), src->y + (rnd() % 10 - 5), "", it.id, src->id, mode, 2, duration, damage);
+
+				char temp[70];
+				snprintf(temp, sizeof(temp), msg_txt(sd, 2005));
+				clif_showscript(src, temp, AREA);
+			}
+		}
+	}
+
+
 	if( attack_type&BF_WEAPON )
 	{ // Breaking Equipment
 		if( sd && battle_config.equip_self_break_rate )
@@ -2772,6 +2801,16 @@ int32 skill_counter_additional_effect (block_list* src, block_list *bl, uint16 s
 					continue; // one or more trigger conditions were not fulfilled
 
 				pc_exeautobonus(*sd, &sd->autobonus, it);
+				if (!sd->exbonus.empty()) {
+					for (auto &it : sd->exbonus) {
+						if (it == nullptr)
+							continue;
+						if (rnd_value(0, 1000) >= it->rate)
+							continue;
+						
+						pc_exeexbonus(*sd, &sd->exbonus, it);
+					}
+				}
 			}
 		}
 
@@ -24924,6 +24963,10 @@ static bool skill_check_unit_movepos(uint8 check_flag, block_list *bl, int16 dst
 		return false;
 
 	return unit_movepos(bl, dst_x, dst_y, easy, checkpath);
+}
+
+bool skill_check_unit_movepos2(uint8 check_flag, block_list *bl, int16 dst_x, int16 dst_y, int32 easy, bool checkpath) {
+	return skill_check_unit_movepos(check_flag, bl, dst_x, dst_y, easy, checkpath);
 }
 
 /**

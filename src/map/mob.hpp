@@ -272,6 +272,7 @@ struct s_mob_db {
 	t_exp mexp;
 	uint16 range2;
 	uint16 range3;
+	uint16 range4;
 	std::vector<e_race2> race2;
 	uint16 lv;
 	std::vector<std::shared_ptr<s_mob_drop>> dropitem;
@@ -349,7 +350,7 @@ struct mob_data : public block_list {
 	struct s_specialState {
 		uint32 size : 2; //Small/Big monsters.
 		enum mob_ai ai; //Special ai for summoned monsters.
-		uint32 clone : 1;/* is clone? 1:0 */
+		uint32 clone : 3;/* is clone? 1:0 */
 	} special_state; //Special mob information that does not needs to be zero'ed on mob respawn.
 	struct s_MobState {
 		uint32 aggressive : 1; //Signals whether the mob AI is in aggressive mode or reactive mode. [Skotlex]
@@ -401,6 +402,7 @@ struct mob_data : public block_list {
 	 **/
 	int32 tomb_nid;
 	uint16 damagetaken;
+	uint32 damagereduce;
 
 	e_mob_bosstype get_bosstype();
 	map_session_data* get_mvp_player(map_session_data* first_sd);
@@ -568,6 +570,7 @@ int32 mob_removeslaves(block_list* bl);
 int32 mob_is_clone(int32 mob_id);
 
 int32 mob_clone_spawn(map_session_data *sd, int16 m, int16 x, int16 y, const char *event, int32 master_id, enum e_mode mode, int32 flag, uint32 duration);
+int32 pc_summon_slave(map_session_data *sd, int16 m, int16 x, int16 y, const char *event, uint32 id, int32 master_id, enum e_mode mode, int32 flag, uint32 duration, uint32 reduce);
 int32 mob_clone_delete(mob_data *md);
 
 void mob_reload_itemmob_data(void);

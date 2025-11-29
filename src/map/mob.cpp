@@ -1535,13 +1535,19 @@ static int32 mob_ai_sub_hard_slavemob(mob_data *md,t_tick tick)
 	}
 	if (bl->prev == nullptr)
 		return 0; //Master not on a map? Could be warping, do not process.
+	
+	map_session_data* sd = BL_CAST(BL_PC, bl);
+	if (sd && md->special_state.clone == 3 && sd->summonslave.empty()) {
+		status_kill(md);
+		return 1;
+	}
 
 	if(status_has_mode(&md->status,MD_CANMOVE))
 	{	//If the mob can move, follow around. [Check by Skotlex]
 		// Distance with between slave and master is measured.
 		md->master_dist = distance_bl(md, bl);
 
-		if (battle_config.slave_stick_with_master || md->special_state.ai == AI_ABR || md->special_state.ai == AI_BIONIC) {
+		if (battle_config.slave_stick_with_master || md->special_state.ai == AI_ABR || md->special_state.ai == AI_BIONIC || md->special_state.clone >= 2) {
 			// Teleport to master if further away than 15 cells (official value for AI_ABR and AI_BIONIC)
 			if (bl->m != md->m || md->master_dist > AREA_SIZE+1) {
 				md->master_dist = 0;
@@ -2799,7 +2805,7 @@ void mob_damage(mob_data *md, block_list *src, int32 damage)
 
 #if PACKETVER >= 20120404
 	if (battle_config.monster_hp_bars_info && !map_getmapflag(md->m, MF_HIDEMOBHPBAR)) {
-		if (md->special_state.ai == AI_ABR || md->special_state.ai == AI_BIONIC) {
+		if (md->special_state.ai == AI_ABR || md->special_state.ai == AI_BIONIC ||md->special_state.clone > 0) {
 			clif_summon_hp_bar(*md);
 		}
 
@@ -2978,6 +2984,8 @@ int32 mob_dead(mob_data *md, block_list *src, int32 type)
 	if (md->master_id) {
 		block_list *master_bl = map_id2bl(md->master_id);
 		if (master_bl) {
+			if (md->special_state.clone >= 2)
+				md->damagereduce = 0;
 			status_change *sc = status_get_sc(master_bl);
 			if (sc && md->mob_id) {
 				if (md->mob_id == MOBID_BIONIC_WOODENWARRIOR && sc->getSCE(SC_BIONIC_WOODENWARRIOR))
@@ -3906,7 +3914,7 @@ void mob_heal(mob_data *md,uint32 heal)
 		clif_name_area(md);
 #if PACKETVER >= 20120404
 	if (battle_config.monster_hp_bars_info && !map_getmapflag(md->m, MF_HIDEMOBHPBAR)) {
-		if (md->special_state.ai == AI_ABR || md->special_state.ai == AI_BIONIC) {
+		if (md->special_state.ai == AI_ABR || md->special_state.ai == AI_BIONIC ||md->special_state.clone > 0) {
 			clif_summon_hp_bar(*md);
 		}
 
@@ -4821,6 +4829,223 @@ int32 mob_clone_spawn(map_session_data *sd, int16 m, int16 x, int16 y, const cha
 	return md->id;
 }
 
+int32 pc_summon_slave(map_session_data* sd, int16 m, int16 x, int16 y, const char* event, uint32 id, int32 master_id, enum e_mode mode, int32 flag, uint32 duration, uint32 reduce)
+{
+	int32 mob_id;
+	int32 inf, fd;
+	mob_data *md;
+	struct status_data *status;
+	std::shared_ptr<s_mob_db> db;
+
+	nullpo_ret(sd);
+
+	if(pc_isdead(sd) && master_id && flag&(1|2))
+		return 0;
+
+	if (id > 0) {
+		mob_id = id;
+		db = mob_db.find(mob_id);
+	} else {
+		ARR_FIND(MOB_CLONE_START, MOB_CLONE_END, mob_id, !mob_db.exists(mob_id));
+		if (mob_id >= MOB_CLONE_END)
+			return 0;
+
+		db = std::make_shared<s_mob_db>();
+
+		mob_db.put(mob_id, db);
+
+		status = &db->status;
+		db->sprite = sd->status.name;
+		db->name = sd->status.name;
+		db->jname = sd->status.name;
+		db->lv = status_get_lv(sd);
+		memcpy(status, &sd->base_status, sizeof(struct status_data));
+		if (mode > MD_NONE) //User provided mode.
+			status->mode = mode;
+		else if (flag & (1|2)) //Friendly Character, remove looting.
+			status->mode = static_cast<enum e_mode>(status->mode & (~MD_LOOTER));
+		status->hp = status->max_hp;
+		status->sp = status->max_sp;
+		memcpy(&db->vd, &sd->vd, sizeof(struct view_data));
+		db->base_exp = 1;
+		db->job_exp = 1;
+		db->status.rhw.range = status->rhw.original_range;
+		db->range2 = AREA_SIZE; //Let them have the same view-range as players.
+		db->range3 = AREA_SIZE; //Min chase of a screen.
+		db->range4 = 10;
+		db->option = sd->sc.option;
+	}
+
+	/**
+	 * We temporarily disable sd's fd so it doesn't receive the messages from skill_check_condition_castbegin
+	 **/
+	fd = sd->fd;
+	sd->fd = 0;
+	memset(&db->skill, 0, sizeof(db->skill));
+
+	//Go Backwards to give better priority to advanced skills.
+	std::shared_ptr<s_skill_tree> tree = skill_tree_db.find(sd->status.class_);
+
+	if( tree != nullptr && !tree->skills.empty() ){
+		std::vector<uint16> skill_list;
+
+		for (const auto &it : tree->skills)
+			skill_list.push_back(it.first);
+		std::sort(skill_list.rbegin(), skill_list.rend());
+
+		for (const auto &it : skill_list) {
+			if (db->skill.size() >= MAX_MOBSKILL)
+				break;
+			uint16 skill_id = it;
+			uint16 sk_idx = 0;
+
+			if (!skill_id || !(sk_idx = skill_get_index(skill_id)) || sd->status.skill[sk_idx].lv < 1 ||
+				skill_get_inf2_(skill_id, { INF2_ISWEDDING, INF2_ISGUILD }) ||
+				mob_clone_disabled_skills(skill_id)
+			)
+				continue;
+			//Normal aggressive mob, disable skills that cannot help them fight
+			//against players (those with flags UF_NOMOB and UF_NOPC are specific
+			//to always aid players!) [Skotlex]
+			if (!(flag&(1|2)) &&
+				skill_get_unit_id(skill_id) &&
+				skill_get_unit_flag_(skill_id, { UF_NOMOB, UF_NOPC }))
+				continue;
+			/**
+			 * The clone should be able to cast the skill (e.g. have the required weapon) bugreport:5299)
+			 **/
+			if( !skill_check_condition_castbegin(*sd,skill_id,sd->status.skill[sk_idx].lv) )
+				continue;
+
+			std::shared_ptr<s_mob_skill> ms = std::make_shared<s_mob_skill>();
+
+			ms->skill_id = skill_id;
+			ms->skill_lv = sd->status.skill[sk_idx].lv;
+			ms->state = MSS_ANY;
+			ms->permillage = 500*battle_config.mob_skill_rate/100; //Default chance of all skills: 5%
+			ms->emotion = -1;
+			ms->cancel = 0;
+			ms->casttime = skill_castfix(sd,skill_id, ms->skill_lv);
+			ms->delay = skill_get_cooldown(skill_id, ms->skill_lv);
+			ms->msg_id = 0;
+
+			inf = skill_get_inf(skill_id);
+			if (inf&INF_ATTACK_SKILL) {
+				ms->target = MST_TARGET;
+				ms->cond1 = MSC_ALWAYS;
+				if (skill_get_range(skill_id, ms->skill_lv)  > 3)
+					ms->state = MSS_ANYTARGET;
+				else
+					ms->state = MSS_BERSERK;
+			} else if(inf&INF_GROUND_SKILL) {
+				if (skill_get_inf2(skill_id, INF2_ISTRAP)) { //Traps!
+					ms->state = MSS_IDLE;
+					ms->target = MST_AROUND2;
+					ms->delay = 60000;
+				} else if (skill_get_unit_target(skill_id) == BCT_ENEMY) { //Target Enemy
+					ms->state = MSS_ANYTARGET;
+					ms->target = MST_TARGET;
+					ms->cond1 = MSC_ALWAYS;
+				} else { //Target allies
+					ms->target = MST_FRIEND;
+					ms->cond1 = MSC_FRIENDHPLTMAXRATE;
+					ms->cond2 = 95;
+				}
+			} else if (inf&INF_SELF_SKILL) {
+				if (skill_get_inf2(skill_id, INF2_NOTARGETSELF)) { //auto-select target skill.
+					ms->target = MST_TARGET;
+					ms->cond1 = MSC_ALWAYS;
+					if (skill_get_range(skill_id, ms->skill_lv)  > 3) {
+						ms->state = MSS_ANYTARGET;
+					} else {
+						ms->state = MSS_BERSERK;
+					}
+				} else { //Self skill
+					ms->target = MST_SELF;
+					ms->cond1 = MSC_MYHPLTMAXRATE;
+					ms->cond2 = 90;
+					ms->permillage = 2000;
+					//Delay: Remove the stock 5 secs and add half of the support time.
+					ms->delay += -5000 +(skill_get_time(skill_id, ms->skill_lv) + skill_get_time2(skill_id, ms->skill_lv))/2;
+					if (ms->delay < 5000)
+						ms->delay = 5000; //With a minimum of 5 secs.
+				}
+			} else if (inf&INF_SUPPORT_SKILL) {
+				ms->target = MST_FRIEND;
+				ms->cond1 = MSC_FRIENDHPLTMAXRATE;
+				ms->cond2 = 90;
+				if (skill_id == AL_HEAL)
+					ms->permillage = 5000; //Higher skill rate usage for heal.
+				else if (skill_id == ALL_RESURRECTION)
+					ms->cond2 = 1;
+				//Delay: Remove the stock 5 secs and add half of the support time.
+				ms->delay += -5000 +(skill_get_time(skill_id, ms->skill_lv) + skill_get_time2(skill_id, ms->skill_lv))/2;
+				if (ms->delay < 2000)
+					ms->delay = 2000; //With a minimum of 2 secs.
+
+				if (db->skill.size() < MAX_MOBSKILL) { //duplicate this so it also triggers on self.
+					ms->target = MST_SELF;
+					ms->cond1 = MSC_MYHPLTMAXRATE;
+					db->skill.push_back(ms);
+				}
+			} else {
+				switch (skill_id) { //Certain Special skills that are passive, and thus, never triggered.
+					case MO_TRIPLEATTACK:
+					case TF_DOUBLE:
+					case GS_CHAINACTION:
+						ms->state = MSS_BERSERK;
+						ms->target = MST_TARGET;
+						ms->cond1 = MSC_ALWAYS;
+						ms->permillage = skill_id==MO_TRIPLEATTACK?(3000-ms->skill_lv*100):(ms->skill_lv*500);
+						ms->delay -= 5000; //Remove the added delay as these could trigger on "all hits".
+						break;
+					default: //Untreated Skill
+						continue;
+				}
+			}
+			if (battle_config.mob_skill_rate!= 100)
+				ms->permillage = ms->permillage*battle_config.mob_skill_rate/100;
+			if (battle_config.mob_skill_delay != 100)
+				ms->delay = ms->delay*battle_config.mob_skill_delay/100;
+
+			db->skill.push_back(ms);
+		}
+	}
+
+	/**
+	 * We grant the session it's fd value back.
+	 **/
+	sd->fd = fd;
+
+	//Finally, spawn it.
+	md = mob_once_spawn_sub(sd, m, x, y, "--en--", mob_id, event, SZ_SMALL, AI_NONE);
+	if (!md) return 0; //Failed?
+
+	if (flag & 2)
+		md->special_state.clone = 3;
+	else
+		md->special_state.clone = 2;
+
+	md->damagereduce = reduce;
+
+	if (master_id || flag || duration) { //Further manipulate crafted char.
+		if (flag&(1|2)) //Friendly Character
+			md->special_state.ai = AI_ATTACK;
+		if (master_id) //Attach to Master
+			md->master_id = master_id;
+		if (duration) //Auto Delete after a while.
+		{
+			if( md->deletetimer != INVALID_TIMER )
+				delete_timer(md->deletetimer, mob_timer_delete);
+			md->deletetimer = add_timer (gettick() + duration, mob_timer_delete, md->id, 0);
+		}
+	}
+
+	mob_spawn(md);
+
+	return md->id;
+}
+
 int32 mob_clone_delete(mob_data *md){
 	uint32 mob_id = md->mob_id;
 
@@ -5272,6 +5497,15 @@ uint64 MobDatabase::parseBodyNode(const ryml::NodeRef& node) {
 			return 0;
 
 		mob->range3 = range;
+	}
+
+	if (this->nodeExists(node, "MasterRange")) {
+		uint16 range;
+
+		if (!this->asUInt16(node, "MasterRange", range))
+			return 0;
+
+		mob->range4 = range;
 	}
 	
 	if (this->nodeExists(node, "Size")) {

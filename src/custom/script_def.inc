@@ -9,3 +9,14 @@
  **/
 
 //BUILDIN_DEF(example,""),
+
+//-----------------------------------------------------
+//Custom bonuses start
+//-----------------------------------------------------
+BUILDIN_DEF(exbonus,"sii??"),
+BUILDIN_DEF(getequipcombocnt,""),
+BUILDIN_DEF(clonemob,"siisi??????"),
+BUILDIN_DEF2(bonus,"bonus7","ivviiiii"),
+//-----------------------------------------------------
+//Custom bonuses end
+//-----------------------------------------------------

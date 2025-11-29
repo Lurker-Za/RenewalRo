@@ -2918,6 +2918,34 @@ int32 unit_attack(block_list *src,int32 target_id,int32 continuous)
 		unit_unattackable(src);
 		return stop_flag;
 	}
+	
+	TBL_PC *sd = BL_CAST(BL_PC, src);
+	status_change *sc = status_get_sc(src);
+	uint8 dir = map_calc_dir(target, src->x, src->y);
+	int32 jrange = status_get_status_data(*src)->rhw.original_range;
+	if (sd && sd->jumpattack.range > 0 && distance_bl(src, target) > jrange) {
+		char temp[70];
+		snprintf(temp, sizeof(temp), msg_txt(sd, 2000));
+		if(DIFF_TICK(ud->attackabletime, gettick()) <= 0 && skill_check_unit_movepos2(0, src, target->x, target->y, 1, 1)) {
+			sc_start(nullptr, src, SC_JUMPPENALTY, 100, 0, status_get_adelay(src));
+			if (sd->jumpattack.mobid > 0) {
+				clif_specialeffect(src, 1751, AREA);
+				if((!sc->getSCE(SC_DELSEFFECT) || sc->getSCE(SC_DELSEFFECT)->val1 != 1751))
+					sc_start(nullptr, src, SC_DELSEFFECT, 100, 1751, status_get_adelay(src));
+				sc_start2(nullptr, src, SC_ACTIVE_MONSTER_TRANSFORM, 100, sd->jumpattack.mobid, 0, status_get_adelay(src));
+			}
+			skill_blown(src, src, jrange, (map_calc_dir_xy(target->x, target->y, src->x+ dirx[dir], src->y+diry[dir], unit_getdir(src))+4)%8, BLOWN_IGNORE_NO_KNOCKBACK);
+			if (sd->jumpattack.splash > 0) {
+				clif_skill_nodamage(src, *target, SHC_SAVAGE_IMPACT, -1, 1);
+				clif_skill_nodamage(src, *target, DK_HACKANDSLASHER, -1, 1);
+			}
+			clif_showscript(src, temp, AREA);
+		} else {
+			clif_skill_fail(*sd, 0, USESKILL_FAIL, 0);
+			clif_showscript(src, temp, AREA);
+			return 1;
+		}
+	}
 
 	if( src->type == BL_PC &&
 		target->type == BL_NPC ) {
@@ -3934,6 +3962,7 @@ int32 unit_free(block_list *bl, clr_type clrtype)
 			pc_delautobonus(*sd, sd->autobonus, false);
 			pc_delautobonus(*sd, sd->autobonus2, false);
 			pc_delautobonus(*sd, sd->autobonus3, false);
+			pc_delexbonus(*sd, sd->exbonus, false);
 
 			if( sd->followtimer != INVALID_TIMER )
 				pc_stop_following(sd);

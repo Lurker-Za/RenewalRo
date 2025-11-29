@@ -3719,6 +3719,8 @@ uint16 ComboDatabase::find_combo_id( const std::vector<t_itemid>& items ){
  */
 uint64 ComboDatabase::parseBodyNode(const ryml::NodeRef& node) {
 	std::vector<std::vector<t_itemid>> items_list;
+	bool global_required_all = true;
+	bool is_config_set = false;
 
 	if( !this->nodesExist( node, { "Combos" } ) ){
 		return 0;
@@ -3727,6 +3729,18 @@ uint64 ComboDatabase::parseBodyNode(const ryml::NodeRef& node) {
 	const ryml::NodeRef& combosNode = node["Combos"];
 
 	for (const auto& comboit : combosNode) {
+
+		if (comboit.has_child("RequiredAll")) {
+			if (is_config_set) {
+				this->invalidWarning(comboit, "RequiredAll can only be set once per Combos block.\n");
+				return 0;
+			}
+			
+			comboit["RequiredAll"] >> global_required_all;
+			is_config_set = true;
+			continue;
+		}
+
 		static const std::string nodeName = "Combo";
 
 		if (!this->nodesExist(comboit, { nodeName })) {
@@ -3812,6 +3826,8 @@ uint64 ComboDatabase::parseBodyNode(const ryml::NodeRef& node) {
 			combo->nameid.insert(combo->nameid.begin(), itemsit.begin(), itemsit.end());
 			combo->id = ++this->combo_num;
 		}
+
+		combo->required_all = global_required_all;
 
 		if (this->nodeExists(node, "Script")) {
 			std::string script;

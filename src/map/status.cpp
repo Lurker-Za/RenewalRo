@@ -3870,6 +3870,7 @@ int32 status_calc_pc_sub(map_session_data* sd, uint8 opt)
 	sd->hp_vanish.clear();
 	sd->itemsphealrate.clear();
 	sd->itemgroupsphealrate.clear();
+	sd->summonslave.clear();
 
 	// Zero up structures...
 	memset(&sd->hp_loss, 0, sizeof(sd->hp_loss)
@@ -3883,6 +3884,7 @@ int32 status_calc_pc_sub(map_session_data* sd, uint8 opt)
 		+ sizeof(sd->norecover_state_race)
 		+ sizeof(sd->hp_vanish_race)
 		+ sizeof(sd->sp_vanish_race)
+		+ sizeof(sd->jumpattack)
 	);
 
 	memset(&sd->bonus, 0, sizeof(sd->bonus));
@@ -3891,6 +3893,7 @@ int32 status_calc_pc_sub(map_session_data* sd, uint8 opt)
 	pc_delautobonus(*sd, sd->autobonus, true);
 	pc_delautobonus(*sd, sd->autobonus2, true);
 	pc_delautobonus(*sd, sd->autobonus3, true);
+	pc_delexbonus(*sd, sd->exbonus, true);
 
 	if (sd->pd != nullptr) {
 		pet_delautobonus(*sd, sd->pd->autobonus, true);
@@ -4079,7 +4082,9 @@ int32 status_calc_pc_sub(map_session_data* sd, uint8 opt)
 			if (no_run)
 				continue;
 
+			sd->current_combo_count = combo->count;
 			run_script(combo->bonus, 0, sd->id, 0);
+			sd->current_combo_count = 0;
 
 			if (!calculating) // Abort, run_script retriggered this
 				return 1;
@@ -4507,6 +4512,16 @@ int32 status_calc_pc_sub(map_session_data* sd, uint8 opt)
 
 	if ((skill = pc_checkskill(sd, SU_SOULATTACK)) > 0)
 		base_status->rhw.range += skill_get_range2(sd, SU_SOULATTACK, skill, true);
+
+	if (sd->jumpattack.range > 0) {
+		if (sd->jumpattack.range > base_status->rhw.range) {
+			int range_before = base_status->rhw.range;
+			base_status->rhw.original_range = range_before;
+			base_status->rhw.range = sd->jumpattack.range;
+		} else {
+			base_status->rhw.original_range = base_status->rhw.range;
+		}
+	}
 
 // ----- FLEE CALCULATION -----
 
@@ -8361,6 +8376,10 @@ static int16 status_calc_aspd(block_list *bl, status_change *sc, bool fixed)
 			if ((skill_lv = pc_checkskill(sd, RG_PLAGIARISM)) > 0)
 				bonus += skill_lv;
 		}
+		if (sc->getSCE(SC_JUMPPENALTY)) {
+			if (sd && sd->jumpattack.penalty > 0)
+				bonus -= sd->jumpattack.penalty;
+		}
 	}
 
 	return bonus;
@@ -11565,6 +11584,9 @@ static bool status_change_start_post_delay(block_list* src, block_list* bl, sc_t
 			else
 				val2 = 0; // 0 -> Half stat.
 			break;
+		case SC_JUMPPENALTY:
+			sd->state.jumpattack = 1;
+			break;
 		case SC_TRICKDEAD:
 			if (vd) vd->dead_sit = 1;
 			tick = INFINITE_TICK;
@@ -13783,6 +13805,15 @@ int32 status_change_end( block_list* bl, enum sc_type type, int32 tid ){
 				}
 				break;
 #endif
+		case SC_JUMPPENALTY:
+			sd->state.jumpattack = 0;
+			break;
+		case SC_DELSEFFECT:
+		case SC_DELSEFFECT2:
+		case SC_DELSEFFECT3:
+			if(val1 > 0 && !sc->getSCE(val2))
+				clif_specialeffect_remove(bl, val1, AREA, bl);
+			break;
 		case SC_TRICKDEAD:
 			if (vd) vd->dead_sit = 0;
 			break;

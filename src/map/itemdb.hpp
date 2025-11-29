@@ -3183,6 +3183,7 @@ struct s_item_combo {
 	std::vector<t_itemid> nameid;
 	script_code *script;
 	uint16 id;
+	bool required_all;
 
 	~s_item_combo() {
 		if (this->script) {

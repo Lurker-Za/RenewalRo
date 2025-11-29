@@ -2303,6 +2303,8 @@ struct DBMap* script_get_label_db(void);
 struct DBMap* script_get_userfunc_db(void);
 void script_run_autobonus(const char *autobonus, map_session_data *sd, uint32 pos);
 void script_run_petautobonus(const std::string &autobonus, map_session_data &sd);
+void script_run_exbonus(const char *exbonus, map_session_data *sd, uint32 pos);
+void script_add_exbonus(const char *exbonus);
 
 const char* script_get_constant_str(const char* prefix, int64 value);
 bool script_get_parameter(const char* name, int64* value);
