@@ -316,6 +316,19 @@ uint64 RefineDatabase::parseBodyNode( const ryml::NodeRef& node ){
 									cost->chance = 0;
 								}
 							}
+							
+							if (this->nodeExists(chanceNode, "EventRate")) {
+								uint16 erate;
+
+								if (!this->asUInt16Rate(chanceNode, "EventRate", erate)) {
+									return 0;
+								}
+								cost->chance_event = erate;
+							}else{
+								if( !cost_exists ){
+									cost->chance_event = 0;
+								}
+							}
 
 							if( this->nodeExists( chanceNode, "Price" ) ){
 								uint32 price;
@@ -3870,6 +3883,13 @@ int32 status_calc_pc_sub(map_session_data* sd, uint8 opt)
 	sd->hp_vanish.clear();
 	sd->itemsphealrate.clear();
 	sd->itemgroupsphealrate.clear();
+	sd->skillboost.clear();
+	sd->skillhealap.clear();
+	sd->skillsplashrange.clear();
+	sd->doublecast.clear();
+	sd->doublecastskill.clear();
+	sd->skillapuse.clear();
+	sd->collection.clear();
 	sd->summonslave.clear();
 
 	// Zero up structures...
@@ -3885,6 +3905,8 @@ int32 status_calc_pc_sub(map_session_data* sd, uint8 opt)
 		+ sizeof(sd->hp_vanish_race)
 		+ sizeof(sd->sp_vanish_race)
 		+ sizeof(sd->jumpattack)
+		+ sizeof(sd->skill_no_require_item)
+		+ sizeof(sd->skill_no_require)
 	);
 
 	memset(&sd->bonus, 0, sizeof(sd->bonus));
@@ -5195,6 +5217,17 @@ int32 status_calc_elemental_(s_elemental_data *ed, uint8 opt)
 
 	if( !sd )
 		return 0;
+	
+	if (sd->ed->elemental.class_ != ELEMENTALID_DILUVIO)
+		status_change_end(sd, SC_SUMMON_ELEMENTAL_DILUVIO);
+	if (sd->ed->elemental.class_ != ELEMENTALID_ARDOR)
+		status_change_end(sd, SC_SUMMON_ELEMENTAL_ARDOR);
+	if (sd->ed->elemental.class_ != ELEMENTALID_PROCELLA)
+		status_change_end(sd, SC_SUMMON_ELEMENTAL_PROCELLA);
+	if (sd->ed->elemental.class_ != ELEMENTALID_TERREMOTUS)
+		status_change_end(sd, SC_SUMMON_ELEMENTAL_TERREMOTUS);
+	if (sd->ed->elemental.class_ != ELEMENTALID_SERPENS)
+		status_change_end(sd, SC_SUMMON_ELEMENTAL_SERPENS);
 
 	if (opt&SCO_FIRST) {
 		memcpy(status, &ed->db->status, sizeof(struct status_data));

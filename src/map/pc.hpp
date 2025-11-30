@@ -406,6 +406,7 @@ public:
 	status_change sc;
 	struct regen_data regen;
 	struct regen_data_sub sregen, ssregen;
+	int32 hitelement;
 	//NOTE: When deciding to add a flag to state or special_state, take into consideration that state is preserved in
 	//status_calc_pc, while special_state is recalculated in each call. [Skotlex]
 	struct s_state {
@@ -480,7 +481,12 @@ public:
 		bool roulette_open;
 		t_itemid item_reform;
 		uint64 item_enchant_index;
+		uint32 doublecast[MAX_SKILL];
+		uint32 doublestate : 1;
+		uint32 prevdoublestate : 1;
+		uint32 autocastskill;
 		uint32 jumpattack : 1;
+		uint32 multihit : 5;
 	} state;
 	struct {
 		unsigned char no_weapon_damage, no_magic_damage, no_misc_damage;
@@ -495,6 +501,9 @@ public:
 		uint32 bonus_coma : 1;
 		uint32 no_mado_fuel : 1; // Disable Magic_Gear_Fuel consumption [Secret]
 		uint32 no_walk_delay : 1;
+		uint32 no_require_ammo : 1; // [Cydh]
+		uint32 skill_no_require : 1; // indicates if sd->skill_no_require struct array has entry [Cydh]
+		uint32 skill_no_require_item : 1; // indicates if sd->bonus.no_require_item array has entry [Cydh]
 	} special_state;
 	uint32 login_id1, login_id2;
 	uint64 class_;	//This is the internal job ID used by the map server to simplify comparisons/queries/etc. [Skotlex]
@@ -630,11 +639,13 @@ public:
 	} indexed_bonus;
 	// zeroed arrays end here.
 
-	std::vector<s_autospell> autospell, autospell2, autospell3, summonslave;
+	std::vector<s_autospell> autospell, autospell2, autospell3, skillhealap, doublecast, doublecastskill, summonslave;
 	std::vector<s_addeffect> addeff, addeff_atked;
 	std::vector<s_addeffectonskill> addeff_onskill;
 	std::vector<s_item_bonus> skillatk, skillusesprate, skillusesp, skillheal, skillheal2, skillblown, skillcastrate, skillfixcastrate, subskill, skillcooldown, skillfixcast,
-		skillvarcast, skilldelay, itemhealrate, add_def, add_mdef, add_mdmg, reseff, itemgrouphealrate, itemsphealrate, itemgroupsphealrate;
+		skillvarcast, skilldelay, itemhealrate, add_def, add_mdef, add_mdmg, reseff, itemgrouphealrate, itemsphealrate, itemgroupsphealrate,
+		skillboost, skillsplashrange, skillapuse, collection;
+	std::vector<s_add_drop> add_drop;
 	std::vector<s_addele2> subele2;
 	std::vector<s_vanish_bonus> sp_vanish, hp_vanish;
 	std::vector<s_addrace2> subrace3;
@@ -661,6 +672,12 @@ public:
 		int16 range, splash;
 		int32 rate, penalty, mobid;
 	} jumpattack;
+
+	struct s_skill_no_require { // [Cydh]
+		uint16 skill_id;
+		uint16 state; // see e_bonus_noreq
+	} skill_no_require[MAX_PC_BONUS];
+	int32 skill_no_require_item[MAX_PC_BONUS]; // [Cydh]
 
 	// zeroed vars start here.
 	struct s_bonus {
@@ -709,6 +726,14 @@ public:
 		int16 critical_rangeatk;
 		int16 weapon_atk_rate, weapon_matk_rate;
 		int32 skill_ratio;
+		int32 normalatk_rate;
+		int32 multi_rate;
+		int32 skillcooldown;
+		int32 skillatk;
+		int32 subskill;
+		int32 magicnormal;
+		int32 res_ratio_atk_class;
+		uint16 skill_no_require; // [Cydh]
 	} bonus;
 	// zeroed vars end here.
 
@@ -1587,6 +1612,9 @@ int32 pc_skillatk_bonus(map_session_data *sd, uint16 skill_id);
 int32 pc_sub_skillatk_bonus(map_session_data *sd, uint16 skill_id);
 int32 pc_skillheal_bonus(map_session_data *sd, uint16 skill_id);
 int32 pc_skillheal2_bonus(map_session_data *sd, uint16 skill_id);
+int32 pc_skillboost_bonus(map_session_data* sd, uint16 skill_id);
+int32 pc_skillsplashrange_bonus(map_session_data* sd, uint16 skill_id);
+int32 pc_skillapuse_bonus(map_session_data* sd, uint16 skill_id);
 
 void pc_damage(map_session_data *sd,block_list *src,uint32 hp, uint32 sp, uint32 ap);
 int32 pc_dead(map_session_data *sd,block_list *src);

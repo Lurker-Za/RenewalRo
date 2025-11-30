@@ -2563,6 +2563,11 @@ int32 unit_skilluse_id2(block_list *src, int32 target_id, uint16 skill_id, uint1
 			status_calc_bl(sd, { SCB_SPEED, SCB_ASPD });
 	} else
 		skill_castend_id(ud->skilltimer,tick,src->id,0);
+	
+	if (sd) {
+		sd->state.doublecast[skill_id] = 0;
+		sd->state.prevdoublestate = 0;
+	}
 
 	if( sd && battle_config.prevent_logout_trigger&PLT_SKILL )
 		sd->canlog_tick = gettick();
@@ -2762,6 +2767,11 @@ int32 unit_skilluse_pos2( block_list *src, int16 skill_x, int16 skill_y, uint16 
 	} else {
 		ud->skilltimer = INVALID_TIMER;
 		skill_castend_pos(ud->skilltimer,tick,src->id,0);
+	}
+	
+	if (sd) {
+		sd->state.doublecast[skill_id] = 0;
+		sd->state.prevdoublestate = 0;
 	}
 
 	if( sd && battle_config.prevent_logout_trigger&PLT_SKILL )
@@ -3332,6 +3342,8 @@ static int32 unit_attack_timer_sub(block_list* src, int32 tid, t_tick tick)
 		}
 
 		ud->attacktarget_lv = battle_weapon_attack(src,target,tick,0);
+		if (sd)
+			sd->state.multihit = 1;
 
 		if(sd && sd->status.pet_id > 0 && sd->pd && battle_config.pet_attack_support)
 			pet_target_check(sd->pd,target,0);

@@ -858,8 +858,22 @@
 	export_constant2("bAddItemSPHealRate", SP_ADD_ITEM_SPHEAL_RATE);
 	export_constant2("bAddItemGroupSPHealRate", SP_ADD_ITEMGROUP_SPHEAL_RATE);
 	export_constant2("bWeaponSubSize", SP_WEAPON_SUBSIZE);
+	export_constant2("bHealAP", SP_HEALAP);
+	export_constant2("bSkillHealAP", SP_SKILL_HEALAP);
+	export_constant2("bSKillBoost", SP_SKILL_BOOST);
+	export_constant2("bSKillSplashAddRange", SP_SKILL_SPLASH_RANGE);
+	export_constant2("bSkillNoRequire", SP_SKILL_NO_REQUIRE);
+	export_constant2("bSkillNoRequireItem", SP_SKILL_NO_REQUIRE_ITEM);
+	export_constant2("bNoRequireAmmo", SP_NO_REQUIRE_AMMO);
+	export_constant2("bDoubleCastRate", SP_DOUBLE_CAST_RATE);
+	export_constant2("bDoubleCastSkill", SP_DOUBLE_CAST_SKILL);
+	export_constant2("bSkillApuse", SP_SKILL_APUSE);
 	export_constant2("bJumprange", SP_JUMPRANGE);
+	export_constant2("bNormalAtk", SP_NORMAL_ATK);
+	export_constant2("bMultiRate", SP_MULTI_RATE);
+	export_constant2("bResRatioAtkClass", SP_RES_RATIO_ATK_CLASS);
 	export_constant2("bSummonSlave", SP_SUMMON_SLAVE);
+	export_constant2("bMagicNormal", SP_MAGICNORMAL);
 
 	/* equip indices */
 	export_constant(EQI_COMPOUND_ON);
@@ -2018,6 +2032,7 @@
 	export_constant(SC_DELSEFFECT);
 	export_constant(SC_DELSEFFECT2);
 	export_constant(SC_DELSEFFECT3);
+	export_constant(SC_TRIPLE_COUNT);
 
 /// Do not modify code below this, until the end of the API hook, since it will be automatically generated again
 /// @APIHOOK_START(EFST_CONST)
@@ -3564,6 +3579,7 @@
 	export_constant(RC2_GLAST_HEIM_ABYSS);
 	export_constant(RC2_DESTROYED_VALKYRIE_REALM);
 	export_constant(RC2_ENCROACHED_GEPHENIA);
+	export_constant(RC2_EPIC);
 	export_deprecated_constant(RC2_MAX);	// Mar. 2025
 
 	/* monster ai */
@@ -7305,6 +7321,61 @@
 	export_constant(IG_BRILLIANT_HAT_BOX);
 	export_constant(IG_CHEST_OF_DEATH);
 	export_constant(IG_SHADOW_CUBE_SAK);
+	export_constant(IG_LENS_CRAFT_STONE);
+	export_constant(IG_EXP_OVERCLOCKER);
+	export_constant(IG_BS_ITEM_M_S_57);
+	export_constant(IG_BS_ITEM_M_S_58);
+	export_constant(IG_BS_ITEM_M_S_59);
+	export_constant(IG_HIGH_REFINE_GAURANTEE);
+	export_constant(IG_REFINE_GAURANTEE);
+	export_constant(IG_KACHUA_KEY);
+	export_constant(IG_S_R_BEARERS_EARRING);
+	export_constant(IG_S_R_BEARERS_PENDANT);
+	export_constant(IG_S_R_BEARERS_ARMOR);
+	export_constant(IG_S_R_BEARERS_SHOES);
+	export_constant(IG_S_M_AUTOSPELL_EARRING);
+	export_constant(IG_S_M_AUTOSPELL_PENDANT);
+	export_constant(IG_S_M_AUTOSPELL_ARMOR);
+	export_constant(IG_S_M_AUTOSPELL_SHOES);
+	export_constant(IG_S_INFINITY_WEAPON);
+	export_constant(IG_S_INFINITY_SHIELD);
+	export_constant(IG_S_EXP_WEAPON);
+	export_constant(IG_S_EXP_SHIELD);
+	export_constant(IG_S_MEGA_BLITZ_WEAPON);
+	export_constant(IG_S_MEGA_BLITZ_SHIELD);
+	export_constant(IG_BS_ITEM_M_S_60);
+	export_constant(IG_BS_ITEM_M_S_61);
+	export_constant(IG_BS_ITEM_M_S_62);
+	export_constant(IG_BS_ITEM_M_S_63);
+	export_constant(IG_MOCADAS_SLABS1);
+	export_constant(IG_MOCADAS_SLABS2);
+	export_constant(IG_MOCADAS_SLABS3);
+	export_constant(IG_MOCADAS_SLABS4);
+	export_constant(IG_MOCADAS_SLABS5);
+	export_constant(IG_MOCADAS_SLABS6);
+	export_constant(IG_MOCADAS_SLABS7);
+	export_constant(IG_MOCADAS_SLABS8);
+	export_constant(IG_MOCADAS_SLABS9);
+	export_constant(IG_MOCADAS_SLABS10);
+	export_constant(IG_MOCADAS_SLABS11);
+	export_constant(IG_MOCADAS_SLABS12);
+	export_constant(IG_MOCADAS_SLABS13);
+	export_constant(IG_MOCADAS_SLABS14);
+	export_constant(IG_MOCADAS_SLABS15);
+	export_constant(IG_MOCADAS_SLABS16);
+	export_constant(IG_MOCADAS_SLABS17);
+	export_constant(IG_MOCADAS_SLABS18);
+	export_constant(IG_MOCADAS_SLABS19);
+	export_constant(IG_MOCADAS_SLABS20);
+	export_constant(IG_MOCADAS_SLABS21);
+	export_constant(IG_MOCADAS_SLABS22);
+	export_constant(IG_MOCADAS_SLABS23);
+	export_constant(IG_GOLD_MILEAGEBOX);
+	export_constant(IG_GOAL_GIFT_BOXC);
+	export_constant(IG_2020_GOAL_GIFT_BOXC);
+	export_constant(IG_2020_GOAL_GIFT_BOX2C);
+	export_constant(IG_2021_GOAL_GIFT_BOXC);
+	export_constant(IG_2021_GOAL_GIFT_BOX2C);
 
 	/* unit stop walking */
 	export_constant(USW_NONE);
@@ -7360,6 +7431,7 @@
 	export_constant(REFINE_COST_NORMAL);
 	export_constant(REFINE_COST_HD);
 	export_constant(REFINE_COST_ENRICHED);
+	export_constant(REFINE_COST_MAGNUM);
 	export_constant(REFINE_COST_MAX);
 
 	/* refine information types */
@@ -10572,7 +10644,8 @@
 	export_constant(UNT_GD_GLORYWOUNDS);
 	export_constant(UNT_GD_SOULCOLD);
 	export_constant(UNT_GD_HAWKEYES);
-	export_constant(UNT_CANE_OF_EVIL_EYE);
+	export_constant(UNT_CANE_OF_EVIL_EYE);;
+	export_constant(UNT_ALL_EARTHQUAKE);
 
 	/* battleground info types */
 	export_constant(BG_INFO_ID);

@@ -5990,6 +5990,15 @@ npc_data* npc_duplicate_npc_for_player( npc_data& nd, map_session_data& sd ){
 
 	for (const auto &it : sd.npc_id_dynamic) {
 		npc_data* src_nd = map_id2nd( it );
+		
+		if(src_nd && sd.m != src_nd->m) {
+			if(!src_nd->src_id)
+				npc_unload_duplicates(src_nd);
+			else
+				npc_unload(src_nd,true);
+		
+			src_nd = nullptr;
+		}
 
 		// Check if the source NPC id of currently active duplicates already exists.
 		if( src_nd != nullptr && src_nd->src_id == src_id ){

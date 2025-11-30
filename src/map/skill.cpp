@@ -229,6 +229,15 @@ int32 skill_get_splash( uint16 skill_id , uint16 skill_lv ) {
 	return splash;
 }
 
+int32 skill_get_splash2(block_list *bl, uint16 skill_id, uint16 skill_lv) {
+	map_session_data *sd = BL_CAST(BL_PC, bl);
+	int32 splash = skill_get_splash(skill_id, skill_lv);
+
+	if (sd && splash != AREA_SIZE)
+		splash += pc_skillsplashrange_bonus(sd, skill_id);
+	return splash;
+}
+
 bool skill_get_nk_(uint16 skill_id, std::vector<e_skill_nk> nk) {
 	if( skill_id == 0 ){
 		return false;
@@ -2238,6 +2247,79 @@ int32 skill_additional_effect( block_list* src, block_list *bl, uint16 skill_id,
 	}
 
 	if (sd) {
+		if (skill_id == IQ_TRIPLEATTACK) {
+			int16 triple = pc_checkskill(sd, IQ_TRIPLEATTACK);
+			int16 explosion = pc_checkskill(sd, IQ_EXPOSION_BLASTER);
+			int16 explosionrate = (triple >= 10) ? 5 : triple / 3 + 1;
+			int16 massive = pc_checkskill(sd, IQ_MASSIVE_F_BLASTER) / 2;
+			int16 massiverate = (triple >= 10) ? 2 : (triple >= 5) ? 1 : 0;
+			if (explosion > 0 && rnd() % 100 < explosionrate) {
+				sd->state.autocast = 1;
+				if (!skill_isNotOk(IQ_EXPOSION_BLASTER, *sd))
+					skill_castend_damage_id(src, bl, IQ_EXPOSION_BLASTER, explosion, tick, 0);
+				sd->state.autocast = 0;
+
+				//Set canact delay. [Skotlex]
+				unit_data *ud = unit_bl2ud(src);
+
+				if (ud) {
+					int32 delay = skill_delayfix(src, skill_id, skill_lv);
+
+					if (DIFF_TICK(ud->canact_tick, tick + delay) < 0){
+						ud->canact_tick = i64max(tick + delay, ud->canact_tick);
+						if ( battle_config.display_status_timers && sd )
+							clif_status_change(src, EFST_POSTDELAY, 1, delay, 0, 0, 0);
+					}
+				}
+				if (massive > 0 && rnd() % 100 < massiverate) {
+					sd->state.autocast = 1;
+					if( !skill_isNotOk(IQ_MASSIVE_F_BLASTER, *sd) )
+						skill_castend_damage_id(src, bl, IQ_MASSIVE_F_BLASTER, explosion, tick, 0);
+					sd->state.autocast = 0;
+
+					//Set canact delay. [Skotlex]
+					unit_data *ud = unit_bl2ud(src);
+
+					if (ud) {
+						int32 delay = skill_delayfix(src, skill_id, skill_lv);
+
+						if (DIFF_TICK(ud->canact_tick, tick + delay) < 0){
+							ud->canact_tick = i64max(tick + delay, ud->canact_tick);
+							if ( battle_config.display_status_timers && sd )
+								clif_status_change(src, EFST_POSTDELAY, 1, delay, 0, 0, 0);
+						}
+					}
+				}
+			}
+		}
+
+		short earthquake = pc_checkskill(sd, ALL_EARTHQUAKE);
+		if (earthquake > 0 && skill_id != ALL_EARTHQUAKE) {
+			int16 quakerate = earthquake / 3 + 1;
+			quakerate += (earthquake >= 10) ? 2 : (earthquake >= 5) ? 1 : 0;
+			if (rnd() % 100 < quakerate) {
+				sd->state.autocast = 1;
+
+				if (!skill_isNotOk(ALL_EARTHQUAKE, *sd)) {
+					skill_castend_nodamage_id(src, src, ALL_EARTHQUAKE, earthquake, tick, 0);
+				}
+				sd->state.autocast = 0;
+
+				//Set canact delay. [Skotlex]
+				unit_data *ud = unit_bl2ud(src);
+
+				if (ud) {
+					int32 delay = skill_delayfix(src, skill_id, skill_lv);
+
+					if (DIFF_TICK(ud->canact_tick, tick + delay) < 0){
+						ud->canact_tick = i64max(tick + delay, ud->canact_tick);
+						if ( battle_config.display_status_timers && sd )
+							clif_status_change(src, EFST_POSTDELAY, 1, delay, 0, 0, 0);
+					}
+				}
+			}
+		}
+
 		if (!sd->summonslave.empty()) { //PC custom summonslave
 			for (const auto &it : sd->summonslave) {
 				if (!(((it.battle_flag)&attack_type)&BF_WEAPONMASK &&
@@ -2245,8 +2327,8 @@ int32 skill_additional_effect( block_list* src, block_list *bl, uint16 skill_id,
 					  ((it.battle_flag)&attack_type)&BF_SKILLMASK))
 					continue; // one or more trigger conditions were not fulfilled
 	
-				int rate = it.rate;
-				int damage = it.damage;
+				int32 rate = it.rate;
+				int32 damage = it.damage;
 				uint32 duration = it.duration;
 				enum e_mode mode = static_cast<e_mode>(it.mode);
 	
@@ -2261,6 +2343,197 @@ int32 skill_additional_effect( block_list* src, block_list *bl, uint16 skill_id,
 				char temp[70];
 				snprintf(temp, sizeof(temp), msg_txt(sd, 2005));
 				clif_showscript(src, temp, AREA);
+			}
+		}
+
+		if (!sd->doublecast.empty() && skill_id != 0) {
+			for (const auto &it : sd->doublecast) {
+				if (!(((it.battle_flag)&attack_type)&BF_WEAPONMASK &&
+					  ((it.battle_flag)&attack_type)&BF_RANGEMASK &&
+					  ((it.battle_flag)&attack_type)&BF_SKILLMASK))
+					continue; // one or more trigger conditions were not fulfilled
+
+				if (sd && md && md->master_id == sd->id) { //Do not doublecast slave skill
+					continue;
+				}
+
+				sd->state.autocast = 1;
+				sd->state.doublestate = 1;
+
+				if( skill_isNotOk(skill_id, *sd) ) {
+					sd->state.autocast = 0;
+					continue;
+				}
+
+				sd->state.autocast = 0;
+				sd->state.doublestate = 0;
+	
+				int32 rate = it.rate;
+	
+				if (rnd()%1000 >= rate)
+					continue;
+				
+				block_list *tbl = (skill_get_inf(skill_id)&INF_SELF_SKILL) ? src : bl;
+				e_cast_type type = skill_get_casttype(skill_id);
+
+				if (sd->state.doublecast[skill_id] || sd->state.prevdoublestate) {
+					continue;
+				}
+
+				if (type == CAST_GROUND) {
+					if (!skill_pos_maxcount_check(src, tbl->x, tbl->y, skill_id, skill_lv, BL_PC, false))
+						continue;
+				}
+				if (battle_config.autospell_check_range &&
+					!battle_check_range(bl, tbl, skill_get_range2(src, skill_id, skill_lv, true)))
+					continue;
+	
+				if (skill_id == PF_SPIDERWEB) //Special case, due to its nature of coding.
+					type = CAST_GROUND;
+	#ifndef RENEWAL
+				else if (skill_id == AS_SONICBLOW)
+					pc_stop_attack(sd); //Special case, Sonic Blow autospell should stop the player attacking.
+	#endif
+
+				sd->state.autocast = 1;
+				sd->state.doublecast[skill_id] = 1;
+				int32 flag = SKILL_NOCONSUME_REQ;
+				if (it.flag & AUTOSPELL_FORCE_CONSUME) {
+					sd->state.autocast = 2;
+					if (!skill_check_condition_castbegin(*sd, skill_id, skill_lv) || !skill_check_condition_castend(*sd, skill_id, skill_lv)) {
+						sd->state.autocast = 0;
+						sd->state.doublecast[skill_id] = 0;
+						continue;
+					}
+					flag = 0;
+				}
+				skill_consume_requirement(sd, skill_id, skill_lv,1);
+	#ifndef RENEWAL
+				skill_toggle_magicpower(src, skill_id);
+	#endif
+				switch (type) {
+					case CAST_GROUND:
+						skill_castend_pos2(src, tbl->x, tbl->y, skill_id, skill_lv, tick, flag);
+						break;
+					case CAST_NODAMAGE:
+						skill_castend_nodamage_id(src, tbl, skill_id, skill_lv, tick, flag);
+						break;
+					case CAST_DAMAGE:
+						skill_castend_damage_id(src, tbl, skill_id, skill_lv, tick, flag);
+						break;
+				}
+				char temp[70];
+				snprintf(temp, sizeof(temp), msg_txt(sd, 2001), skill_get_desc(skill_id));
+				clif_showscript(src, temp, AREA);
+				sd->state.autocast = 0;
+
+				//Set canact delay. [Skotlex]
+				/* unit_data* ud = unit_bl2ud(src);
+
+				if (ud) {
+					int32 delay = skill_delayfix(src, skill_id, skill_lv);
+
+					if (DIFF_TICK(ud->canact_tick, tick + delay) < 0){
+						ud->canact_tick = i64max(tick + delay, ud->canact_tick);
+						if ( battle_config.display_status_timers && sd )
+							clif_status_change(src, EFST_POSTDELAY, 1, delay, 0, 0, 0);
+					}
+				} */
+			}
+		}
+
+		if (!sd->doublecastskill.empty()) {
+			for (const auto &it : sd->doublecastskill) {
+				if (it.id != skill_id)
+					continue;
+
+				int32 skill = it.id;
+
+				if (sd && md && md->master_id == sd->id) { //Do not doublecast slave skill
+					continue;
+				}
+
+				sd->state.autocast = 1;
+				sd->state.doublestate = 1;
+				
+				if( skill_isNotOk(skill, *sd) ) {
+					sd->state.autocast = 0;
+					continue;
+				}
+
+				sd->state.autocast = 0;
+				sd->state.doublestate = 0;
+	
+				int32 rate = it.rate;
+	
+				if (rnd()%1000 >= rate)
+					continue;
+				
+				block_list *tbl = (skill_get_inf(skill)&INF_SELF_SKILL) ? src : bl;
+				e_cast_type type = skill_get_casttype(skill);
+				
+				if (sd->state.doublecast[skill_id] || sd->state.prevdoublestate)
+					continue;
+	
+				if (type == CAST_GROUND) {
+					if (!skill_pos_maxcount_check(src, tbl->x, tbl->y, skill, skill_lv, BL_PC, false))
+						continue;
+				}
+				if (battle_config.autospell_check_range &&
+					!battle_check_range(bl, tbl, skill_get_range2(src, skill, skill_lv, true)))
+					continue;
+	
+				if (skill == PF_SPIDERWEB) //Special case, due to its nature of coding.
+					type = CAST_GROUND;
+	#ifndef RENEWAL
+				else if (skill == AS_SONICBLOW)
+					pc_stop_attack(sd); //Special case, Sonic Blow autospell should stop the player attacking.
+	#endif
+
+				sd->state.autocast = 1;
+				sd->state.doublecast[skill_id] = 1;
+				int32 flag = SKILL_NOCONSUME_REQ;
+				if (it.flag & AUTOSPELL_FORCE_CONSUME) {
+					sd->state.autocast = 2;
+					if (!skill_check_condition_castbegin(*sd, skill_id, skill_lv) || !skill_check_condition_castend(*sd, skill_id, skill_lv)) {
+						sd->state.autocast = 0;
+						sd->state.doublecast[skill_id] = 0;
+						continue;
+					}
+					flag = 0;
+				}
+				skill_consume_requirement(sd, skill_id, skill_lv,1);
+	#ifndef RENEWAL
+				skill_toggle_magicpower(src, skill);
+	#endif
+				switch (type) {
+					case CAST_GROUND:
+						skill_castend_pos2(src, tbl->x, tbl->y, skill, skill_lv, tick, flag);
+						break;
+					case CAST_NODAMAGE:
+						skill_castend_nodamage_id(src, tbl, skill, skill_lv, tick, flag);
+						break;
+					case CAST_DAMAGE:
+						skill_castend_damage_id(src, tbl, skill, skill_lv, tick, flag);
+						break;
+				}
+				char temp[70];
+				snprintf(temp, sizeof(temp), msg_txt(sd, 2001), skill_get_desc(skill_id));
+				clif_showscript(src, temp, AREA);
+				sd->state.autocast = 0;
+
+				//Set canact delay. [Skotlex]
+				/* unit_data* ud = unit_bl2ud(src);
+
+				if (ud) {
+					int32 delay = skill_delayfix(src, skill, skill_lv);
+
+					if (DIFF_TICK(ud->canact_tick, tick + delay) < 0){
+						ud->canact_tick = i64max(tick + delay, ud->canact_tick);
+						if ( battle_config.display_status_timers && sd )
+							clif_status_change(src, EFST_POSTDELAY, 1, delay, 0, 0, 0);
+					}
+				} */
 			}
 		}
 	}
@@ -2398,12 +2671,14 @@ int32 skill_additional_effect( block_list* src, block_list *bl, uint16 skill_id,
 #endif
 
 			sd->state.autocast = 1;
+			sd->state.prevdoublestate = 1;
 
 			int32 flag = SKILL_NOCONSUME_REQ;
 			if (it.flag & AUTOSPELL_FORCE_CONSUME) {
 				sd->state.autocast = 2;
 				if (!skill_check_condition_castbegin(*sd, skill, autospl_skill_lv) || !skill_check_condition_castend(*sd, skill, autospl_skill_lv)) {
 					sd->state.autocast = 0;
+					sd->state.prevdoublestate = 0;
 					continue;
 				}
 				flag = 0;
@@ -2501,6 +2776,7 @@ int32 skill_onskillusage(map_session_data *sd, block_list *bl, uint16 skill_id, 
 			continue;
 
 		sd->state.autocast = 1;
+		sd->state.prevdoublestate = 1;
 		it.lock = true;
 
 		int32 flag = SKILL_NOCONSUME_REQ;
@@ -2508,6 +2784,7 @@ int32 skill_onskillusage(map_session_data *sd, block_list *bl, uint16 skill_id, 
 			sd->state.autocast = 2;
 			if (!skill_check_condition_castbegin(*sd, skill, skill_lv) || !skill_check_condition_castend(*sd, skill, skill_lv)) {
 				sd->state.autocast = 0;
+				sd->state.prevdoublestate = 0;
 				continue;
 			}
 			flag = 0;
@@ -2705,6 +2982,33 @@ int32 skill_counter_additional_effect (block_list* src, block_list *bl, uint16 s
 		if (sc && sc->getSCE(SC_DORAM_SVSP) && attack_type&(BF_MAGIC|BF_LONG))
 			skill_castend_damage_id(bl, src, SU_SV_STEMSPEAR, (pc_checkskill(dstsd, SU_SV_STEMSPEAR) ? pc_checkskill(dstsd, SU_SV_STEMSPEAR) : 1), tick, 0);
 	}
+	
+	if (dstsd && !status_isdead(*bl)) {
+		int16 earthquake = pc_checkskill(dstsd, ALL_EARTHQUAKE);
+		if (earthquake > 0) {
+			int16 quakerate = earthquake / 3 + 1;
+			if (rnd() % 100 < quakerate) {
+				dstsd->state.autocast = 1;
+				if (!skill_isNotOk(ALL_EARTHQUAKE, *dstsd)) {
+					skill_castend_nodamage_id(bl, bl, ALL_EARTHQUAKE, earthquake, tick, 0);
+				}
+				dstsd->state.autocast = 0;
+			}
+		}
+
+		//Set canact delay. [Skotlex]
+		unit_data *ud = unit_bl2ud(bl);
+
+		if (ud) {
+			int32 delay = skill_delayfix(bl, ALL_EARTHQUAKE, earthquake);
+
+			if (DIFF_TICK(ud->canact_tick, tick + delay) < 0){
+				ud->canact_tick = i64max(tick + delay, ud->canact_tick);
+				if ( battle_config.display_status_timers && dstsd )
+					clif_status_change(bl, EFST_POSTDELAY, 1, delay, 0, 0, 0);
+			}
+		}
+	}
 
 	// Trigger counter-spells to retaliate against damage causing skills.
 	if(dstsd && !status_isdead(*bl) && !dstsd->autospell2.empty() &&
@@ -2733,16 +3037,6 @@ int32 skill_counter_additional_effect (block_list* src, block_list *bl, uint16 s
 				continue;
 			}
 			dstsd->state.autocast = 0;
-			
-			int32 flag = SKILL_NOCONSUME_REQ;
-			if (it.flag & AUTOSPELL_FORCE_CONSUME) {
-				dstsd->state.autocast = 2;
-				if (!skill_check_condition_castbegin(*dstsd, autospl_skill_id, autospl_skill_lv) || !skill_check_condition_castend(*dstsd, autospl_skill_id, autospl_skill_lv)) {
-					dstsd->state.autocast = 0;
-					continue;
-				}
-				flag = 0;
-			}
 
 			if (rnd()%1000 >= autospl_rate)
 				continue;
@@ -2757,6 +3051,17 @@ int32 skill_counter_additional_effect (block_list* src, block_list *bl, uint16 s
 				continue;
 
 			dstsd->state.autocast = 1;
+			dstsd->state.prevdoublestate = 1;
+			int32 flag = SKILL_NOCONSUME_REQ;
+			if (it.flag & AUTOSPELL_FORCE_CONSUME) {
+				dstsd->state.autocast = 2;
+				if (!skill_check_condition_castbegin(*dstsd, autospl_skill_id, autospl_skill_lv) || !skill_check_condition_castend(*dstsd, autospl_skill_id, autospl_skill_lv)) {
+					dstsd->state.autocast = 0;
+					dstsd->state.prevdoublestate = 0;
+					continue;
+				}
+				flag = 0;
+			}
 			skill_consume_requirement(dstsd,autospl_skill_id,autospl_skill_lv,1);
 			switch (type) {
 				case CAST_GROUND:
@@ -4039,6 +4344,10 @@ int64 skill_attack (int32 attack_type, block_list* src, block_list *dsrc, block_
 				clif_skill_damage( *dsrc, *bl, tick, 10, dmg.dmotion, damage, dmg.div_, skill_id, -1, DMG_SPLASH );
 			else
 				clif_skill_damage( *dsrc, *bl, tick, dmg.amotion, dmg.dmotion, damage, dmg.div_, skill_id, skill_lv, dmg_type );
+			break;
+		case IQ_TRIPLEATTACK:
+		case ALL_EARTHQUAKE:
+			clif_skill_damage( *dsrc, *bl, tick, dmg.amotion, dmg.dmotion, damage, dmg.div_, CR_REFLECTSHIELD, -1, dmg_type);
 			break;
 		case AB_DUPLELIGHT_MELEE:
 		case AB_DUPLELIGHT_MAGIC:
@@ -5491,6 +5800,14 @@ int32 skill_castend_damage_id (block_list* src, block_list *bl, uint16 skill_id,
 		skill_attack(BF_WEAPON, src, src, bl, skill_id, skill_lv, tick, flag);
 		break;
 
+		
+	case IQ_TRIPLEATTACK: {
+		char temp[70];
+		snprintf(temp, sizeof(temp), msg_txt(sd, 2006));
+		clif_showscript(src, temp, AREA);
+		skill_attack(BF_WEAPON,src,src,bl,skill_id,skill_lv,tick,flag|SD_ANIMATION);
+	}
+		break;
 	case MO_TRIPLEATTACK:
 		skill_attack(BF_WEAPON,src,src,bl,skill_id,skill_lv,tick,flag|SD_ANIMATION);
 		break;
@@ -7496,8 +7813,15 @@ int32 skill_castend_damage_id (block_list* src, block_list *bl, uint16 skill_id,
 					skill_attack(BF_WEAPON, src, src, bl, skill_id, skill_lv, tick, SD_LEVEL|flag);
 			} else {
 				skill_area_temp[1] = bl->id;
+				src->targetx = bl->x;
+				src->targety = bl->y;
+				int32 srange = 0;
+				if (sd->state.jumpattack == 1)
+					srange = sd->jumpattack.splash;
+				else
+					srange = sd->bonus.splash_range;
 				map_foreachinallrange(skill_area_sub, bl,
-					sd->bonus.splash_range, BL_CHAR,
+					srange, BL_CHAR,
 					src, skill_id, skill_lv, tick, flag | BCT_ENEMY | 1,
 					skill_castend_damage_id);
 				flag|=1; //Set flag to 1 so ammo is not double-consumed. [Skotlex]
@@ -7604,6 +7928,7 @@ int32 skill_castend_damage_id (block_list* src, block_list *bl, uint16 skill_id,
 	case HN_JACK_FROST_NOVA:
 	case HN_HELLS_DRIVE:
 	case HN_GROUND_GRAVITATION:
+	case ALL_EARTHQUAKE:
 		if (flag & 1)
 			skill_attack(skill_get_type(skill_id), src, src, bl, skill_id, skill_lv, tick, flag);
 		break;
@@ -8325,6 +8650,36 @@ int32 skill_castend_nodamage_id (block_list *src, block_list *bl, uint16 skill_i
 			case 10: type = SC_IMMUNE_PROPERTY_UNDEAD; break;
 		}
 		clif_skill_nodamage(src,*bl,skill_id,skill_lv,sc_start(src,bl,type,100,skill_lv,skill_get_time(skill_id,skill_lv)));
+		break;
+	case NPC_IMMUNE_PROPERTY_COUNTER: {
+		int32 element = -1;
+		int64 max_value = -1;
+		
+		for (int32 i = 0; i < ELE_MAX; i++) {
+		    if (md->dmgele[i] > 0) {
+		        if (md->dmgele[i] > max_value) {
+					element = i;
+		            max_value = md->dmgele[i];
+		        }
+		    }
+		}
+		
+		if(src->type == BL_MOB && element >= 0) {
+			switch (element) {
+				case ELE_NEUTRAL: type = SC_IMMUNE_PROPERTY_NOTHING; break;
+				case ELE_WATER: type = SC_IMMUNE_PROPERTY_WATER; break;
+				case ELE_EARTH: type = SC_IMMUNE_PROPERTY_GROUND; break;
+				case ELE_FIRE: type = SC_IMMUNE_PROPERTY_FIRE; break;
+				case ELE_WIND: type = SC_IMMUNE_PROPERTY_WIND; break;
+				case ELE_POISON: type = SC_IMMUNE_PROPERTY_POISON; break;
+				case ELE_HOLY: type = SC_IMMUNE_PROPERTY_SAINT; break;
+				case ELE_DARK: type = SC_IMMUNE_PROPERTY_DARKNESS; break;
+				case ELE_GHOST: type = SC_IMMUNE_PROPERTY_TELEKINESIS; break;
+				case ELE_UNDEAD: type = SC_IMMUNE_PROPERTY_UNDEAD; break;
+			}
+			clif_skill_nodamage(src,*bl,NPC_IMMUNE_PROPERTY,skill_lv,sc_start(src,bl,type,100,skill_lv,skill_get_time(skill_id,skill_lv)));
+		}
+	}
 		break;
 	case SS_FOUR_CHARM:
 		if (sd != nullptr) {
@@ -13403,6 +13758,14 @@ int32 skill_castend_nodamage_id (block_list *src, block_list *bl, uint16 skill_i
 		clif_skill_nodamage(src, *bl, skill_id, skill_lv);
 		map_foreachinrange(skill_area_sub, bl, skill_get_splash(skill_id, skill_lv), BL_CHAR, src, skill_id, skill_lv, tick, flag | BCT_ENEMY | 1, skill_castend_damage_id);
 		break;
+		
+	case ALL_EARTHQUAKE:
+		clif_specialeffect(src, EF_SCREEN_QUAKE, AREA);
+		clif_skill_nodamage(src, *bl, HN_HELLS_DRIVE, skill_lv + 3);
+		clif_skill_nodamage(src, *bl, skill_id, skill_lv);
+		map_foreachinrange(skill_area_sub, bl, skill_get_splash(skill_id, skill_lv), BL_CHAR,
+		src, skill_id, skill_lv, tick, flag | BCT_ENEMY | 1, skill_castend_damage_id);
+		break;
 
 	case NW_THE_VIGILANTE_AT_NIGHT:
 		i = skill_get_splash(skill_id, skill_lv);
@@ -14081,6 +14444,23 @@ TIMER_FUNC(skill_castend_id){
 				skill_consume_requirement(sd,ud->skill_id,ud->skill_lv,1);
 
 				int32 add_ap = skill_get_giveap( ud->skill_id, ud->skill_lv );
+				
+				if (!sd->skillhealap.empty()) {
+					for (const auto &it : sd->skillhealap) {
+
+						if (ud->skill_id != it.id)
+							continue;
+	
+						if (rnd()%1000 >= it.rate)
+							continue;
+						
+						if (it.rate < 1000) {
+							clif_specialeffect(src, 1831, SELF);
+						}
+
+						add_ap += it.lv;
+					}
+				}
 
 				// Give AP
 				if (add_ap > 0) {
@@ -14371,6 +14751,23 @@ TIMER_FUNC(skill_castend_pos){
 				skill_consume_requirement(sd, ud->skill_id, ud->skill_lv, 1);
 
 				int32 add_ap = skill_get_giveap(ud->skill_id, ud->skill_lv);
+				
+				if (!sd->skillhealap.empty()) {
+					for (const auto &it : sd->skillhealap) {
+
+						if (ud->skill_id != it.id)
+							continue;
+	
+						if (rnd()%1000 >= it.rate)
+							continue;
+						
+						if (it.rate < 1000) {
+							clif_specialeffect(src, 1831, SELF);
+						}
+
+						add_ap += it.lv;
+					}
+				}
 
 				// Give AP
 				if (add_ap > 0) {
@@ -19481,7 +19878,8 @@ bool skill_check_condition_castbegin( map_session_data& sd, uint16 skill_id, uin
 	}
 
 	if (require.ap > 0 && status->ap < (uint32)require.ap) {
-		clif_skill_fail( sd, skill_id, USESKILL_FAIL_AP_INSUFFICIENT );
+		if (sd.state.autocast == 0)
+			clif_skill_fail( sd, skill_id, USESKILL_FAIL_AP_INSUFFICIENT );
 		return false;
 	}
 
@@ -20036,7 +20434,7 @@ struct s_skill_condition skill_get_requirement(map_session_data* sd, uint16 skil
 			req.sp += req.sp * (20 * sc->getSCE(SC_CRESCIVEBOLT)->val1) / 100;
 	}
 
-	req.ap = skill->require.ap[skill_lv - 1];
+	req.ap = skill->require.ap[skill_lv - 1] + pc_skillapuse_bonus(sd, skill_id);
 	ap_rate = skill->require.ap_rate[skill_lv - 1];
 	if (ap_rate > 0)
 		req.ap += (status->ap * ap_rate) / 100;
@@ -20340,6 +20738,67 @@ struct s_skill_condition skill_get_requirement(map_session_data* sd, uint16 skil
 		req.status.shrink_to_fit();
 		req.eqItem.clear();
 		req.eqItem.shrink_to_fit();
+	}
+	
+	// Removes item requirement [Cydh]
+	if (sd->special_state.skill_no_require_item) {
+		for (i = 0; i < MAX_SKILL_ITEM_REQUIRE; i++) {
+			ARR_FIND(0, ARRAYLENGTH(sd->skill_no_require_item), i, sd->skill_no_require_item[i] == req.itemid[i]);
+			if (i < ARRAYLENGTH(sd->skill_no_require_item)) {
+				req.itemid[i] = 0;
+				req.amount[i] = 0;
+				break;
+			}
+		}
+	}
+
+	// Removes requirement by states [Cydh]
+	i = 0;
+	if (sd->special_state.skill_no_require) {
+		ARR_FIND(0, ARRAYLENGTH(sd->skill_no_require), i, sd->skill_no_require[i].skill_id == skill_id);
+		if (i < ARRAYLENGTH(sd->skill_no_require))
+			i = sd->skill_no_require[i].state;
+	}
+	i |= sd->bonus.skill_no_require;
+	if (i) {
+		if (i & BONUS_NOREQ_HP)
+			req.hp = 0;
+		if (i & BONUS_NOREQ_MAXHP)
+			req.mhp = 0;
+		if (i & BONUS_NOREQ_SP)
+			req.sp = 0;
+		if (i & BONUS_NOREQ_HPRATE)
+			req.hp_rate = 0;
+		if (i & BONUS_NOREQ_SPRATE)
+			req.sp_rate = 0;
+		if (i & BONUS_NOREQ_ZENY)
+			req.zeny = 0;
+		if (i & BONUS_NOREQ_WEAPON)
+			req.weapon = 0;
+		if (i & BONUS_NOREQ_AMMO) {
+			req.ammo = 0;
+			req.ammo_qty = 0;
+		}
+		if (i & BONUS_NOREQ_STATE)
+			req.state = ST_NONE;
+		if (i & BONUS_NOREQ_STATUS) {
+			req.status.clear();
+			req.status.shrink_to_fit();
+		}
+		if (i & BONUS_NOREQ_SPIRIT)
+			req.spiritball = 0;
+		if (i & BONUS_NOREQ_ITEM) {
+			memset(req.itemid, 0, sizeof(req.itemid));
+			memset(req.amount, 0, sizeof(req.amount));
+		}
+		if (i & BONUS_NOREQ_EQUIP) {
+			req.eqItem.clear();
+			req.eqItem.shrink_to_fit();
+		}
+		if (i & BONUS_NOREQ_AP)
+			req.ap = 0;
+		if (i & BONUS_NOREQ_APRATE)
+			req.ap_rate = 0;
 	}
 
 	return req;

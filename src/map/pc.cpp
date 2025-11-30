@@ -3247,6 +3247,57 @@ static void pc_bonus_autospell_onskill(std::vector<s_autospell> &spell, uint16 s
 	spell.push_back(entry);
 }
 
+static void pc_bonus_doublecast(std::vector<s_autospell> &spell, uint16 id, short rate, short battle_flag, uint8 flag)
+{
+	if (spell.size() == MAX_PC_BONUS) {
+		ShowWarning("pc_bonus_doublecast: Reached max (%d) number of autospells per character!\n", MAX_PC_BONUS);
+		return;
+	}
+
+	if (!rate)
+		return;
+
+	if (!(battle_flag&BF_RANGEMASK))
+		battle_flag |= BF_SHORT | BF_LONG; //No range defined? Use both.
+	if (!(battle_flag&BF_WEAPONMASK))
+		battle_flag |= BF_WEAPON; //No attack type defined? Use weapon.
+	battle_flag |= BF_SKILL; //These two would never trigger without BF_SKILL
+
+	struct s_autospell entry = {};
+
+	if (rate < -1000 || rate > 1000)
+		ShowWarning("pc_bonus_doublecast: Item bonus rate %d exceeds -1000~1000 range, capping.\n", rate);
+
+	entry.id = id;
+	entry.rate = cap_value(rate, -1000, 1000);
+	entry.battle_flag = battle_flag;
+	entry.flag = flag;
+
+	spell.push_back(entry);
+}
+
+static void pc_bonus_skillhealap(std::vector<s_autospell>& spell, uint16 id, short value, short rate)
+{
+	if (spell.size() == MAX_PC_BONUS) {
+		ShowWarning("pc_bonus_skillhealap: Reached max (%d) number of healap bonuses per character!\n", MAX_PC_BONUS);
+		return;
+	}
+
+	if (!rate)
+		return;
+	
+	struct s_autospell entry = {};
+	
+	if (rate < -1000 || rate > 1000)
+		ShowWarning("pc_bonus_skillhealap: Item bonus rate %d exceeds -1000~1000 range, capping.\n", rate);
+
+	entry.id = id;
+	entry.lv = value;
+	entry.rate = cap_value(rate, -1000, 1000);
+
+	spell.push_back(entry);
+}
+
 static void pc_bonus_summonslave(std::vector<s_autospell> &spell, uint16 id, int16 rate, int16 battle_flag, uint16 duration, uint8 damage, uint8 number, enum e_mode mode)
 {
 	if (spell.size() == MAX_PC_BONUS) {
@@ -4649,6 +4700,62 @@ void pc_bonus(map_session_data *sd,int32 type,int32 val)
 			if (sd->state.lr_flag != LR_FLAG_ARROW)
 				sd->bonus.itemsphealrate2 += val;
 			break;
+		case SP_NORMAL_ATK: //bonus bNormalAtk,val;
+			if (sd->state.lr_flag == LR_FLAG_ARROW)
+				break;
+			sd->bonus.normalatk_rate += val;
+			break;
+		case SP_MULTI_RATE: //bonus bMultiRate,val;
+			if(sd->state.lr_flag == 0)
+				sd->bonus.multi_rate += val;
+			break;
+		case SP_SKILL_COOLDOWN: // bonus bSKillCooldown,val;
+			if(sd->state.lr_flag == LR_FLAG_ARROW)
+				break;
+			sd->bonus.skillcooldown += val;
+			break;
+		case SP_RES_RATIO_ATK_CLASS: //bonus bResRatioAtkClas
+			if (sd->state.lr_flag == LR_FLAG_ARROW)
+				break;
+			PC_BONUS_CHK_CLASS(val, SP_RES_RATIO_ATK_CLASS);
+			sd->bonus.res_ratio_atk_class |= 1 << val;
+			break;
+		case SP_SKILL_ATK: // bonus bSkillAtk,n;
+			if (sd->state.lr_flag == LR_FLAG_ARROW)
+				break;
+			sd->bonus.skillatk += val;
+			break;
+		case SP_SUB_SKILL: // bonus bSubSkill,n;
+			if (sd->state.lr_flag == LR_FLAG_ARROW)
+				break;
+			sd->bonus.subskill += val;
+			break;
+		case SP_MAGICNORMAL: // bonus bMagicNormal,n;
+			if (sd->state.lr_flag == LR_FLAG_ARROW)
+				break;
+			sd->bonus.magicnormal += val;
+			break;
+		case SP_SKILL_NO_REQUIRE: // [Cydh]
+			sd->bonus.skill_no_require |= val;
+			break;
+		case SP_SKILL_NO_REQUIRE_ITEM: //[Cydh]
+			if (!item_db.exists(val)) {
+				ShowWarning("pc_bonus: SP_SKILL_NO_REQUIRE_ITEM: Invalid item with ID %d. Skip bonus.\n", val);
+				break;
+			} else {
+				uint8 i;
+				ARR_FIND(0, ARRAYLENGTH(sd->skill_no_require_item), i, !sd->skill_no_require_item[i]);
+				if (i < ARRAYLENGTH(sd->skill_no_require_item)) {
+					sd->skill_no_require_item[i] = val;
+					sd->special_state.skill_no_require_item = 1;
+				}
+				else
+					ShowError("pc_bonus: SP_SKILL_NO_REQUIRE_ITEM: Can't add more data. Limit is %d\n", ARRAYLENGTH(sd->skill_no_require_item));
+			}
+			break;
+		case SP_NO_REQUIRE_AMMO: //[Cydh]
+			sd->special_state.no_require_ammo = 1;
+			break;
 		default:
 			if (current_equip_combo_pos > 0) {
 				ShowWarning("pc_bonus: unknown bonus type %d %d in a combo with item #%u\n", type, val, sd->inventory_data[pc_checkequip( sd, current_equip_combo_pos )]->nameid);
@@ -5291,6 +5398,55 @@ void pc_bonus2(map_session_data *sd,int32 type,int32 type2,int32 val)
 
 		pc_bonus_itembonus( sd->itemgroupsphealrate, type2, val, false );
 		break;
+	case SP_SKILL_BOOST: // bonus2 bSkillBoost,sk,n;
+		if(sd->state.lr_flag == LR_FLAG_ARROW)
+			break;
+		if (sd->skillboost.size() == MAX_PC_BONUS) {
+			ShowWarning("pc_bonus2: SP_SKILL_BOOST: Reached max (%d) number of skills per character, bonus skill %d (+%d%%) lost.\n", MAX_PC_BONUS, type2, val);
+			break;
+		}
+
+		pc_bonus_itembonus(sd->skillboost, type2, val, false);
+		break;
+	case SP_SKILL_SPLASH_RANGE: // bonus2 bSkillSplashAddRange,sk,n;
+		if (sd->state.lr_flag == LR_FLAG_ARROW)
+			break;
+		if (sd->skillsplashrange.size() == MAX_PC_BONUS) {
+			ShowWarning("pc_bonus2: SP_SKILL_SPLASH_RANGE: Reached max (%d) number of skills per character, bonus skill %d (+%d%%) lost.\n", MAX_PC_BONUS, type2, val);
+			break;
+		}
+
+		pc_bonus_itembonus(sd->skillsplashrange, type2, val, false);
+		break;
+	case SP_SKILL_APUSE: // bonus2 bSkillApuse,sk,n;
+		if(sd->state.lr_flag == LR_FLAG_ARROW)
+			break;
+		if (sd->skillapuse.size() == MAX_PC_BONUS) {
+			ShowWarning("pc_bonus2: SP_SKILL_BOOST: Reached max (%d) number of skills per character, bonus skill %d (+%d%%) lost.\n", MAX_PC_BONUS, type2, val);
+			break;
+		}
+
+		pc_bonus_itembonus(sd->skillapuse, type2, val, false);
+		break;
+	case SP_SKILL_NO_REQUIRE: // [Cydh] //PC custom Cydh
+		if (sd->state.lr_flag != LR_FLAG_ARROW) {
+			uint8 i, len = ARRAYLENGTH(sd->skill_no_require);
+			ARR_FIND(0, len, i, sd->skill_no_require[i].skill_id == type2); // Same Skill ID
+			if (i < len) {
+				sd->skill_no_require[i].state |= val;
+				sd->special_state.skill_no_require = 1;
+				break;
+			}
+			ARR_FIND(0, len, i, !sd->skill_no_require[i].skill_id); // New entry
+			if (i < len) {
+				sd->skill_no_require[i].skill_id = type2;
+				sd->skill_no_require[i].state = val;
+				sd->special_state.skill_no_require = 1;
+			} else {
+				ShowError("pc_bonus2: SP_SKILL_NO_REQUIRE: Limit reached already (%d).\n", ARRAYLENGTH(sd->skill_no_require));
+			}
+		}
+		break;
 	default:
 		if (current_equip_combo_pos > 0) {
 			ShowWarning("pc_bonus2: unknown bonus type %d %d %d in a combo with item #%u\n", type, type2, val, sd->inventory_data[pc_checkequip( sd, current_equip_combo_pos )]->nameid);
@@ -5431,6 +5587,22 @@ void pc_bonus3(map_session_data *sd,int32 type,int32 type2,int32 type3,int32 val
 		sd->norecover_state_race[type2].rate = type3;
 		sd->norecover_state_race[type2].tick = val;
 		break;
+	case SP_SKILL_HEALAP: // bonus3 bSKillHealAP,sk,val,rate;
+		if (sd->state.lr_flag == LR_FLAG_ARROW)
+			break;
+	
+		pc_bonus_skillhealap(sd->skillhealap, type2, type3, val);
+		break;
+	case SP_DOUBLE_CAST_RATE: // bonus3 bDoubleCastRate,rate,bf,flag;
+		if (sd->state.lr_flag == LR_FLAG_ARROW)
+			break;
+		pc_bonus_doublecast(sd->doublecast, 0, type2, type3, val & AUTOSPELL_FORCE_ALL);
+		break;
+	case SP_DOUBLE_CAST_SKILL: // bonus3 bDoubleCastSkill,sk,rate,flag;
+		if (sd->state.lr_flag == LR_FLAG_ARROW)
+			break;
+		pc_bonus_doublecast(sd->doublecastskill, type2, type3, 0, val & AUTOSPELL_FORCE_ALL);
+		break;
 	default:
 		if (current_equip_combo_pos > 0) {
 			ShowWarning("pc_bonus3: unknown bonus type %d %d %d %d in a combo with item #%u\n", type, type2, type3, val, sd->inventory_data[pc_checkequip( sd, current_equip_combo_pos )]->nameid);
@@ -5564,7 +5736,7 @@ void pc_bonus5(map_session_data *sd,int32 type,int32 type2,int32 type3,int32 typ
 		break;
 
 	case SP_JUMPRANGE: //bonus5 bJumprange,range,splash,atkrate,penalty,mobid;
-		if (sd->state.lr_flag == 2)
+		if (sd->state.lr_flag == LR_FLAG_ARROW)
 			break;
 		sd->jumpattack.range += type2;
 		sd->jumpattack.splash += type3;
@@ -5602,7 +5774,7 @@ void pc_bonus7(map_session_data *sd,int32 type, int32 type2, int32 type3, int32 
 
 	switch(type){
 	case SP_SUMMON_SLAVE: // bonus7 bSummonSlave,id,rate,flag,duration,damage,number,mode;
-		if (sd->state.lr_flag == 2)
+		if (sd->state.lr_flag == LR_FLAG_ARROW)
 			break;
 		pc_bonus_summonslave(sd->summonslave, type2, type3, type4, type5, type6, type7, static_cast<e_mode>(val));
 		break;
@@ -7546,6 +7718,9 @@ int32 pc_get_skillcooldown(map_session_data *sd, uint16 skill_id, uint16 skill_l
 			break;
 		}
 	}
+
+	if (sd && sd->bonus.skillcooldown != 0)
+		cooldown += sd->bonus.skillcooldown;
 
 	return max(0, cooldown);
 }
@@ -9823,7 +9998,8 @@ int32 pc_skillatk_bonus(map_session_data *sd, uint16 skill_id)
 	nullpo_ret(sd);
 
 	skill_id = skill_dummy2skill_id(skill_id);
-
+	
+	bonus += sd->bonus.skillatk;
 	for (auto &it : sd->skillatk) {
 		if (it.id == skill_id) {
 			bonus += it.val;
@@ -9841,7 +10017,8 @@ int32 pc_sub_skillatk_bonus(map_session_data *sd, uint16 skill_id)
 	nullpo_ret(sd);
 
 	skill_id = skill_dummy2skill_id(skill_id);
-
+	
+	bonus += sd->bonus.subskill;
 	for (auto &it : sd->subskill) {
 		if (it.id == skill_id) {
 			bonus += it.val;
@@ -9922,6 +10099,60 @@ static TIMER_FUNC(pc_respawn_timer){
 	}
 
 	return 0;
+}
+
+int32 pc_skillboost_bonus(map_session_data *sd, uint16 skill_id)
+{
+	int32 bonus = 0;
+
+	nullpo_ret(sd);
+
+	skill_id = skill_dummy2skill_id(skill_id);
+
+	for (auto &it : sd->skillboost) {
+		if (it.id == skill_id) {
+			bonus += it.val;
+			break;
+		}
+	}
+
+	return bonus;
+}
+
+int32 pc_skillsplashrange_bonus(map_session_data *sd, uint16 skill_id)
+{
+	int32 bonus = 0;
+
+	nullpo_ret(sd);
+
+	skill_id = skill_dummy2skill_id(skill_id);
+
+	for (auto &it : sd->skillsplashrange) {
+		if (it.id == skill_id) {
+			bonus += it.val;
+			break;
+		}
+	}
+
+	return bonus;
+}
+
+int32 pc_skillapuse_bonus(map_session_data* sd, uint16 skill_id)
+{
+	int32 bonus = 0;
+
+	nullpo_ret(sd);
+
+	skill_id = skill_dummy2skill_id(skill_id);
+
+	for (auto& it : sd->skillapuse) {
+		if (it.id == skill_id) {
+			bonus += it.val;
+			break;
+		}
+	}
+
+	return bonus;
 }
 
 /*==========================================

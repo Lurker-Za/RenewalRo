@@ -1775,7 +1775,7 @@ static int32 pet_ai_sub_hard(pet_data *pd, map_session_data *sd, t_tick tick)
 		return 0;
 	}
 
-	if (!check_distance_bl(sd, pd, pd->db->range3)) {
+	if (!check_distance_bl(sd, pd, pd->db->range4)) {
 		// Master too far, chase.
 		if(pd->target_id)
 			pet_unlocktarget(pd);

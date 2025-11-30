@@ -369,6 +369,7 @@ struct mob_data : public block_list {
 	struct guardian_data* guardian_data;
 	std::deque<s_dmglog> dmglog;
 	uint32 spotted_log[DAMAGELOG_SIZE];
+	int64 dmgele[ELE_MAX];
 	struct spawn_data *spawn; //Spawn data.
 	int32 spawn_timer; //Required for Convex Mirror
 	int16 centerX, centerY; // Spawn center of this individual monster

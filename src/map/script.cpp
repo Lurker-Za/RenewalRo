@@ -10085,6 +10085,12 @@ BUILDIN_FUNC(bonus)
 		case SP_SKILL_DELAY:
 		case SP_SKILL_USE_SP:
 		case SP_SUB_SKILL:
+		case SP_SKILL_HEALAP:
+		case SP_SKILL_BOOST:
+		case SP_SKILL_SPLASH_RANGE:
+		case SP_DOUBLE_CAST_SKILL:
+		case SP_SKILL_APUSE:
+		case SP_SKILL_NO_REQUIRE: //Cydh
 			// these bonuses support skill names
 			if (script_isstring(st, 3)) {
 				const char *name = script_getstr(st, 3);
@@ -17009,7 +17015,7 @@ BUILDIN_FUNC(equip) {
 
 		ARR_FIND( 0, MAX_INVENTORY, i, sd->inventory.u.items_inventory[i].nameid == nameid );
 		if (i < MAX_INVENTORY) {
-			pc_equipitem(sd,i,id->equip);
+			pc_equipitem(sd,i, pc_equippoint(sd, i));
 			script_pushint(st,1);
 			return SCRIPT_CMD_SUCCESS;
 		}

@@ -516,6 +516,7 @@ int32 skill_get_max( uint16 skill_id );
 int32 skill_get_range( uint16 skill_id , uint16 skill_lv );
 int32 skill_get_range2(block_list *bl, uint16 skill_id, uint16 skill_lv, bool isServer);
 int32 skill_get_splash( uint16 skill_id , uint16 skill_lv );
+int32 skill_get_splash2(block_list *bl, uint16 skill_id, uint16 skill_lv);
 int32 skill_get_num( uint16 skill_id ,uint16 skill_lv );
 int32 skill_get_cast( uint16 skill_id ,uint16 skill_lv );
 int32 skill_get_delay( uint16 skill_id ,uint16 skill_lv );
@@ -2567,6 +2568,11 @@ enum e_skill {
 
 	ALL_ASSISTANT_VENDING = 5061,
 	ALL_ASSISTANT_BUYING = 5062,
+	IQ_TRIPLEATTACK = 900,
+	ALL_EARTHQUAKE = 931,
+	ALL_ETHERION = 932,
+	ALL_MINDSWORD = 933,
+	NPC_IMMUNE_PROPERTY_COUNTER = 950,
 };
 
 /// The client view ids for land skills.
@@ -2756,6 +2762,8 @@ enum e_skill_unit_id : uint16 {
 	UNT_SOLIDTRAP,
 	UNT_SWIFTTRAP,
 	UNT_FLAMETRAP,
+
+	UNT_ALL_EARTHQUAKE,
 
 	/**
 	 * Guild Auras

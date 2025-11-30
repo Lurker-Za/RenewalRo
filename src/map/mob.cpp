@@ -2980,6 +2980,9 @@ int32 mob_dead(mob_data *md, block_list *src, int32 type)
 		sd = (map_session_data *)src;
 		first_sd = sd;
 	}
+	
+	for(int16 i = 0; i < ELE_MAX; i++)
+		md->dmgele[i] = 0;
 
 	if (md->master_id) {
 		block_list *master_bl = map_id2bl(md->master_id);

@@ -785,6 +785,7 @@ struct Battle_Config
 	int32 feature_goldpc_time;
 	int32 feature_goldpc_max_points;
 	int32 feature_goldpc_vip;
+	int32 refine_event;
 
 #include <custom/battle_config_struct.inc>
 };

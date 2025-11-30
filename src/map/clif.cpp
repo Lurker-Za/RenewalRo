@@ -1708,6 +1708,8 @@ int32 clif_spawn( block_list *bl, bool walking ){
 	case BL_MOB:
 		{
 			TBL_MOB *md = ((TBL_MOB*)bl);
+			if (util::vector_exists(status_get_race2(md), RC2_EPIC))
+				clif_specialeffect(md, 1751, AREA);
 			if (md->special_state.clone == 3) //If it is a clone
 				clif_specialeffect(md, EF_GRAYBODY, AREA);
 			if(md->special_state.size==SZ_BIG) // tiny/big mobs [Valaris]
@@ -2081,6 +2083,8 @@ void clif_move( struct unit_data& ud )
 	case BL_MOB:
 		{
 			mob_data* md = reinterpret_cast<mob_data*>( bl );
+			if (util::vector_exists(status_get_race2(md), RC2_EPIC))
+				clif_specialeffect(md, 1751, AREA);
 			if (md->special_state.clone == 3) //If it is a clone
 				clif_specialeffect(md, EF_GRAYBODY, AREA);
 			if (md->special_state.size == SZ_BIG) // tiny/big mobs [Valaris]
@@ -5084,6 +5088,8 @@ void clif_getareachar_unit( map_session_data* sd,block_list *bl ){
 	case BL_MOB:
 		{
 			TBL_MOB* md = (TBL_MOB*)bl;
+			if (util::vector_exists(status_get_race2(md), RC2_EPIC))
+				clif_specialeffect(md, 1751, AREA);
 			if (md->special_state.clone == 3) //If it is a clone
 				clif_specialeffect(md, EF_GRAYBODY, AREA);
 			if(md->special_state.size==SZ_BIG) // tiny/big mobs [Valaris]
@@ -6482,7 +6488,7 @@ void clif_status_change_sub(block_list *bl, int32 id, int32 type, int32 flag, t_
 	
 	if (!(status_efst_get_bl_type((efst_type)type)&bl->type)) // only send status changes that actually matter to the client
 		return;
-	
+
 	map_session_data *sd = BL_CAST(BL_PC, bl);
 
 #if PACKETVER >= 20120618
@@ -22644,8 +22650,11 @@ void clif_refineui_info( map_session_data* sd, uint16 index ){
 
 			PACKET_ZC_REFINING_MATERIAL_LIST_SUB& entry = p->req[count];
 
+			int32 chance = cost->chance;
+			if (battle_config.refine_event)
+				chance += cost->chance_event;
 			entry.itemId = client_nameid( cost->nameid );
-			entry.chance = static_cast<decltype(entry.chance)>( cost->chance / 100 );
+			entry.chance = static_cast<decltype(entry.chance)>(chance / 100 );
 			entry.zeny = cost->zeny;
 
 			p->packetLength += static_cast<decltype(p->packetLength)>( sizeof( entry ) );
@@ -22801,7 +22810,10 @@ void clif_parse_refineui_refine( int32 fd, map_session_data* sd ){
 	}
 
 	// Try to refine the item
-	if( cost->chance >= ( rnd() % 10000 ) ){
+	int32 chance = cost->chance;
+	if (battle_config.refine_event)
+		chance += cost->chance_event;
+	if(chance >= ( rnd() % 10000 ) ){
 		log_pick_pc( sd, LOG_TYPE_OTHER, -1, item );
 		// Success
 		item->refine = cap_value( item->refine + 1, 0, MAX_REFINE );

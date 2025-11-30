@@ -80,6 +80,7 @@ enum e_refine_cost_type : uint16{
 	REFINE_COST_NORMAL = 0,
 	REFINE_COST_ENRICHED,
 	REFINE_COST_HD,
+	REFINE_COST_MAGNUM,
 	REFINE_COST_MAX
 };
 
@@ -93,6 +94,7 @@ struct s_refine_cost{
 	uint16 index;
 	t_itemid nameid;
 	uint16 chance;
+	uint16 chance_event;
 	uint32 zeny;
 	uint16 breaking_rate;
 	uint16 downgrade_amount;
@@ -1459,6 +1461,7 @@ enum sc_type : int16 {
 	SC_DELSEFFECT,
 	SC_DELSEFFECT2,
 	SC_DELSEFFECT3,
+	SC_TRIPLE_COUNT,
 
 	SC_MAX, //Automatically updated max, used in for's to check we are within bounds.
 };
