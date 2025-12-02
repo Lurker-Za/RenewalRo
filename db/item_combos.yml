@@ -39,4 +39,5 @@ Footer:
     Mode: Prerenewal
   - Path: db/re/item_combos.yml
     Mode: Renewal
-  - Path: db/import/item_combos.yml
+  - Path: db/import/re/item_combos.yml
+    Mode: Renewal

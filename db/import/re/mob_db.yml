@@ -293,6 +293,29 @@ Body:
     Class: Boss
     Modes:
       Mvp: true
+  - Id: 20851
+    AegisName: SUMMON_HELLTREE
+    Name: Hell Tree
+    Level: 200
+    Str: 0
+    Agi: 0
+    Vit: 0
+    Int: 0
+    Dex: 0
+    Luk: 0
+    AttackRange: 2
+    SkillRange: 8
+    ChaseRange: 12
+    Size: Large
+    Race: Plant
+    Element: Neutral
+    ElementLevel: 4
+    WalkSpeed: 130
+    AttackDelay: 540
+    AttackMotion: 1080
+    ClientAttackMotion: 840
+    DamageMotion: 480
+    Ai: 24
   - Id: 21089
     AegisName: WANDERING_DUCK
     Name: 방황하는 오리인형
@@ -585,34 +608,39 @@ Body:
       Mvp: true
   - Id: 21919
     AegisName: LARVA_VIOLET
-    Name: 바이올렛
-    Level: 65
-    Hp: 947500
-    BaseExp: 103950
-    JobExp: 74250
-    MvpExp: 51975
-    Attack: 1509
-    Attack2: 776
-    Defense: 166
-    MagicDefense: 70
-    Str: 92
-    Agi: 80
-    Vit: 103
-    Int: 66
-    Dex: 139
-    Luk: 85
-    AttackRange: 1
+    Name: 란드그리스
+    Level: 141
+    Hp: 3205000
+    BaseExp: 1300000
+    JobExp: 1210000
+    MvpExp: 650000
+    Attack: 7343
+    Attack2: 4412
+    Defense: 588
+    MagicDefense: 506
+    Str: 196
+    Agi: 131
+    Vit: 125
+    Int: 276
+    Dex: 401
+    Luk: 156
+    AttackRange: 3
     SkillRange: 10
     ChaseRange: 12
     Size: Large
-    Race: Brute
-    Element: Fire
-    ElementLevel: 1
-    WalkSpeed: 300
-    AttackDelay: 872
-    AttackMotion: 1344
-    DamageMotion: 432
+    Race: Angel
+    Element: Holy
+    ElementLevel: 4
+    WalkSpeed: 100
+    AttackDelay: 576
+    AttackMotion: 576
+    ClientAttackMotion: 504
+    DamageMotion: 480
+    DamageTaken: 10
     Ai: 21
+    Class: Boss
+    Modes:
+      Mvp: true
   - Id: 21965
     AegisName: EP20_COPO
     Name: 꼬뽀
@@ -703,6 +731,15 @@ Body:
     AttackMotion: 1344
     DamageMotion: 432
     Ai: 21
+  - Id: 22161
+    AegisName: VR_MD_TILBY
+    Name: 틸비
+    Level: 100
+  - Id: 22163
+    AegisName: VR_MD_TILBY2
+    Name: 틸비
+    Level: 100
+    DamageMotion: 1
   - Id: 22185
     AegisName: DARK_LORD2
     Name: 다크 로드
@@ -739,12 +776,50 @@ Body:
       Mvp: true
   - Id: 22299
     AegisName: VR_CHAO
-    Name: 차오
+    Name: 타임홀더
+    Level: 170
+    Hp: 25000000
+    BaseExp: 4582500
+    JobExp: 3877500
+    MvpExp: 2291250
+    Attack: 5250
+    Attack2: 2100
+    Defense: 288
+    MagicDefense: 265
+    Str: 224
+    Agi: 152
+    Vit: 251
+    Int: 257
+    Dex: 402
+    Luk: 77
+    AttackRange: 1
+    SkillRange: 10
+    ChaseRange: 12
+    Size: Large
+    Race: Demon
+    RaceGroups:
+      Clocktower: true
+    Element: Neutral
+    ElementLevel: 4
+    WalkSpeed: 150
+    AttackDelay: 100
+    AttackMotion: 576
+    ClientAttackMotion: 960
     DamageMotion: 480
+    DamageTaken: 10
+    Ai: 04
+    Class: Boss
+    Modes:
+      Mvp: true
   - Id: 22318
     AegisName: EP21_ICESEAHORSE
     Name: 얼음해마
     Level: 240
+    DamageMotion: 1
+  - Id: 22362
+    AegisName: EP21_ICEHORN
+    Name: 얼음뿔
+    Level: 265
     DamageMotion: 1
   - Id: 22381
     AegisName: CLB_SS_FC

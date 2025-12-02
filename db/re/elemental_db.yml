@@ -62,7 +62,7 @@ Header:
 Body:
   - Id: 2114
     AegisName: EL_AGNI_S
-    Name: Agni
+    Name: 아그니
     Level: 100
     Size: Small
     Element: Fire
@@ -76,7 +76,7 @@ Body:
         Skill: EL_FIRE_ARROW
   - Id: 2115
     AegisName: EL_AGNI_M
-    Name: Agni
+    Name: 아그니
     Level: 100
     Size: Medium
     Element: Fire
@@ -90,7 +90,7 @@ Body:
         Skill: EL_FIRE_BOMB
   - Id: 2116
     AegisName: EL_AGNI_L
-    Name: Agni
+    Name: 아그니
     Level: 100
     Size: Large
     Element: Fire
@@ -104,7 +104,7 @@ Body:
         Skill: EL_FIRE_WAVE
   - Id: 2117
     AegisName: EL_AQUA_S
-    Name: Aqua
+    Name: 아쿠아
     Level: 100
     Size: Small
     Element: Water
@@ -118,7 +118,7 @@ Body:
         Skill: EL_ICE_NEEDLE
   - Id: 2118
     AegisName: EL_AQUA_M
-    Name: Aqua
+    Name: 아쿠아
     Level: 100
     Size: Medium
     Element: Water
@@ -132,7 +132,7 @@ Body:
         Skill: EL_WATER_SCREW
   - Id: 2119
     AegisName: EL_AQUA_L
-    Name: Aqua
+    Name: 아쿠아
     Level: 100
     Str: 1
     Agi: 1
@@ -152,7 +152,7 @@ Body:
         Skill: EL_TIDAL_WEAPON
   - Id: 2120
     AegisName: EL_VENTUS_S
-    Name: Ventus
+    Name: 벤투스
     Level: 100
     Size: Small
     Element: Wind
@@ -166,7 +166,7 @@ Body:
         Skill: EL_WIND_SLASH
   - Id: 2121
     AegisName: EL_VENTUS_M
-    Name: Ventus
+    Name: 벤투스
     Level: 100
     Size: Medium
     Element: Wind
@@ -180,7 +180,7 @@ Body:
         Skill: EL_HURRICANE
   - Id: 2122
     AegisName: EL_VENTUS_L
-    Name: Ventus
+    Name: 벤투스
     Level: 100
     Size: Large
     Element: Wind
@@ -194,7 +194,7 @@ Body:
         Skill: EL_TYPOON_MIS
   - Id: 2123
     AegisName: EL_TERA_S
-    Name: Tera
+    Name: 테라
     Level: 100
     Size: Small
     Element: Earth
@@ -208,7 +208,7 @@ Body:
         Skill: EL_STONE_HAMMER
   - Id: 2124
     AegisName: EL_TERA_M
-    Name: Tera
+    Name: 테라
     Level: 100
     Size: Medium
     Element: Earth
@@ -222,7 +222,7 @@ Body:
         Skill: EL_ROCK_CRUSHER
   - Id: 2125
     AegisName: EL_TERA_L
-    Name: Tera
+    Name: 테라
     Level: 100
     Size: Large
     Element: Earth
@@ -236,7 +236,7 @@ Body:
         Skill: EL_STONE_RAIN
   - Id: 20816
     AegisName: EM_DILUVIO
-    Name: Diluvio
+    Name: 딜루비오
     Level: 200
     Size: Large
     Element: Water
@@ -250,7 +250,7 @@ Body:
         Skill: EM_EL_AGE_OF_ICE
   - Id: 20817
     AegisName: EM_ARDOR
-    Name: Ardor
+    Name: 아르도르
     Level: 200
     Size: Large
     Element: Fire
@@ -264,7 +264,7 @@ Body:
         Skill: EM_EL_FLAMEROCK
   - Id: 20818
     AegisName: EM_PROCELLA
-    Name: Procella
+    Name: 프로첼라
     Level: 200
     Size: Large
     Element: Wind
@@ -278,7 +278,7 @@ Body:
         Skill: EM_EL_STORM_WIND
   - Id: 20819
     AegisName: EM_TERREMOTUS
-    Name: Terremotus
+    Name: 테레모투스
     Level: 200
     Size: Large
     Element: Earth
@@ -292,7 +292,7 @@ Body:
         Skill: EM_EL_AVALANCHE
   - Id: 20820
     AegisName: EM_SERPENS
-    Name: Serpens
+    Name: 세르펜스
     Level: 200
     Size: Large
     Element: Poison

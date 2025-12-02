@@ -14807,3 +14807,4 @@
 21361,EP18_MD_DEMI_FREYJA_L@NPC_CANE_OF_EVIL_EYE,attack,780,5,7000,300,30000,yes,target,always,0,,,,,,,
 
 // Garden of Time (placeholder). Ids [22177-22180], [22192-22239]
+

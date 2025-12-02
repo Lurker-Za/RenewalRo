@@ -46,6 +46,329 @@ Header:
   Version: 4
 
 Body:
+  - Status: Cloaking
+    Icon: EFST_CLOAKING
+    DurationLookup: AS_CLOAKING
+    States:
+      NoPickItem: true
+    CalcFlags:
+      Cri: true
+      Speed: true
+    Options:
+      Cloak: true
+    Flags:
+      OnTouch: true
+      StopAttacking: true
+      RemoveOnDamaged: true
+      RemoveOnMapWarp: true
+      NoBanishingBuster: true
+      NoDispell: true
+      NoClearance: true
+    EndOnStart:
+      Hiding: true
+  - Status: S_Lifepotion
+    Icon: EFST_S_LIFEPOTION
+    Flags:
+      NoClearbuff: true
+      NoDispell: true
+      NoBanishingBuster: true
+      NoClearance: true
+  - Status: L_Lifepotion
+    Icon: EFST_L_LIFEPOTION
+    Flags:
+      NoClearbuff: true
+      NoDispell: true
+      NoBanishingBuster: true
+      NoClearance: true
+  - Status: M_Lifepotion
+    Icon: EFST_M_LIFEPOTION
+    Flags:
+      NoClearbuff: true
+      NoDispell: true
+      NoBanishingBuster: true
+      NoClearance: true
+  - Status: S_Manapotion
+    Icon: EFST_S_MANAPOTION
+    Flags:
+      NoClearbuff: true
+      NoDispell: true
+      NoBanishingBuster: true
+      NoClearance: true
+  - Status: G_LIFEPOTION
+    Icon: EFST_G_LIFEPOTION
+    Flags:
+      NoClearbuff: true
+      NoDispell: true
+      NoBanishingBuster: true
+      NoClearance: true
+  - Status: Fear
+    Icon: EFST_HEALTHSTATE_FEAR
+    DurationLookup: RK_DRAGONHOWLING
+    States:
+      NoMoveCond: true
+    CalcFlags:
+      Flee: true
+      Hit: true
+    Flags:
+      BossResist: true
+      StopWalking: true
+      Debuff: true
+    Fail:
+      Inspiration: true
+    EndOnStart:
+      Blind: true
+  - Status: Burning
+  - Status: Offertorium
+    Icon: EFST_OFFERTORIUM
+    DurationLookup: AB_OFFERTORIUM
+    Flags:
+      DisplayPc: true
+    EndOnStart:
+      Magnificat: true
+      Blind: true
+      Curse: true
+      Poison: true
+      Hallucination: true
+      Confusion: true
+      Bleeding: true
+      Burning: true
+      Freezing: true
+      Mandragora: true
+      Paralyse: true
+      Pyrexia: true
+      Deathhurt: true
+      LeechesEnd: true
+      Venombleed: true
+      Toxin: true
+      Magicmushroom: true
+  - Status: Handicapstate_Deepblind
+    Icon: EFST_HANDICAPSTATE_DEEPBLIND
+    DurationLookup: DK_SERVANT_W_PHANTOM
+    Flags:
+      BossResist: true
+      BlEffect: true
+      DisplayPc: true
+    Script: |
+      bonus bFleeRate,-30;
+      bonus bFlee2Rate,-30;
+  - Status: Handicapstate_Deepsilence
+    Icon: EFST_HANDICAPSTATE_DEEPSILENCE
+    DurationLookup: CD_ARBITRIUM
+    States:
+      NoCast: true
+    Flags:
+      BossResist: true
+      BlEffect: true
+      DisplayPc: true
+    Script: |
+      bonus bAspdRate,-5;
+  - Status: Handicapstate_Lassitude
+    CalcFlags:
+      Speed: true
+    Flags:
+      BossResist: true
+      DisplayPc: true
+    Script: |
+      bonus bCriticalRate,-30;
+  - Status: Handicapstate_Frostbite
+    Icon: EFST_HANDICAPSTATE_FROSTBITE
+    DurationLookup: EM_DIAMOND_STORM
+    States:
+      NoMove: true
+      NoCast: true
+      NoConsumeItem: true
+    CalcFlags:
+      Def: true
+      Mdef: true
+      Def_Ele: true
+    Flags:
+      BossResist: true
+      BlEffect: true
+      DisplayPc: true
+      RemoveOnDamaged: true
+    Script: |
+      bonus bDefEle,Ele_Water;
+  - Status: Handicapstate_Swooning
+    Icon: EFST_HANDICAPSTATE_SWOONING
+    States:
+      NoMove: true
+      NoCast: true
+      NoConsumeItem: true
+    Flags:
+      BossResist: true
+      DisplayPc: true
+      RemoveOnDamaged: true
+  - Status: Handicapstate_Lightningstrike
+    Icon: EFST_HANDICAPSTATE_LIGHTNINGSTRIKE
+    DurationLookup: EM_LIGHTNING_LAND
+    States:
+      NoMove: true
+      NoCast: true
+      NoConsumeItem: true
+    CalcFlags:
+      Def_Ele: true
+    Flags:
+      BossResist: true
+      BlEffect: true
+      DisplayPc: true
+      RemoveOnDamaged: true
+  - Status: Handicapstate_Crystallization
+    Icon: EFST_HANDICAPSTATE_CRYSTALLIZATION
+    DurationLookup: EM_TERRA_DRIVE
+    States:
+      NoMove: true
+      NoCast: true
+      NoConsumeItem: true
+    CalcFlags:
+      Mdef: true
+      Def_Ele: true
+    Flags:
+      BossResist: true
+      BlEffect: true
+      DisplayPc: true
+      RemoveOnDamaged: true
+  - Status: Handicapstate_Conflagration
+    Icon: EFST_HANDICAPSTATE_CONFLAGRATION
+    DurationLookup: EM_CONFLAGRATION
+    Flags:
+      BossResist: true
+      BlEffect: true
+      DisplayPc: true
+    Script: |
+      bonus bDefEle,Ele_Fire;
+  - Status: Handicapstate_Misfortune
+    Icon: EFST_HANDICAPSTATE_MISFORTUNE
+    DurationLookup: ABC_UNLUCKY_RUSH
+    Flags:
+      BossResist: true
+      BlEffect: true
+      DisplayPc: true
+    Script: |
+      bonus bHitRate,-30;
+  - Status: Handicapstate_Deadlypoison
+    Icon: EFST_HANDICAPSTATE_DEADLYPOISON
+    DurationLookup: EM_VENOM_SWAMP
+    CalcFlags:
+      Def: true
+    Flags:
+      BossResist: true
+      BlEffect: true
+      DisplayPc: true
+  - Status: Handicapstate_Depression
+    Icon: EFST_HANDICAPSTATE_DEPRESSION
+    Flags:
+      BossResist: true
+      DisplayPc: true
+  - Status: Handicapstate_Holyflame
+    Icon: EFST_HANDICAPSTATE_HOLYFLAME
+    Flags:
+      BossResist: true
+      DisplayPc: true
+  - Status: Vigor
+    Icon: EFST_VIGOR
+    DurationLookup: DK_VIGOR
+    CalcFlags:
+      All: true
+    Flags:
+      SendVal1: true
+      BlEffect: true
+      DisplayPc: true
+  - Status: Deadly_Defeasance
+    Icon: EFST_DEADLY_DEFEASANCE
+    DurationLookup: AG_DEADLY_PROJECTION
+    Flags:
+      BlEffect: true
+      DisplayPc: true
+  - Status: Climax_Des_Hu
+    Icon: EFST_CLIMAX_DES_HU
+    DurationLookup: AG_DESTRUCTIVE_HURRICANE
+    CalcFlags:
+      All: true
+  - Status: Climax_Earth
+    Icon: EFST_CLIMAX_EARTH
+    DurationLookup: AG_VIOLENT_QUAKE
+  - Status: Climax_Bloom
+    Icon: EFST_CLIMAX_BLOOM
+    DurationLookup: AG_ALL_BLOOM
+  - Status: Abr_Battle_Warior
+    Icon: EFST_ABR_BATTLE_WARIOR
+    DurationLookup: MT_SUMMON_ABR_BATTLE_WARIOR
+    Flags:
+      NoDispell: true
+      NoBanishingBuster: true
+      NoClearance: true
+  - Status: Abr_Dual_Cannon
+    Icon: EFST_ABR_DUAL_CANNON
+    DurationLookup: MT_SUMMON_ABR_DUAL_CANNON
+    Flags:
+      NoDispell: true
+      NoBanishingBuster: true
+      NoClearance: true
+  - Status: Abr_Mother_Net
+    Icon: EFST_ABR_MOTHER_NET
+    DurationLookup: MT_SUMMON_ABR_MOTHER_NET
+    Flags:
+      NoDispell: true
+      NoBanishingBuster: true
+      NoClearance: true
+  - Status: Abr_Infinity
+    Icon: EFST_ABR_INFINITY
+    DurationLookup: MT_SUMMON_ABR_INFINITY
+    Flags:
+      NoDispell: true
+      NoBanishingBuster: true
+      NoClearance: true
+  - Status: Attack_Stance
+    Icon: EFST_ATTACK_STANCE
+    DurationLookup: IG_ATTACK_STANCE
+    CalcFlags:
+      Patk: true
+      Smatk: true
+      Def: true
+    Flags:
+      NoRemoveOnDead: true
+      NoSave: true
+      NoBanishingBuster: true
+      NoDispell: true
+      NoClearance: true
+    EndOnStart:
+      Guard_Stance: true
+  - Status: Bo_Hell_Dusty
+    Icon: EFST_BO_HELL_DUSTY
+    DurationLookup: BO_HELL_DUSTY
+    Script: |
+      bonus bLongAtkRate,20;
+      bonus2 bAddRace,RC_Formless,20;
+      bonus2 bAddRace,RC_Plant,20;
+  - Status: Bionic_Woodenwarrior
+    DurationLookup: BO_WOODENWARRIOR
+    Flags:
+      NoDispell: true
+      NoBanishingBuster: true
+      NoClearance: true
+  - Status: Bionic_Wooden_Fairy
+    DurationLookup: BO_WOODEN_FAIRY
+    Flags:
+      NoDispell: true
+      NoBanishingBuster: true
+      NoClearance: true
+  - Status: Bionic_Creeper
+    DurationLookup: BO_CREEPER
+    Flags:
+      NoDispell: true
+      NoBanishingBuster: true
+      NoClearance: true
+  - Status: Bionic_Helltree
+    DurationLookup: BO_HELLTREE
+    Flags:
+      NoDispell: true
+      NoBanishingBuster: true
+      NoClearance: true
+      
+
+#//---------------------------------------
+#//New added start
+#//---------------------------------------
   - Status: Premium_Expboost
     Icon: EFST_AID_PERIOD_PLUSEXP_2ND
     Flags:
@@ -137,51 +460,6 @@ Body:
       NoClearbuff: true
     Fail:
       Speedup2: true
-  - Status: S_Lifepotion
-    Icon: EFST_S_LIFEPOTION
-    Flags:
-      NoClearbuff: true
-      NoDispell: true
-      NoBanishingBuster: true
-      NoClearance: true
-  - Status: L_Lifepotion
-    Icon: EFST_L_LIFEPOTION
-    Flags:
-      NoClearbuff: true
-      NoDispell: true
-      NoBanishingBuster: true
-      NoClearance: true
-  - Status: M_Lifepotion
-    Icon: EFST_M_LIFEPOTION
-    Flags:
-      NoClearbuff: true
-      NoDispell: true
-      NoBanishingBuster: true
-      NoClearance: true
-  - Status: S_Manapotion
-    Icon: EFST_S_MANAPOTION
-    Flags:
-      NoClearbuff: true
-      NoDispell: true
-      NoBanishingBuster: true
-      NoClearance: true
-  - Status: G_LIFEPOTION
-    Icon: EFST_G_LIFEPOTION
-    Flags:
-      NoClearbuff: true
-      NoDispell: true
-      NoBanishingBuster: true
-      NoClearance: true
-
-  //-------------------------------------
-  //Custom status changes start
-  //-------------------------------------
-  - Status: Jumppenalty
-    CalcFlags:
-      Aspd: true
-    Flags:
-      NoClearbuff: true
-      NoDispell: true
-      NoBanishingBuster: true
-      NoClearance: true
-      NoForcedEnd: true
+#//---------------------------------------
+#//New added end
+#//---------------------------------------

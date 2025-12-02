@@ -62,6 +62,9 @@ uint64 ItemDatabase::parseBodyNode(const ryml::NodeRef& node) {
 		item = std::make_shared<item_data>();
 		item->nameid = nameid;
 		item->flag.available = true;
+	} else {
+		this->invalidWarning(node["Id"], "Item Id %d already exists. Skipping.\n", nameid);
+		return 0;
 	}
 
 	if (this->nodeExists(node, "AegisName")) {

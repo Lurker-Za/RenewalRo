@@ -2090,7 +2090,6 @@ bool status_check_skilluse(block_list *src, block_list *target, uint16 skill_id,
 				return false;
 			break;
 		case AL_TELEPORT:
-		case ALL_ODINS_POWER:
 			// Should fail when used on top of Land Protector [Skotlex]
 			if (src && map_getcell(src->m, src->x, src->y, CELL_CHKLANDPROTECTOR)
 				&& !status_has_mode(status,MD_STATUSIMMUNE)
@@ -7581,6 +7580,8 @@ static int16 status_calc_critical(block_list *bl, status_change *sc, int32 criti
 		critical += sc->getSCE(SC_BEYONDOFWARCRY)->val3;
 	if (sc->getSCE(SC_INTENSIVE_AIM))
 		critical += 300;
+	if (sc->getSCE(SC_HANDICAPSTATE_LASSITUDE))
+		critical -= critical * 30 / 100;
 
 	return (int16)cap_value(critical,10,SHRT_MAX);
 }
@@ -7625,6 +7626,8 @@ static int16 status_calc_hit(block_list *bl, status_change *sc, int32 hit)
 		hit -= hit * sc->getSCE(SC__GROOMY)->val3 / 100;
 	if(sc->getSCE(SC_FEAR))
 		hit -= hit * 20 / 100;
+	if(sc->getSCE(SC_HANDICAPSTATE_MISFORTUNE))
+		hit -= hit * 30 / 100;
 	if (sc->getSCE(SC_ASH))
 		hit -= hit * sc->getSCE(SC_ASH)->val2 / 100;
 	if (sc->getSCE(SC_TEARGAS))
@@ -7761,6 +7764,8 @@ static int16 status_calc_flee(block_list *bl, status_change *sc, int32 flee)
 	//	flee -= (flee * sc->getSCE(SC_C_MARKER)->val3) / 100;
 	if (sc->getSCE(SC_GROOMING))
 		flee += sc->getSCE(SC_GROOMING)->val2;
+	if (sc->getSCE(SC_HANDICAPSTATE_DEEPBLIND))
+		flee -= flee * 30 / 100;
 
 	return (int16)cap_value(flee,1,SHRT_MAX);
 }
@@ -7785,6 +7790,8 @@ static int16 status_calc_flee2(block_list *bl, status_change *sc, int32 flee2)
 		flee2 += sc->getSCE(SC_HISS)->val2*10;
 	if (sc->getSCE(SC_DORAM_FLEE2))
 		flee2 += sc->getSCE(SC_DORAM_FLEE2)->val1;
+	if (sc->getSCE(SC_HANDICAPSTATE_DEEPBLIND) )
+		flee2 -= flee2 * 30 / 100;
 
 	return (int16)cap_value(flee2,10,SHRT_MAX);
 }
@@ -7858,7 +7865,7 @@ static defType status_calc_def(block_list *bl, status_change *sc, int32 def)
 		def -= def * sc->getSCE(SC_STRIPSHIELD)->val2/100;
 	if (sc->getSCE(SC_FLING))
 		def -= def * (sc->getSCE(SC_FLING)->val2)/100;
-	if( sc->getSCE(SC_FREEZING) )
+	if( sc->getSCE(SC_FREEZING) || sc->getSCE(SC_HANDICAPSTATE_FROSTBITE) || sc->getSCE(SC_HANDICAPSTATE_DEADLYPOISON)  )
 		def -= def * (bl->type == BL_PC ? 30 : 10) / 100;
 	if( sc->getSCE(SC_ANALYZE) )
 		def -= def * (14 * sc->getSCE(SC_ANALYZE)->val1) / 100;
@@ -8002,7 +8009,7 @@ static defType status_calc_mdef(block_list *bl, status_change *sc, int32 mdef)
 		mdef += 25 * mdef / 100;
 	if(sc->getSCE(SC_FREEZE))
 		mdef += 25 * mdef / 100;
-	if(sc->getSCE(SC_BURNING))
+	if(sc->getSCE(SC_BURNING) || sc->getSCE(SC_HANDICAPSTATE_FROSTBITE) || sc->getSCE(SC_HANDICAPSTATE_CRYSTALLIZATION))
 		mdef -= 25 * mdef / 100;
 	if( sc->getSCE(SC_NEUTRALBARRIER) )
 		mdef += mdef * sc->getSCE(SC_NEUTRALBARRIER)->val2 / 100;
@@ -8247,9 +8254,11 @@ static uint16 status_calc_speed(block_list *bl, status_change *sc, int32 speed)
 			val = max( val, sc->getSCE(SC_WILD_WALK)->val2 );
 
 		// !FIXME: official items use a single bonus for this [ultramage]
-		if( sd && sd->bonus.speed_rate + sd->bonus.speed_add_rate < 0 ) // Permanent item-based speedup
+		if( sd && sd->bonus.speed_rate + sd->bonus.speed_add_rate < 0 ) // PermanenSC_GEF_NOCTURNt item-based speedup
 			val = max( val, -(sd->bonus.speed_rate + sd->bonus.speed_add_rate) );
-
+		
+		if (sc->getSCE(SC_HANDICAPSTATE_LASSITUDE))
+			val = val * 30 / 100;
 		speed_rate -= val;
 
 		if( speed_rate < 40 )
@@ -8589,6 +8598,8 @@ static int16 status_calc_aspd_rate(block_list *bl, status_change *sc, int32 aspd
 		aspd_rate -= 100;
 	if (sc->getSCE(SC_STARSTANCE))
 		aspd_rate -= 10 * sc->getSCE(SC_STARSTANCE)->val2;
+	if (sc->getSCE(SC_HANDICAPSTATE_DEEPSILENCE))
+		aspd_rate += 50;
 
 	return (int16)cap_value(aspd_rate,0,SHRT_MAX);
 }
@@ -8717,6 +8728,8 @@ static int16 status_calc_mres(block_list *bl, status_change *sc, int32 mres)
 		mres -= mres * sc->getSCE(SC_SHADOW_STRIP)->val2 / 100;
 	if (sc->getSCE(SC_GEF_NOCTURN))
 		mres -= sc->getSCE(SC_GEF_NOCTURN)->val2;
+	if (sc->getSCE(SC_TOXIN_OF_MANDARA))
+		mres -= sc->getSCE(SC_TOXIN_OF_MANDARA)->val2;
 
 	return (int16)cap_value(mres, 0, SHRT_MAX);
 }
@@ -8826,13 +8839,13 @@ static unsigned char status_calc_element(block_list *bl, status_change *sc, int3
 	if(sc == nullptr || sc->empty())
 		return cap_value(element, 0, UCHAR_MAX);
 
-	if(sc->getSCE(SC_FREEZE) || sc->getSCE(SC_CRYSTAL_ARMOR_OPTION))
+	if(sc->getSCE(SC_FREEZE) || sc->getSCE(SC_CRYSTAL_ARMOR_OPTION) || sc->getSCE(SC_HANDICAPSTATE_FROSTBITE))
 		return ELE_WATER;
-	if(sc->getSCE(SC_STONE) || sc->getSCE(SC_STRONG_PROTECTION_OPTION))
+	if(sc->getSCE(SC_STONE) || sc->getSCE(SC_STRONG_PROTECTION_OPTION) || sc->getSCE(SC_HANDICAPSTATE_CRYSTALLIZATION))
 		return ELE_EARTH;
-	if(sc->getSCE(SC_FLAMEARMOR_OPTION))
+	if(sc->getSCE(SC_FLAMEARMOR_OPTION) || sc->getSCE(SC_HANDICAPSTATE_CONFLAGRATION))
 		return ELE_FIRE;
-	if(sc->getSCE(SC_EYES_OF_STORM_OPTION))
+	if(sc->getSCE(SC_EYES_OF_STORM_OPTION) || sc->getSCE(SC_HANDICAPSTATE_LIGHTNINGSTRIKE))
 		return ELE_WIND;
 	if(sc->getSCE(SC_POISON_SHIELD_OPTION))
 		return ELE_POISON;
@@ -9609,7 +9622,11 @@ static int32 status_get_sc_interval(enum sc_type type)
 		case SC_GRADUAL_GRAVITY:
 		case SC_KILLING_AURA:
 		case SC_BOSSMAPINFO:
+		case SC_HANDICAPSTATE_DEADLYPOISON:
 			return 1000;
+		case SC_HANDICAPSTATE_CONFLAGRATION:
+		case SC_HANDICAPSTATE_DEPRESSION:
+			return 2000;
 		case SC_WINKCHARM:
 		case SC_VOICEOFSIREN:
 			return 2250;
@@ -10825,6 +10842,9 @@ static bool status_change_start_post_delay(block_list* src, block_list* bl, sc_t
 				if( sce->val4 && !val4 ) // You cannot override master guild aura
 					return false;
 				break;
+			case SC_CLIMAX:
+				sce->val1 = val1;
+				break;
 			case SC_JOINTBEAT:
 				if (sc && sc->getSCE(type)->val2 & BREAK_NECK)
 					return false; // BREAK_NECK cannot be stacked with new breaks until the status is over.
@@ -10945,7 +10965,10 @@ static bool status_change_start_post_delay(block_list* src, block_list* bl, sc_t
 			val2 = val1*20; // SP gained
 			break;
 		case SC_KYRIE:
-			if( val4 ) { // Formulas for Praefatio
+			if (val2 == RL_P_ALTER) { // Formulas for Platinum Altar caused Kyrie Eleison
+				val2 = status->max_hp * (val1 * 5) / 100; //%Max HP to absorb
+				val3 = 3 + val1; //Hits
+			} else if( val4 ) { // Formulas for Praefatio
 				val2 = (status->max_hp * (val1 * 2 + 10) / 100) + val4 * 2; //%Max HP to absorb
 				val3 = 6 + val1; //Hits
 			} else { // Formulas for Kyrie Eleison
@@ -11197,6 +11220,9 @@ static bool status_change_start_post_delay(block_list* src, block_list* bl, sc_t
 		case SC_KILLING_AURA:
 		case SC_WINKCHARM:
 		case SC_VOICEOFSIREN:
+		case SC_HANDICAPSTATE_CONFLAGRATION:
+		case SC_HANDICAPSTATE_DEADLYPOISON:
+		case SC_HANDICAPSTATE_DEPRESSION:
 			tick_time = status_get_sc_interval(type);
 			val4 = tick - tick_time; // Remaining time
 			break;
@@ -12538,7 +12564,7 @@ static bool status_change_start_post_delay(block_list* src, block_list* bl, sc_t
 			val2 = 30 * val1; // ATK bonus
 			break;
 		case SC_UNLIMIT:
-			val2 = 50 * val1;
+			val2 = 100 + 50 * val1;
 			break;
 		case SC_MONSTER_TRANSFORM:
 		case SC_ACTIVE_MONSTER_TRANSFORM:
@@ -12712,6 +12738,10 @@ static bool status_change_start_post_delay(block_list* src, block_list* bl, sc_t
 					}
 					if (pc_checkskill(ssd, SU_SPIRITOFSEA) > 0)
 						val2 *= 2; // Doubles HP
+				}
+				if (status->hp < status->max_hp) {
+					clif_skill_nodamage(nullptr, *bl, AL_HEAL, val2);
+					status_heal(bl, val2, 0, 0);
 				}
 				tick_time = 10000 - ((val1 - 1) * 1000);
 				val4 = tick / tick_time;
@@ -13753,12 +13783,18 @@ int32 status_change_end( block_list* bl, enum sc_type type, int32 tid ){
 			}
 			break;
 		case SC_SPLASHER:
-		case SC_ROSEBLOSSOM:
 			{
 				block_list *src=map_id2bl(val3);
 
 				if(src && tid != INVALID_TIMER)
 					skill_castend_damage_id(src, bl, val2, val1, gettick(), SD_LEVEL );
+			}
+			break;
+		case SC_ROSEBLOSSOM:
+			{
+				block_list *src=map_id2bl(val3);
+				if(src)
+					skill_castend_pos2(src, bl->x, bl->y, val2, val1, gettick(), SD_LEVEL);
 			}
 			break;
 		case SC_CLOSECONFINE2:
@@ -14381,6 +14417,7 @@ TIMER_FUNC(status_change_tick_timer){
 			status_percent_damage(nullptr, bl, -1, 0, false);
 		break;
 
+	case SC_HANDICAPSTATE_DEADLYPOISON: // TODO actual damage unknown [Muh]
 	case SC_POISON:
 	case SC_DPOISON:
 		if (sce->val4 >= 0 && !sc->getSCE(SC_SLOWPOISON)) {
@@ -14404,6 +14441,12 @@ TIMER_FUNC(status_change_tick_timer){
 		}
 		break;
 
+	case SC_HANDICAPSTATE_DEPRESSION:
+		if (sce->val4 >= 0) {
+			status_heal(bl, 0, -static_cast<int32>(status->max_sp) * 2 / 100, 0, 1);
+		}
+		break;
+	case SC_HANDICAPSTATE_CONFLAGRATION: // TODO actual damage unknown [Muh]
 	case SC_BURNING:
 		if (sce->val4 >= 0) {
 			int64 damage = 1000 + (3 * status->max_hp) / 100; // Deals fixed (1000 + 3%*MaxHP)
@@ -15221,7 +15264,10 @@ TIMER_FUNC(status_change_tick_timer){
 		break;
 	case SC_FRESHSHRIMP:
 		if (--(sce->val4) >= 0) {
-			status_heal(bl, sce->val2, 0, 2);
+			if (status->hp < status->max_hp) {
+				clif_skill_nodamage(nullptr, *bl, AL_HEAL, sce->val2);
+				status_heal(bl, sce->val2, 0, 0);
+			}
 			sc_timer_next((10000 - ((sce->val1 - 1) * 1000)) + tick);
 			return 0;
 		}
@@ -16061,6 +16107,9 @@ uint64 StatusDatabase::parseBodyNode(const ryml::NodeRef& node) {
 	if (!exists) {
 		status = std::make_shared<s_status_change_db>();
 		status->type = static_cast<sc_type>(status_id);
+	} else {
+		this->invalidWarning(node["Status"], "Status %s already exists. Skipping.\n", status_name.c_str());
+		return 0;
 	}
 
 	if (this->nodeExists(node, "Icon")) {

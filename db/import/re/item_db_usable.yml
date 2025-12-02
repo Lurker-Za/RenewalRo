@@ -136,6 +136,108 @@ Body:
       sc_start4 SC_PREMIUM_EXPBOOST,#pre_duration,20,0,0,.@now;
       sc_start4 SC_PREMIUM_STORAGEBOOST,#pre_duration,0,0,0,.@now;
       getitem 23165,1;
+  - Id: 23348
+    AegisName: Vend_Arbeit_1Lv
+    Name: 판매노점 아르바이트생(초보) 고용증
+    Type: DelayConsume
+    Flags:
+      UniqueId: true
+    Trade:
+      NoDrop: true
+      NoTrade: true
+      NoSell: true
+      NoCart: true
+      NoStorage: true
+      NoGuildStorage: true
+      NoMail: true
+      NoAuction: true
+    Script: |
+      open_stall "ALL_ASSISTANT_VENDING",1;
+  - Id: 23349
+    AegisName: Vend_Arbeit_2Lv
+    Name: 판매노점 아르바이트생(일반) 고용증
+    Type: DelayConsume
+    Flags:
+      UniqueId: true
+    Trade:
+      NoDrop: true
+      NoTrade: true
+      NoSell: true
+      NoCart: true
+      NoStorage: true
+      NoGuildStorage: true
+      NoMail: true
+      NoAuction: true
+    Script: |
+      open_stall "ALL_ASSISTANT_VENDING",2;
+  - Id: 23350
+    AegisName: Vend_Arbeit_3Lv
+    Name: 판매노점 아르바이트생(달인) 고용증
+    Type: DelayConsume
+    Flags:
+      UniqueId: true
+    Trade:
+      NoDrop: true
+      NoTrade: true
+      NoSell: true
+      NoCart: true
+      NoStorage: true
+      NoGuildStorage: true
+      NoMail: true
+      NoAuction: true
+    Script: |
+      open_stall "ALL_ASSISTANT_VENDING",3;
+  - Id: 23351
+    AegisName: Buy_Arbeit_1Lv
+    Name: 구매노점 아르바이트생(초보) 고용증
+    Type: DelayConsume
+    Flags:
+      UniqueId: true
+    Trade:
+      NoDrop: true
+      NoTrade: true
+      NoSell: true
+      NoCart: true
+      NoStorage: true
+      NoGuildStorage: true
+      NoMail: true
+      NoAuction: true
+    Script: |
+      open_stall "ALL_ASSISTANT_BUYING",1;
+  - Id: 23352
+    AegisName: Buy_Arbeit_2Lv
+    Name: 구매노점 아르바이트생(일반) 고용증
+    Type: DelayConsume
+    Flags:
+      UniqueId: true
+    Trade:
+      NoDrop: true
+      NoTrade: true
+      NoSell: true
+      NoCart: true
+      NoStorage: true
+      NoGuildStorage: true
+      NoMail: true
+      NoAuction: true
+    Script: |
+      open_stall "ALL_ASSISTANT_BUYING",2;
+  - Id: 23353
+    AegisName: Buy_Arbeit_3Lv
+    Name: 구매노점 아르바이트생(달인) 고용증
+    Type: DelayConsume
+    Flags:
+      UniqueId: true
+    Trade:
+      NoDrop: true
+      NoTrade: true
+      NoSell: true
+      NoCart: true
+      NoStorage: true
+      NoGuildStorage: true
+      NoMail: true
+      NoAuction: true
+    Script: |
+      open_stall "ALL_ASSISTANT_BUYING",3;
   - Id: 100913
     AegisName: EXP_Drop_Up_7days
     Name: 카프라 버프(7일)
@@ -172,8 +274,8 @@ Body:
       NoAuction: true
     Script: |
       .@now = gettimetick(2);
-      sc_start4 SC_PERIOD_PLUSEXP_2ND,3600000,50,0,0,.@now;
-      sc_start4 SC_PERIOD_RECEIVEITEM_2ND,3600000,50,0,0,.@now;
+      sc_start4 SC_PERIOD_PLUSEXP_2ND,3600,50,0,0,.@now;
+      sc_start4 SC_PERIOD_RECEIVEITEM_2ND,3600,50,0,0,.@now;
   - Id: 100949
     AegisName: EXP_Drop_Up_1day
     Name: "[철통보안]카프라 버프(1일)"

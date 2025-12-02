@@ -103,3 +103,222 @@ Body:
     Script: |
       bonus bCritical,(readparam(bStr)>=110)?40:20;
       bonus5 bAutoSpellWhenHit,"AM_ACIDTERROR",5,100,BF_WEAPON,5;
+
+#--------------------------------
+#//PC Custom start
+#--------------------------------
+  - Id: 29212
+    AegisName: Demonic_Drain
+    Name: 악의 흡수
+    Type: Card
+    SubType: Enchant
+    Script: |
+      bonus2 bSPDrainRate,20,1;
+  - Id: 29213
+    AegisName: Demonic_Drain_
+    Name: 악의 흡수
+    Type: Card
+    SubType: Enchant
+    Script: |
+      bonus2 bHPDrainRate,20,3;
+  - Id: 29690
+    AegisName: fallen_spirit
+    Name: 타락한 투지
+    Type: Card
+    Script: |
+      .@r = getequiprefinerycnt(EQI_HEAD_TOP);
+      bonus bShortAtkRate,3*(.@r/2);
+      bonus bHit,7*(.@r/2);
+      bonus bAtkRate,4*(.@r/5);
+  - Id: 29691
+    AegisName: ominous_fierce
+    Name: 불길한 살기
+    Type: Card
+    Script: |
+      .@r = getequiprefinerycnt(EQI_HEAD_TOP);
+      bonus bLongAtkRate,3*(.@r/2);
+      bonus bHit,7*(.@r/2);
+      bonus bAtkRate,4*(.@r/5);
+  - Id: 29692
+    AegisName: polluted_shadow
+    Name: 오염된 그림자
+    Type: Card
+    Script: |
+      .@r = getequiprefinerycnt(EQI_HEAD_TOP);
+      bonus bCritAtkRate,9*(.@r/2);
+      bonus bCritical,3*(.@r/2);
+      bonus bAtkRate,4*(.@r/5);
+  - Id: 29693
+    AegisName: chaos_spell
+    Name: 혼돈의 마력
+    Type: Card
+    Script: |
+      .@r = getequiprefinerycnt(EQI_HEAD_TOP);
+      bonus bHealPower,5*(.@r/2);
+      bonus bMatk,7*(.@r/2);
+      bonus bMatkRate,4*(.@r/5);
+  - Id: 29850
+    AegisName: Divine_Power
+    Name: 신성 마력
+    Type: Card
+    SubType: Enchant
+    Script: |
+      bonus bBaseAtk,pow(getrefine(),2)*2;
+      bonus bMatk,pow(getrefine(),2)*2;
+  - Id: 300900
+    AegisName: R_Thanatos_Card
+    Name: 마검사 타나토스 카드
+    Type: Card
+    Buy: 20
+    Weight: 10
+    Locations:
+      Armor: true
+    Flags:
+      BuyingStore: true
+      DropEffect: CLIENT
+    Script: |
+      bonus bMaxHPrate,-50;
+      bonus bRes,-20;
+      bonus bMRes,-20;
+      bonus bResRatioAtkClass,Class_All;
+      skill "ALL_MINDSWORD",1;
+  - Id: 300901
+    AegisName: R_Baphomet_Card
+    Name: 사탄 카드
+    Type: Card
+    Buy: 20
+    Weight: 10
+    Locations:
+      Head_Low: true
+      Head_Mid: true
+      Head_Top: true
+    Flags:
+      BuyingStore: true
+      DropEffect: CLIENT
+    Script: |
+      bonus bHit,-50;
+      bonus bNormalAtk,40;
+  - Id: 300902
+    AegisName: R_Turtle_General_Card
+    Name: 터틀로드 카드
+    Type: Card
+    Buy: 20
+    Weight: 10
+    Locations:
+      Right_Hand: true
+    Flags:
+      BuyingStore: true
+      DropEffect: CLIENT
+    Script: |
+      .@r = getrefine();
+      bonus2 bAddClass,Class_All,4*(.@r/4);
+      bonus2 bAddSize,Size_All,4*(.@r/4);
+      bonus2 bMagicAddClass,Class_All,4*(.@r/4);
+      bonus2 bMagicAddSize,Size_All,4*(.@r/4);
+  - Id: 300903
+    AegisName: R_Ifrit_Card
+    Name: 피닉스 카드
+    Type: Card
+    Buy: 20
+    Weight: 10
+    Locations:
+      Both_Accessory: true
+    Flags:
+      BuyingStore: true
+      DropEffect: CLIENT
+    Script: |
+      .@r = getrefine();
+      .@quake = getskilllv("ALL_EARTHQUAKE");
+      addtoskill "ALL_EARTHQUAKE",1+.@r/7;
+      bonus bPAtk,1+.@r/5;
+      bonus bSMatk,1+.@r/5;
+      bonus bShortAtkRate,6+2*.@r/5;
+      bonus bLongAtkRate,6+.2*@r/5;
+      bonus2 bMagicAtkEle,Ele_All,6+2*.@r/5;
+  - Id: 300904
+    AegisName: R_Randgris_Card
+    Name: 프레이야 카드
+    Type: Card
+    Buy: 20
+    Weight: 10
+    Locations:
+      Garment: true
+    Flags:
+      BuyingStore: true
+      DropEffect: CLIENT
+    Script: |
+      .@r = getrefine();
+      bonus2 bAddRace,RC_All,20;
+      bonus2 bMagicAddRace,RC_All,20;
+      bonus bAllStats,10;
+      if (getrefine()>9)
+         bonus bAllStats,10;
+      if (getrefine()>12)
+         bonus bAllTraitStats,5;
+      if (getrefine()>19) {
+         bonus bAllStats,5;
+         bonus bAllTraitStats,5;
+      }
+  - Id: 300905
+    AegisName: R_Amon_Ra_Card
+    Name: 이모탈 카드
+    Type: Card
+    Buy: 20
+    Weight: 10
+    Locations:
+      Right_Hand: true
+    Flags:
+      BuyingStore: true
+      DropEffect: CLIENT
+    Script: |
+      if (isequippedcnt(300905) > 1) {
+      }
+      bonus2 bIgnoreMResRaceRate,RC_All,100;
+      bonus2 bSubEle,Ele_All,-50;
+      skill "ALL_ETHERION",1;
+  - Id: 300906
+    AegisName: R_Doppelganger_Card
+    Name: 라플라스 카드
+    Type: Card
+    Buy: 20
+    Weight: 10
+    Locations:
+      Armor: true
+      Shoes: true
+    Flags:
+      BuyingStore: true
+      DropEffect: CLIENT
+    Script: |
+      .@r = getrefine();
+      bonus bSubSkill,.@r;
+      bonus bMaxHPrate,.@r/2;
+      bonus bSkillAtk,5*.@r/4;
+      if(.@r >= 20) { bonus bMaxHP,5000; bonus bSubSkill,10; }
+  - Id: 1009000
+    AegisName: D_stone
+    Name: 차원석
+    Type: Etc
+    Weight: 10
+    Flags:
+      DropEffect: BLUE_PILLAR
+    Trade:
+      NoDrop: true
+      NoTrade: true
+      NoSell: true
+      NoCart: true
+      NoGuildStorage: true
+      NoMail: true
+      NoAuction: true
+  - Id: 1009001
+    AegisName: Magnum_Rubedo
+    Name: 매그넘 루베도
+    Type: Etc
+    Weight: 10
+    Flags:
+      DropEffect: YELLOW_PILLAR
+    Trade:
+      NoDrop: true
+      NoSell: true
+#--------------------------------
+#//PC Custom end
+#--------------------------------

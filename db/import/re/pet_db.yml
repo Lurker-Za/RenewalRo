@@ -2361,25 +2361,6 @@ Body:
       } else {
         bonus bCritical,5;
       }
-  - Mob: LARVA_VIOLET
-    EggItem: Larva_Violet_Egg
-    FoodItem: Green_Herb
-    Fullness: 2   # unknown
-    HungryDelay: 120   # unknown
-    IntimacyFed: 15   # unknown
-    CaptureRate: 0   # unknown
-    SpecialPerformance: 3
-    Script: >
-      .@i = getpetinfo(PETINFO_INTIMATE);
-      
-      if (.@i >= PET_INTIMATE_LOYAL) {
-         bonus bCritical,5;
-         bonus bHit,10;
-      }
-      else if (.@i >= PET_INTIMATE_CORDIAL) {
-         bonus bCritical,3;
-         bonus bHit,5;
-      }
   - Mob: EP20_COPO
     TameItem: Ep20_Fatty_Icegangu
     EggItem: Copo_Egg
@@ -2500,26 +2481,6 @@ Body:
       }
       else if (.@i >= PET_INTIMATE_AWKWARD || .@i >= PET_INTIMATE_SHY) {
          bonus2 bMagicAtkEle,Ele_Dark,3;
-      }
-
-  - Mob: VR_CHAO
-    EggItem: Sonic_Chao_Egg
-    FoodItem: Pet_Food
-    Fullness: 2   # unknown
-    HungryDelay: 120   # unknown
-    IntimacyFed: 15   # unknown
-    CaptureRate: 0   # unknown
-    SpecialPerformance: 4
-    Script: >
-      .@i = getpetinfo(PETINFO_INTIMATE);
-      
-      if (.@i >= PET_INTIMATE_LOYAL) {
-         bonus bMaxHP,300;
-         bonus bMaxSP,30;
-      }
-      else if (.@i >= PET_INTIMATE_CORDIAL) {
-         bonus bMaxHP,200;
-         bonus bMaxSP,20;
       }
 
   - Mob: EP21_ICESEAHORSE
@@ -2707,7 +2668,7 @@ Body:
          bonus bAspdRate,1;
       }
     Evolution:
-      - Target: TIMEHOLDER3
+      - Target: VR_CHAO
         ItemRequirements:
           - Item: Big_Ben_Card
             Amount: 10
@@ -2773,7 +2734,18 @@ Body:
       else if (.@i >= PET_INTIMATE_AWKWARD || .@i >= PET_INTIMATE_SHY) {
          bonus bVariableCastrate,-2;
       }
-  - Mob: TIMEHOLDER3
+    Evolution:
+      - Target: LARVA_VIOLET
+        ItemRequirements:
+          - Item: Skeggiold_Card
+            Amount: 10
+          - Item: Angelgolt_Card
+            Amount: 10
+          - Item: Holy_Frus_Card
+            Amount: 10
+          - Item: Mightysoul_Essence
+            Amount: 30
+  - Mob: VR_CHAO
     EggItem: aegis_9171
     FoodItem: High_Class_Pet_food
     Fullness: 2   # unknown
@@ -2800,4 +2772,34 @@ Body:
       }
       else if (.@i >= PET_INTIMATE_AWKWARD || .@i >= PET_INTIMATE_SHY) {
          bonus bMatkRate,3;
+      }
+  - Mob: LARVA_VIOLET
+    EggItem: Randgris_egg
+    FoodItem: High_Class_Pet_food
+    Fullness: 2   # unknown
+    HungryDelay: 120   # unknown
+    IntimacyFed: 15   # unknow
+    CaptureRate: 0   # unknown
+    SpecialPerformance: 3
+    AllowAutoFeed: true
+    Script: >
+      .@i = getpetinfo(PETINFO_INTIMATE);
+      
+      if (.@i >= PET_INTIMATE_LOYAL) {
+         bonus bAtkRate,6;
+         bonus bShortAtkRate,7;
+         bonus bLongAtkRate,7;
+         bonus2 bHPDrainRate,20,2;
+         bonus2 bSPDrainRate,10,2;
+      }
+      else if (.@i >= PET_INTIMATE_CORDIAL) {
+         bonus bAtkRate,5;
+         bonus bShortAtkRate,5;
+         bonus bLongAtkRate,5;
+      }
+      else if (.@i >= PET_INTIMATE_NEUTRAL) {
+         bonus bAtkRate,4;
+      }
+      else if (.@i >= PET_INTIMATE_AWKWARD || .@i >= PET_INTIMATE_SHY) {
+         bonus bAtkRate,3;
       }

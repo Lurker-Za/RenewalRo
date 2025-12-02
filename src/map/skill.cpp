@@ -6151,7 +6151,6 @@ int32 skill_castend_damage_id (block_list* src, block_list *bl, uint16 skill_id,
 	case SP_SHA:
 	case SP_SWHOO:
 	case DK_SERVANTWEAPON_ATK:
-	case DK_SERVANT_W_PHANTOM:
 	case DK_SERVANT_W_DEMOL:
 	case DK_MADNESS_CRUSHER:
 	case DK_HACKANDSLASHER:
@@ -6349,6 +6348,8 @@ int32 skill_castend_damage_id (block_list* src, block_list *bl, uint16 skill_id,
 				case NJ_HUUMA:
 #endif
 				case LG_MOONSLASHER:
+					sc_start(src,src,SC_OVERBRANDREADY,100,skill_lv,skill_get_time2(skill_id,skill_lv));
+					[[fallthrough]];
 				case MH_XENO_SLASHER:
 					clif_skill_damage( *src, *bl,tick, status_get_amotion(src), 0, DMGVAL_IGNORE, 1, skill_id, skill_lv, DMG_SINGLE );
 					break;
@@ -6392,7 +6393,6 @@ int32 skill_castend_damage_id (block_list* src, block_list *bl, uint16 skill_id,
 					}
 					break;
 				}
-				case DK_SERVANT_W_PHANTOM:
 				case SHC_FATAL_SHADOW_CROW: {
 					uint8 dir = DIR_NORTHEAST;
 
@@ -6402,7 +6402,7 @@ int32 skill_castend_damage_id (block_list* src, block_list *bl, uint16 skill_id,
 					// Move the player 1 cell near the target, between the target and the player
 					if (skill_check_unit_movepos(5, src, bl->x + dirx[dir], bl->y + diry[dir], 0, 1)) {
 						clif_blown(src);
-					clif_skill_nodamage(src, *bl, skill_id, skill_lv);// Trigger animation
+						clif_skill_nodamage(src, *bl, skill_id, skill_lv);// Trigger animation
 					} else {
 						if (sd)
 							clif_skill_fail( *sd, skill_id, USESKILL_FAIL, 0);
@@ -6566,6 +6566,30 @@ int32 skill_castend_damage_id (block_list* src, block_list *bl, uint16 skill_id,
 			if( skill_id == AS_SPLASHER ) {
 				// Don't consume a second gemstone.
 				return 0;
+			}
+		}
+		break;
+	case DK_SERVANT_W_PHANTOM:
+		if (flag & 1) {
+			if (tsc && tsc->getSCE(SC_SERVANT_SIGN) && tsc->getSCE(SC_SERVANT_SIGN)->val1 == src->id &&	sd->servantball_old > 0) {
+				pc_delservantball(*sd, skill_get_requirement(sd, skill_id, skill_lv).spiritball);
+				skill_attack(skill_get_type(skill_id), src, src, bl, skill_id, skill_lv, tick, skill_area_temp[0] & 0xFFF);
+			}
+		} else {
+			uint8 dir = DIR_NORTHEAST;
+
+			if (bl->x != src->x || bl->y != src->y)
+				dir = map_calc_dir(bl, src->x, src->y);	// dir based on target as we move player based on target location
+
+			// Move the player 1 cell near the target, between the target and the player
+			if (skill_check_unit_movepos(5, src, bl->x + dirx[dir], bl->y + diry[dir], 0, 1)) {
+				clif_blown(src);
+				clif_skill_nodamage(src, *bl, skill_id, skill_lv);// Trigger animation
+				map_foreachinrange(skill_area_sub, bl, skill_get_splash(skill_id, skill_lv), BL_CHAR|BL_SKILL, src, skill_id, skill_lv, tick, flag|BCT_ENEMY|SD_SPLASH|1, skill_castend_damage_id);
+			} else {
+				if (sd)
+					clif_skill_fail( *sd, skill_id, USESKILL_FAIL, 0);
+				return 1;
 			}
 		}
 		break;
@@ -8833,7 +8857,6 @@ int32 skill_castend_nodamage_id (block_list *src, block_list *bl, uint16 skill_i
 	case RA_UNLIMIT:
 	case WL_TELEKINESIS_INTENSE:
 	case RL_HEAT_BARREL:
-	case RL_P_ALTER:
 	case RL_E_CHAIN:
 	case SU_FRESHSHRIMP:
 	case SU_ARCLOUSEDASH:
@@ -8882,6 +8905,11 @@ int32 skill_castend_nodamage_id (block_list *src, block_list *bl, uint16 skill_i
 	case SKE_ENCHANTING_SKY:
 		clif_skill_nodamage(src,*bl,skill_id,skill_lv,
 			sc_start(src,bl,type,100,skill_lv,skill_get_time(skill_id,skill_lv)));
+		break;
+	case RL_P_ALTER:
+		clif_skill_nodamage(src,*bl,skill_id,skill_lv,
+			sc_start(src,bl,type,100,skill_lv,skill_get_time(skill_id,skill_lv)));
+		sc_start2(src,bl,SC_KYRIE,100,skill_lv,skill_id,skill_get_time(skill_id,skill_lv));
 		break;
 
 	case NPC_GRADUAL_GRAVITY:
@@ -8957,11 +8985,11 @@ int32 skill_castend_nodamage_id (block_list *src, block_list *bl, uint16 skill_i
 
 			if (skill_id == AG_DESTRUCTIVE_HURRICANE && climax_lv == 4) // Buff for caster instead of damage AoE.
 				sc_start(src, bl, type, 100, skill_lv, skill_get_time2(skill_id, skill_lv));
-			else if (skill_id == AG_CRYSTAL_IMPACT && climax_lv == 1) // Buffs the caster and allies instead of doing damage AoE.
-					map_foreachinrange(skill_area_sub, bl, splash_size, BL_CHAR, src, skill_id, skill_lv, tick, flag|BCT_ALLY|SD_SPLASH|1, skill_castend_nodamage_id);
 			else {
 				if (skill_id == AG_DESTRUCTIVE_HURRICANE && climax_lv == 1) // Display extra animation for the additional hit cast.
 					clif_skill_nodamage(src, *bl, AG_DESTRUCTIVE_HURRICANE_CLIMAX, skill_lv);
+				if (skill_id == AG_CRYSTAL_IMPACT && climax_lv == 1) // Buffs the caster and allies
+					map_foreachinrange(skill_area_sub, bl, splash_size, BL_CHAR, src, skill_id, skill_lv, tick, flag|BCT_ALLY|SD_SPLASH|1, skill_castend_nodamage_id);
 
 				map_foreachinrange(skill_area_sub, bl, splash_size, BL_CHAR, src, skill_id, skill_lv, tick, flag | BCT_ENEMY | SD_SPLASH | 1, skill_castend_damage_id);
 			}
@@ -8969,6 +8997,16 @@ int32 skill_castend_nodamage_id (block_list *src, block_list *bl, uint16 skill_i
 		break;
 
 	case CD_MEDIALE_VOTUM:
+		if (flag & 1) {
+			if (sd == nullptr || sd->status.party_id == 0 || (flag & 2)) {
+				int32 heal_amount = sstatus->max_hp * skill_lv * 2 / 100;
+				clif_specialeffect(bl, 1808, AREA);
+				clif_skill_nodamage(nullptr, *bl, AL_HEAL, heal_amount);
+				status_heal(bl, heal_amount, 0, 0);
+			} else if (sd)
+				party_foreachsamemap(skill_area_sub, sd, skill_get_splash(skill_id, skill_lv), src, skill_id, skill_lv, tick, flag | BCT_PARTY | 3, skill_castend_nodamage_id);
+		}
+		break;
 	case CD_DILECTIO_HEAL:
 		if (flag & 1) {
 			if (sd == nullptr || sd->status.party_id == 0 || (flag & 2)) {
@@ -8979,12 +9017,8 @@ int32 skill_castend_nodamage_id (block_list *src, block_list *bl, uint16 skill_i
 			} else if (sd)
 				party_foreachsamemap(skill_area_sub, sd, skill_get_splash(skill_id, skill_lv), src, skill_id, skill_lv, tick, flag | BCT_PARTY | 3, skill_castend_nodamage_id);
 		} else {
-			if (skill_id == CD_MEDIALE_VOTUM)
-				clif_skill_nodamage(src, *bl, skill_id, skill_lv, sc_start(src, bl, type, 100, skill_lv, skill_get_time(skill_id, skill_lv)));
-			else { // Dilectio Heal
-				clif_skill_nodamage(src, *bl, skill_id, skill_lv); // Placed here to display animation on target only.
-				skill_castend_nodamage_id(bl, bl, skill_id, skill_lv, tick, 1);
-			}
+			clif_skill_nodamage(src, *bl, skill_id, skill_lv); // Placed here to display animation on target only.
+			skill_castend_nodamage_id(bl, bl, skill_id, skill_lv, tick, 1);
 		}
 		break;
 
@@ -9442,6 +9476,7 @@ int32 skill_castend_nodamage_id (block_list *src, block_list *bl, uint16 skill_i
 	case MT_MIGHTY_SMASH:
 	case ABC_ABYSS_DAGGER:
 	case BO_EXPLOSIVE_POWDER:
+	case BO_HELL_HOWLING:
 	case SOA_EXORCISM_OF_MALICIOUS_SOUL:
 	case SOA_TALISMAN_OF_WHITE_TIGER:
 	case SKE_DAWN_BREAK:
@@ -9450,6 +9485,9 @@ int32 skill_castend_nodamage_id (block_list *src, block_list *bl, uint16 skill_i
 	case SKE_SKY_SUN:
 	{
 		int32 starget = BL_CHAR|BL_SKILL;
+		
+		if (skill_id == LG_OVERBRAND)
+			clif_skill_poseffect(*src, skill_id, skill_lv, src->x, src->y, tick);
 
 		if (skill_id == SR_HOWLINGOFLION)
 			starget = splash_target(src);
@@ -13723,6 +13761,13 @@ int32 skill_castend_nodamage_id (block_list *src, block_list *bl, uint16 skill_i
 			}
 		}
 		break;
+	case BO_HELL_DUSTY:
+		bl = battle_get_master(src);
+		if (bl != nullptr) {
+			clif_skill_nodamage(src, *bl, skill_id, skill_lv, 1);
+			sc_start(src, bl, type, 100, skill_lv, skill_get_time(skill_id, skill_lv));
+		}
+		break;
 
 #ifdef RENEWAL
 	case CG_HERMODE:
@@ -15574,7 +15619,7 @@ int32 skill_castend_pos2(block_list* src, int32 x, int32 y, uint16 skill_id, uin
 		flag |= 1;
 		if (sd)
 			sd->canequip_tick = tick + skill_get_time(skill_id, skill_lv); // Can't switch equips for the duration of the skill.
-		skill_unitsetting(src,skill_id,skill_lv,x,y,0);
+		skill_unitsetting(src,skill_id,skill_lv,x,y,UNIT_NOCONSUME_AMMO);
 		break;
 
 	case GN_CRAZYWEED: {
@@ -16051,6 +16096,12 @@ int32 skill_castend_pos2(block_list* src, int32 x, int32 y, uint16 skill_id, uin
 		unit_setdir(src, map_calc_dir_xy(src->x, src->y, x, y, unit_getdir(src)));
 		skill_blown(src, src, skill_get_blewcount(skill_id, skill_lv), unit_getdir(src), (enum e_skill_blown)(BLOWN_IGNORE_NO_KNOCKBACK | BLOWN_DONT_SEND_PACKET));
 		clif_blown(src);
+		break;
+		
+	case TR_ROSEBLOSSOM_ATK:
+		i = skill_get_splash(skill_id, skill_lv);
+		map_foreachinallarea(skill_area_sub, src->m, x - i, y - i, x + i, y + i, BL_CHAR,
+			src, skill_id, skill_lv, tick, flag | BCT_ENEMY | 1, skill_castend_damage_id);
 		break;
 
 	default:
@@ -19582,6 +19633,8 @@ bool skill_check_condition_castbegin( map_session_data& sd, uint16 skill_id, uin
 				return false;
 			break;
 		case DK_SERVANT_W_PHANTOM:
+			sd.servantball_old = require.spiritball = sd.servantball;
+			break;
 		case DK_SERVANT_W_DEMOL:
 			if (sd.servantball > 0 && sd.servantball < require.spiritball)
 				sd.servantball_old = require.spiritball = sd.servantball;
@@ -19683,7 +19736,7 @@ bool skill_check_condition_castbegin( map_session_data& sd, uint16 skill_id, uin
 			break;
 		case ST_SHIELD:
 			if(sd.status.shield <= 0) {
-				clif_skill_fail( sd, skill_id );
+				clif_skill_fail( sd, skill_id, USESKILL_FAIL_NEED_SHIELD);
 				return false;
 			}
 			break;
@@ -20263,7 +20316,6 @@ void skill_consume_requirement(map_session_data *sd, uint16 skill_id, uint16 ski
 				// since using these skills auto trigger an animation
 				// with them in unique ways that makes them vanish.
 				case DK_SERVANT_W_SIGN:
-				case DK_SERVANT_W_PHANTOM:
 				case DK_SERVANT_W_DEMOL:
 					pc_delservantball( *sd, require.spiritball );
 					break;
@@ -20432,6 +20484,8 @@ struct s_skill_condition skill_get_requirement(map_session_data* sd, uint16 skil
 			req.sp += req.sp * (skill_lv * 10) / 100;
 		if (sc->getSCE(SC_CRESCIVEBOLT))
 			req.sp += req.sp * (20 * sc->getSCE(SC_CRESCIVEBOLT)->val1) / 100;
+		if (sc->getSCE(SC_HANDICAPSTATE_DEPRESSION))
+			req.sp += req.sp * 30 / 100;
 	}
 
 	req.ap = skill->require.ap[skill_lv - 1] + pc_skillapuse_bonus(sd, skill_id);
@@ -25535,6 +25589,9 @@ uint64 SkillDatabase::parseBodyNode(const ryml::NodeRef& node) {
 
 		skill = std::make_shared<s_skill_db>();
 		skill->nameid = skill_id;
+	} else {
+		this->invalidWarning(node["Id"], "Skill Id %d already exists. Skipping.\n", skill_id);
+		return 0;
 	}
 
 	if (this->nodeExists(node, "Name")) {

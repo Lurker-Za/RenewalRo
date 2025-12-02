@@ -2430,17 +2430,6 @@ int32 unit_skilluse_id2(block_list *src, int32 target_id, uint16 skill_id, uint1
 			if (sc && sc->getSCE(SC_WUGDASH))
 				casttime = -1;
 			break;
-		case DK_SERVANT_W_PHANTOM: { // Stops servants from being consumed on unmarked targets.
-				status_change *tsc = status_get_sc(target);
-
-				// Only allow to attack if the enemy has a sign mark given by the caster.
-				if( tsc == nullptr || tsc->getSCE(SC_SERVANT_SIGN) == nullptr || tsc->getSCE(SC_SERVANT_SIGN)->val1 != src->id ){
-					if (sd)
-						clif_skill_fail( *sd, skill_id, USESKILL_FAIL );
-					return 0;
-				}
-			}
-			break;
 		case EL_WIND_SLASH:
 		case EL_HURRICANE:
 		case EL_TYPOON_MIS:
